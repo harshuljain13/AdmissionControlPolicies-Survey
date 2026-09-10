@@ -18,6 +18,17 @@ Working draft. Four axes.
 | Offline batch | Throughput-oriented batch inference; SLOs relaxed | CONCUR/PACE, Continuum |
 | Hybrid | Mix of interactive + batch | HyGen, Aegaeon |
 
+### Axis 2 sub-branch: Concurrency context
+
+Added 2026-09-10 (Day 4 eval — Clairvoyant deep read exposed this).
+
+| Value | Description | Example policies |
+|---|---|---|
+| Concurrent-batch server | vLLM / SGLang / TensorRT-LLM; iteration-level scheduling + preemption + KV pressure govern admission | QLM, Chronos, SOLA, FastServe, CONCUR, FairBatching, VTC (**most of the field**) |
+| Serial edge | Ollama / llama.cpp; one-request-at-a-time; HoL blocking is the primary problem | **Clairvoyant** (sole entry) |
+
+**Observation**: server and edge admission share almost no mechanism. Clairvoyant's predictive SJF works because it's serial; the same technique on a continuous-batching server would require different plumbing entirely. Splitting into sub-clusters (5.1a server vs 5.1b edge) prevents misleading a reader.
+
 ## Axis 3: SLO awareness
 
 | Value | Description | Example policies |
@@ -38,6 +49,18 @@ Added 2026-09-10 (Day 3 eval — SLOs-Serve deep read).
 | Per-stage | Distinct SLOs for each stage of a multi-turn app (e.g., ToolLLM: tight TTFT on tool-call prefill, loose TPOT on reasoning decode, tight TPOT on final answer) | **SLOs-Serve** (sole entry) |
 
 **Observation**: per-stage SLOs are a genuine taxonomy gap — nobody else in the cluster models them. Load-bearing for a new open problem (see `open-problems.md` #17).
+
+### Axis 3 sub-branch: Fairness type
+
+Added 2026-09-10 (Day 4 eval — FairBatching + VTC deep reads exposed this).
+
+| Fairness axis | Description | Example policies |
+|---|---|---|
+| Task-fairness | Between prefill and decode tasks within a batch; equalizes computational share across task types | **FairBatching** (sole clean entry) |
+| Tenant-fairness | Between users/clients; equalizes token-throughput or SLO-attainment across principals | **VTC** (anchor), Equinox, Weighted VTC variants |
+| Priority-weighted | Ordered classes with weights, not strict fairness | Weighted VTC, ProServe |
+
+**Observation**: task-fairness and tenant-fairness share almost no mechanism. FairBatching's "fairness" would actively mislead a reader looking for multi-tenant isolation — it's an intra-batch resource-allocation problem, not a cross-principal QoS problem. Split them in the survey.
 
 ## Axis 4: Signal used
 

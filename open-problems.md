@@ -74,6 +74,30 @@ Draft of Section 8 of the survey. Each item cites specific peer-reviewer or pape
 
 **Evidence**: SLOs-Serve deep read. Distinct from Problem #3 (outcome fairness under admission control). Problem #18 is about *decision transparency* under multi-SLO soft admission: SLOs-Serve "guarantees admitted SLOs by declining others" — but nobody characterizes *which* cohorts (which tenants, which SLO tiers, which prompt shapes) get systematically declined under overload. VTC solves this for token throughput; nobody solves it for multi-SLO decline decisions.
 
+## 19. Workload-arithmetic-aware admission
+
+**Evidence**: Service-Induced Congestion (arXiv:2606.15555) deep read. Theorem 3 (GCD criterion): if gcd of active decoding lengths > 1, unstable modes appear on g-th roots of unity → synchronized eviction cycles; if gcd = 1 (coprime), all roots strictly inside unit disc → global stability. This is *workload arithmetic* — not rate — governing stability. **No production scheduler (vLLM / SGLang / TensorRT-LLM) exposes decode-length gcd/coprimality as an admission signal.** Clean theory-to-practice gap.
+
+## 20. LIFO eviction fairness inversion
+
+**Evidence**: Flow-Controlled Scheduling (arXiv:2604.11001) deep read. Algorithm 2 uses LIFO eviction (newest arrivals evicted first under overflow) to minimize wasted decode work — but this is a fairness inversion for interactive workloads: short recent requests get starved. The paper never analyzes starvation under interactive SLOs, and no other admission-control paper addresses LIFO-eviction fairness properties.
+
+## 21. TPOT SLO ≠ streaming perception SLO
+
+**Evidence**: FairBatching (arXiv:2510.14392) deep read. Time-budget formulation assumes per-token TPOT SLOs. Unclear how it degrades under end-to-end deadline SLOs or *streaming perception SLOs* (voice agents needing bounded inter-chunk gaps, not per-token TPOT). As voice/streaming applications grow, the "TPOT = perception" assumption breaks.
+
+## 22. Cross-domain retraining ownership for edge admission
+
+**Evidence**: Clairvoyant (arXiv:2606.07248) deep read. Zero-shot cross-distribution accuracy collapses to 52.7-65.3%; ~240-request domain retraining is required per new workload. On edge devices (Ollama/llama.cpp deployments) it is unclear who owns retraining — the model provider? The edge orchestrator? The end-user? Also: the paper flags that "curated instruction datasets are degenerate for length prediction" (Alpaca has 4 Long examples of 52K = 0.008%), a reusable negative result for anyone training length predictors.
+
+## 23. Prefix locality vs fairness composability
+
+**Evidence**: VTC (Sheng et al., OSDI '24) deep read + follow-up DLPM (arXiv:2501.14312). VTC's least-served-first scheduling shatters prefix-cache reuse. DLPM already claims 2.87× throughput over VTC by co-optimizing prefix-cache hits and fairness. General open problem: how does fair admission compose with prefix-cache locality? No policy in the cluster explicitly optimizes both.
+
+## 24. VTC never says no — composability with soft-decline admission
+
+**Evidence**: VTC deep read. VTC is a *scheduler*, not an *admission gate* — it never declines a request, only reorders. How VTC (or any pure fair-share scheduler) composes with a soft-decline admission layer (SLOs-Serve style) is completely unaddressed. Adjacent to Problem 18 (decision transparency) but distinct: this is about the *composability* of fair scheduling with declining admission, not the transparency of the decline decision.
+
 ---
 
 For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable. Problems 11-14 added Day 2 (2026-09-10) from CONCUR/QLM/Chronos/SOLA deep reads. Problems 15-18 added Day 3 (2026-09-10) from FastServe/Shen et al./SLOs-Serve/Continuum deep reads. Each cites the specific paper's own text or design as evidence.

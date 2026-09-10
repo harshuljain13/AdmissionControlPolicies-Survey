@@ -15,7 +15,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 7 | SLOs-Serve (Chen et al.) | arXiv:2504.08784 (still preprint 2026-09-10) | Multi-SLO with soft admission; per-stage SLOs |
 | 8 | Continuum (Li et al., Berkeley/Stoica) | **ICLR 2026 Workshop on Lifelong Agents** (poster); VLDB submission in flight; code released as vLLM fork | Agent-level (KV TTL) |
 | 9 | Fluid-WAIT (Ao et al.) | arXiv:2504.11320 | Threshold admission |
-| 10 | Aqua | arXiv:2407.21255 | Preemption alternative |
+| 10 | AQUA (Kumar et al.) | **ASPLOS '25** (DOI 10.1145/3676641.3715983; code at github.com/aquaml) | Preemption alternative — canonical foil to admission-based work |
 | 11 | Service-Induced Congestion | arXiv:2606.15555 | Stability analysis |
 | 12 | Flow-controlled scheduling | arXiv:2604.11001 | Rate limiting |
 | 13 | FairBatching (Lyu et al.) | arXiv:2510.14392 | Fair batch formation |
