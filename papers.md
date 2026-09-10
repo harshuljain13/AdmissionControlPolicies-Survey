@@ -50,15 +50,15 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 
 | # | Paper | Venue |
 |---|---|---|
-| 30 | Sarathi-Serve | **OSDI '24** |
-| 31 | Llumnix | **OSDI '24** |
-| 32 | DistServe | arXiv (widely cited) |
-| 33 | Orca | **OSDI '22** (foundational) |
-| 34 | Aegaeon | **SOSP '25** |
-| 35 | Jenga | **SOSP '25** |
-| 36 | Past-Future Scheduler | **ASPLOS '25** |
-| 37 | AdaServe | **EuroSys '25** |
-| 38 | PASCAL (phase-aware for reasoning) | **HPCA 2026** |
+| 30 | Sarathi-Serve (Agrawal et al.) | **OSDI '24** — chunked prefill; no admission (pure batching) |
+| 31 | Llumnix (Sun et al.) | **OSDI '24** — live migration; no admission (SOTA baseline for SOLA + SLOs-Serve) |
+| 32 | DistServe (Zhong et al.) | **OSDI '24** — arXiv:2401.09670 — P/D disaggregation; no admission (SLOs-Serve reports 2.6× gap due to static split) |
+| 33 | Orca (Yu et al.) | **OSDI '22** — foundational; iteration-level scheduling substrate for all admission papers; no admission itself |
+| 34 | Aegaeon | **SOSP '25** — [PDF](https://ennanzhai.github.io/pub/sosp25-aegaeon.pdf) — per-token autoscaling; "admission by elasticity" not gate |
+| 35 | Jenga | **SOSP '25** — arXiv:2503.18292 — [code](https://github.com/heheda12345/Jenga-SOSP25-AE) — memory heterogeneity; no admission |
+| 36 | Past-Future Scheduler | **ASPLOS '25** — arXiv:2507.10150 — in [LightLLM](https://github.com/ModelTC/lightllm) — memory-projection gate at batch boundary (internal admission, not ingress) |
+| 37 | AdaServe | **EuroSys '26** (Edinburgh Apr 2026 — CORRECTED, not '25) — DOI 10.1145/3767295.3769315 — SLO-customized speculative decoding trees; INVALID feasibility signal exists but unused as reject |
+| 38 | PASCAL (phase-aware for reasoning) | **HPCA 2026** — arXiv:2602.11530 — runtime phase detection; NO ingress classification (reinforces Open Problem 4) |
 
 ## Tier 5 — Foundational / adjacent (~6 papers, cite in Background)
 

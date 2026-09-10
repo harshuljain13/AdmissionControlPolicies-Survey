@@ -115,3 +115,52 @@ Open problems: 24 (up from planned 10-15). Rich taxonomy of gaps for Section 8.
 - Peer-reviewed top-venue admission papers confirmed: 9 (CONCUR ICML '26, QLM SoCC '24, Chronos Frontiers CS '26, SOLA MLSys '25, FastServe NSDI '26, Shen et al ICML '26, AQUA ASPLOS '25, VTC OSDI '24, Continuum ICLR '26 workshop)
 - Open problems: 24
 - Taxonomy: 4 axes + 4 sub-branches (signal-structure D2, SLO-granularity D3, fairness-type D4, concurrency-context D4)
+
+---
+
+## Day 6 eval (2026-09-10)
+
+**Deep-read this cycle**: Sarathi-Serve, Llumnix, DistServe, Orca, Aegaeon, Jenga, Past-Future, AdaServe, PASCAL (9 papers — all Tier 4, scheduling-primary with admission-adjacent framing).
+
+**Cumulative**: 34 / 40 papers deep-read (**85%**) at 6 / 21 days consumed (29%). **~2.9× planned pace.**
+
+### Q1: Right gap?
+**YES — dramatically strengthened.** The 9-for-9 finding is the paper's hero data point: **not a single top-venue LLM serving paper in 2022-2026 has explicit ingress-level admission control**. All 9 Tier 4 papers punt admission entirely (batching / migration / placement / autoscaling / memory-mgmt / speculation tuning). This is the smoking gun for our survey's motivation — admission-as-primary is genuinely under-explored at top venues even during the LLM serving boom.
+
+### Q2: Taxonomy holding?
+**YES.** 4 axes + 4 sub-branches accommodated all 34 papers. No further refactor needed. Tier 5 (foundational) and Tier 6 (differentiation surveys) shouldn't stress it further.
+
+### Q3: Contributions defensible?
+**YES + strengthened.** The 9-for-9 finding fits directly into the paper's opening. Reproducibility narrative sharpened by Days 4-6 (released code now ~13/34 but methodology-level cross-comparison impossibility is the real crisis). Open problems saturated at 37 — pruning to 7-10 headline problems is Week 2 draft work.
+
+### Q4: On timeline?
+**YES — dramatically ahead.** 85% papers at 29% time. Days 8-14 planned for drafting; realistically we can start Section 2 draft on Day 7 without risk.
+
+### Q5: New open problems?
+**Zero net-new.** All 9 Tier 4 papers reinforced existing problems (1, 4, 7, 15). This is a POSITIVE signal — we've hit saturation on new open problems from primary literature. Remaining Tier 5+6 papers are foundational, unlikely to surface new problems.
+
+### Venue corrections captured this cycle
+- **AdaServe**: EuroSys **'26** (Edinburgh, Apr 2026) — my earlier '25 was wrong.
+- **DistServe**: confirmed OSDI '24 (previously "arXiv widely cited").
+- **Jenga**: released code at github.com/heheda12345/Jenga-SOSP25-AE.
+- **Past-Future**: available in LightLLM engine (github.com/ModelTC/lightllm).
+- **Aegaeon PDF**: at ennanzhai.github.io/pub/sosp25-aegaeon.pdf; "on the market" = Alibaba Model Studio marketplace, NOT spot instances.
+
+### Notable insights for survey
+- **Sarathi-Serve reports 2.6-5.6× throughput over vLLM via chunked prefill alone** — sharpens what admission uniquely must deliver (fairness, deadlines, priority) beyond what batching solves.
+- **Past-Future's "memory-projection gate at batch boundary"** is a variant of admission that operates at scheduling epochs, not ingress. Interesting boundary case for Section 5.6.
+- **Aegaeon's "admission by elasticity"** — token-cadence autoscaling as functional substitute for admission gate. Sharpens Problem 7 (coupling admission and autoscaling).
+- **PASCAL confirms Problem 4 is unclaimed** — the canonical HPCA '26 reasoning-serving paper does runtime phase detection, not ingress classification.
+
+### Decisions
+- **Proceed to Day 7**: Tier 5 (foundational — SHEPHERD, PreQuaL, vLLM/PagedAttention, Kleinrock/Harchol-Balter) + Tier 6 (differentiation surveys — Heisler, Zhen "Taming the Titans", Li HPEC 2024, Li KV cache survey). ~7-10 papers, mostly quick reads since these are cite-only or already familiar.
+- **Consider**: given the ~2.9× pace, start Section 2 (Background) draft on Day 7 in parallel with Tier 5/6 reads. Saves buffer for Week 3 polish.
+- **Applied this cycle**: papers.md (9 venue confirmations + AdaServe correction), open-problems.md (meta-observation).
+- **No scope change** to Roadmap.md — timeline healthy.
+
+### Health check
+- Days consumed: 6 / 21 (29%)
+- Papers deep-read: 34 / 40 (85%)
+- Peer-reviewed top-venue admission-adjacent papers confirmed: **23** (14 primary + 9 Tier 4 all confirmed top-venue)
+- Open problems: 37 (saturating — no net-new from Day 6)
+- Taxonomy: 4 axes + 4 sub-branches (stable, no further refactor needed)
