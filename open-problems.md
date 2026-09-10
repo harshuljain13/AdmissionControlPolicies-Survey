@@ -98,6 +98,60 @@ Draft of Section 8 of the survey. Each item cites specific peer-reviewer or pape
 
 **Evidence**: VTC deep read. VTC is a *scheduler*, not an *admission gate* — it never declines a request, only reorders. How VTC (or any pure fair-share scheduler) composes with a soft-decline admission layer (SLOs-Serve style) is completely unaddressed. Adjacent to Problem 18 (decision transparency) but distinct: this is about the *composability* of fair scheduling with declining admission, not the transparency of the decline decision.
 
+## 25. Fairness-of-perception vs fairness-of-tokens — metric entanglement
+
+**Evidence**: Equinox (arXiv:2508.16646) deep read. VTC equalizes served tokens. Equinox argues equal tokens ≠ equal user experience (latency, GPU util diverge) and introduces a dual counter HF = α·UFC + β·RFC that folds latency and resource-efficiency into the fairness metric itself. But this entangles the fairness *definition* with the scheduling *mechanism*: Equinox's reported "+13% fairness vs VTC" is measured on a Jain index over Equinox's own HF — not on a definition-neutral fairness metric (e.g., latency-percentile spread, TTFT variance across tenants). The field has no agreed-upon *mechanism-independent* fairness metric for LLM serving. Related but distinct from Problem 3 (starvation) and Problem 6 (per-tenant SLO): this is about the *measurement layer*, not the policy layer. Adjacent to Problem 24 — pure fair-share schedulers proliferate (VTC, Equinox, DLPM, FairBatching) each defining fairness differently, making apples-to-apples comparison impossible.
+
+## 26. Prediction-driven fair scheduling under distribution shift
+
+**Evidence**: Equinox depends on MoPE (3× BERT-base + length-router) predicting output length, latency, TPS, and GPU-util per prompt. VTC needs zero prediction. Under distribution shift (new tenants with code-heavy, non-English, or reasoning-CoT prompts unlike LMSYS training data) MoPE's L1 error will rise — and every scheduling decision uses these predictions. No graceful-degradation path is measured. Same fragility Clairvoyant (Problem 22) surfaced for length prediction, now compounded across four predicted signals feeding a fairness controller.
+
+## 27. Practical Gittins-index policies for LLM admission
+
+**Evidence**: Mitzenmacher & Shahout, SIGMETRICS 2025 tutorial (arXiv:2503.07545). Classical scheduling theory (Gittins index) is provably optimal under wide conditions but has never been operationalized for LLM serving. The tutorial argues this is a first-order gap between queueing theory and current LLM admission practice.
+
+## 28. Distributional (not point) service-time predictions
+
+**Evidence**: Mitzenmacher & Shahout tutorial. Current length-prediction work (Clairvoyant, S³, proxy-model predictors) returns point estimates of output length. Scheduling theory says the *distribution* matters — variance shape governs tail behavior. Extends Problem 16 (prompt-conditional distributions) on the policy side: nobody consumes distributional predictions as scheduler input.
+
+## 29. Heterogeneous-GPU prefill/decode balance + lower-tier-GPU sizing
+
+**Evidence**: Mitzenmacher & Shahout tutorial. Multi-generation GPU fleets (H100 + A100 + L40S + T4) require admission decisions to reason about which GPU tier can serve which request without SLO violation. No published policy addresses this hardware-tier admission dimension explicitly.
+
+## 30. Learning-augmented framing of α-accuracy — robustness/consistency Pareto
+
+**Evidence**: Jaillet et al. "Online Scheduling for LLM Inference with KV Cache Constraints" (arXiv:2502.07115). Their MC-SF policy provides Ω(√n) lower bound and O(1) upper bound under structured arrival + α-accurate predictions. Real production predictions have unknown α; a learning-augmented (robustness/consistency Pareto) framing is unaddressed. Extends Problem 8 (formal schedulability) with prediction-quality-conditioned bounds.
+
+## 31. Autoscaling-aware routing under class asymmetry
+
+**Evidence**: Chiron (arXiv:2501.08090) + QLM (SoCC '24), both same Patke/Iyer group. Chiron autoscales replicas; QLM queues per-replica. Neither addresses the third axis: routing across a heterogeneous replica set (different instance types running different model variants under different admission policies). Sub-problem of Problem 7. Same group, no composition paper published.
+
+## 32. Predictive drop-at-admission using SLO-risk predictor
+
+**Evidence**: Ascendra (arXiv:2504.20828). Ascendra uses an SLO-risk predictor to promote LP→HP but drops requests only *reactively* (after TTFT is already blown in queue). Turning the same predictor into a *proactive* admission gate — dropping at arrival when SLO violation is predicted inevitable — is unstudied in LLM serving.
+
+## 33. Interaction between admission control and workflow-aware KV eviction
+
+**Evidence**: KVFlow (NeurIPS 2025, arXiv:2507.07400) + CONCUR (ICML 2026). CONCUR caps concurrent sessions to fit working set; KVFlow evicts KV based on steps-to-execution. Under joint deployment, CONCUR reduces the pressure that would trigger KVFlow's eviction. Neither paper runs the joint config. Bridges clusters 5.2 (agent admission) and 5.5 (KV management).
+
+## 34. Cake hybrid-fill fallback under queue depth
+
+**Evidence**: Cake (ICML 2025, arXiv:2410.03065). Cake speeds single-request TTFT via hybrid compute-vs-load KV, but hybrid fill burns GPU cycles pure-load would spare. No characterization of the queue-depth threshold at which hybrid-fill *hurts* aggregate goodput — a natural admission-adjacent research question.
+
+## 35. Joint intercept-KV-management + admission POMDP
+
+**Evidence**: InferCept (ICML 2024, arXiv:2402.01869) + Continuum (arXiv:2511.02230). InferCept's `WastePreserve/Discard/Swap` cost model is local to a single intercept decision under unknown-duration tool calls. Joint scheduling of KV-mgmt AND admission/preemption under stochastic intercept durations = POMDP with unknown per-tool priors. No published treatment.
+
+## 36. Policy portability across programmable serving substrates
+
+**Evidence**: Pie (SOSP 2025, arXiv:2510.24051). Pie ships generation-loop handlers + explicit KvPage management but no cross-inferlet scheduler API. If QLM/CONCUR/FairBatching get independently re-implemented on Pie, SGLang, and vLLM, apples-to-apples comparison dies. A minimal common admission-policy API (admit/reject/preempt/migrate with standardized signals) is unbuilt.
+
+## 37. Tool-asset admission control
+
+**Evidence**: ThunderAgent (ICML 2026 Spotlight, arXiv:2602.13692). ThunderAgent is the first cluster paper to treat disk/ports/sandboxes as first-class scheduled resources, not just KV/GPU. Cluster 5.2 currently collapses LLM-side and tool-side admission; the survey should split this axis. Also: program migration for HBM balancing may conflict with prefix-cache locality (extends Problem 10).
+
 ---
 
-For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable. Problems 11-14 added Day 2 (2026-09-10) from CONCUR/QLM/Chronos/SOLA deep reads. Problems 15-18 added Day 3 (2026-09-10) from FastServe/Shen et al./SLOs-Serve/Continuum deep reads. Each cites the specific paper's own text or design as evidence.
+For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable. Problems 11-14 added Day 2 (2026-09-10) from CONCUR/QLM/Chronos/SOLA deep reads. Problems 15-18 added Day 3 (2026-09-10) from FastServe/Shen et al./SLOs-Serve/Continuum deep reads. Problems 19-24 added Day 4 (2026-09-10) from Tier 1 completion + VTC. Problems 25-37 added Day 5 (2026-09-10) from Equinox / Mitzenmacher-Shahout / Jaillet / Chiron / Ascendra / KVFlow / Cake / InferCept / Pie / ThunderAgent. Each cites the specific paper's own text or design as evidence.
+
+**Note (Day 5)**: Problem 5 (Reproducibility crisis) needs refinement — as of Day 5, released-code count is ~11/25 papers (QLM, Chronos, FastServe, Shen et al., Continuum, Clairvoyant, AQUA, VTC, KVFlow, InferCept, Pie, ThunderAgent, Cake). Reframe from "only Chronos has code" to: "even where code exists, cross-comparison is impossible because each uses different engines/models/traces/baselines — the reproducibility crisis is at the *methodology* level, not the *artifact* level." Apply in Week 2 draft.

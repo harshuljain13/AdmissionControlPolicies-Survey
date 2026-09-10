@@ -39,11 +39,11 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 
 | # | Paper | Venue |
 |---|---|---|
-| 24 | KVFlow (Pan et al.) | **NeurIPS 2025** |
-| 25 | Cake | **ICML 2025** |
-| 26 | InferCept (Abhyankar et al.) | **ICML 2024** |
-| 27 | Pie (Gim et al.) | **SOSP 2025** |
-| 28 | ThunderAgent (Kang et al.) | Preprint |
+| 24 | KVFlow (Pan et al.) | **NeurIPS 2025** — arXiv:2507.07400 — code at github.com/PanZaifeng/KVFlow |
+| 25 | Cake | **ICML 2025** — arXiv:2410.03065 — PMLR v267 jin25d |
+| 26 | InferCept (Abhyankar et al.) | **ICML 2024** — arXiv:2402.01869 — code at github.com/WukLab/InferCept |
+| 27 | Pie (Gim et al.) | **SOSP 2025** — arXiv:2510.24051 — code at github.com/pie-project/pie |
+| 28 | ThunderAgent (Kang et al.) | **ICML 2026 Spotlight** — arXiv:2602.13692 — integrated into NVIDIA Dynamo 2.0; code at github.com/ThunderAgent-org/ThunderAgent |
 | 29 | Mooncake | **FAST '25** |
 
 ## Tier 4 — Scheduling papers with admission components (~8 papers)
