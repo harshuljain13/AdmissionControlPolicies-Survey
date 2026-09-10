@@ -11,9 +11,9 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 3 | Chronos | **Frontiers CS 2026** | Request-level SLO |
 | 4 | SOLA (Hong et al.) | **MLSys 2025** | Request-level SLO |
 | 5 | FastServe (Wu et al.) | **NSDI 2026** | Request-level SLO + preemption |
-| 6 | Shen et al. Two-Layer Framework | **ICML 2026** | Joint config + admission |
-| 7 | SLOs-Serve (Kim et al.) | arXiv:2504.08784 | Multi-SLO with soft admission |
-| 8 | Continuum | arXiv:2511.02230 | Agent-level (KV TTL) |
+| 6 | Shen et al. Two-Layer Framework | **ICML 2026** (poster; code released) | Joint config + admission |
+| 7 | SLOs-Serve (Chen et al.) | arXiv:2504.08784 (still preprint 2026-09-10) | Multi-SLO with soft admission; per-stage SLOs |
+| 8 | Continuum (Li et al., Berkeley/Stoica) | **ICLR 2026 Workshop on Lifelong Agents** (poster); VLDB submission in flight; code released as vLLM fork | Agent-level (KV TTL) |
 | 9 | Fluid-WAIT (Ao et al.) | arXiv:2504.11320 | Threshold admission |
 | 10 | Aqua | arXiv:2407.21255 | Preemption alternative |
 | 11 | Service-Induced Congestion | arXiv:2606.15555 | Stability analysis |

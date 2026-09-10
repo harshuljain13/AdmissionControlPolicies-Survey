@@ -27,6 +27,18 @@ Working draft. Four axes.
 | Fairness-oriented | Enforce fairness across tenants/agents | VTC, FairBatching, Equinox |
 | Cost-oriented | Minimize $/token or energy | EconoServe, CEDAR |
 
+### Axis 3 sub-branch: SLO granularity
+
+Added 2026-09-10 (Day 3 eval — SLOs-Serve deep read).
+
+| Granularity | Description | Example policies |
+|---|---|---|
+| Job-level | Single SLO per multi-turn agent job (e.g., end-to-end completion time) | Continuum (JCT) |
+| Request-level | One SLO per prompt/response request | QLM, Chronos, SOLA, FastServe (most of the field) |
+| Per-stage | Distinct SLOs for each stage of a multi-turn app (e.g., ToolLLM: tight TTFT on tool-call prefill, loose TPOT on reasoning decode, tight TPOT on final answer) | **SLOs-Serve** (sole entry) |
+
+**Observation**: per-stage SLOs are a genuine taxonomy gap — nobody else in the cluster models them. Load-bearing for a new open problem (see `open-problems.md` #17).
+
 ## Axis 4: Signal used
 
 Refined 2026-09-10 (Day 2 eval) into 4 sub-branches capturing the *structure* of the signal, not just its content.

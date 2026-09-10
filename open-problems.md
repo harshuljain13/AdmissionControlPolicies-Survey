@@ -58,6 +58,22 @@ Draft of Section 8 of the survey. Each item cites specific peer-reviewer or pape
 
 **Evidence**: Chronos (Frontiers CS 2026) deep read. Chronos's AC-FCFS ablation (throughput-matched token bucket vs formal admission test) is entirely in-simulator with shared α/β/γ parameters. On a real vLLM/SGLang, a matched-throughput token bucket may queue at the KV-cache admission point rather than the request queue, potentially closing the gap. Real-engine reproduction of AC-FCFS-vs-formal-admission is the obvious next study.
 
+## 15. Preemption papers and admission-control papers do not cite each other
+
+**Evidence**: FastServe (arXiv:2305.05920, NSDI '26) deep read. FastServe frames token-level preemption as strictly dominant over FCFS but never compares against admission-control / request-drop baselines (Llumnix, SHEPHERD, S³). Symmetrically, admission-control papers (CONCUR, QLM, Chronos) do not compare against preemption-based systems. The survey should surface this axis explicitly: is preemption a *replacement* for admission control, or *complementary* under different load regimes? This is a whole missing quadrant in the cross-comparison matrix.
+
+## 16. Prompt-conditional reward distributions break i.i.d.-per-config assumptions
+
+**Evidence**: Shen et al. Two-Layer Framework (arXiv:2602.07663, ICML 2026) deep read. The framework assumes each config induces a *stationary* reward-resource distribution, but in real LLM serving a config's per-request cost is *prompt-conditional* (input length, decode length, tool-call pattern). The paper's "contextual extension" future-work bullet contextualizes the config *choice*, not the reward-resource distribution — so the actual gap between the theory and LLM deployment is unaddressed. General open problem across all queueing-theoretic admission work.
+
+## 17. Per-stage-of-agent SLOs are a taxonomy gap
+
+**Evidence**: SLOs-Serve (arXiv:2504.08784) deep read. Multi-turn agent applications like ToolLLM have distinct SLOs per stage (tight TTFT on tool-call prefill, loose TPOT on reasoning decode, tight TPOT on final answer). Only SLOs-Serve models this; Llumnix (single deadline), DynamoLLM (single-stage energy-SLO), ExeGPT (throughput/latency, single-stage), VTC (fairness, no deadlines) all model single-stage SLOs. As agentic workloads dominate, per-stage-SLO-aware admission becomes essential and is systematically underexplored.
+
+## 18. Transparency of soft-admission decline decisions
+
+**Evidence**: SLOs-Serve deep read. Distinct from Problem #3 (outcome fairness under admission control). Problem #18 is about *decision transparency* under multi-SLO soft admission: SLOs-Serve "guarantees admitted SLOs by declining others" — but nobody characterizes *which* cohorts (which tenants, which SLO tiers, which prompt shapes) get systematically declined under overload. VTC solves this for token throughput; nobody solves it for multi-SLO decline decisions.
+
 ---
 
-For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable. Problems 11-14 are new as of Day 2 deep reads (2026-09-10) and each cites the specific paper's own text or design as evidence.
+For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable. Problems 11-14 added Day 2 (2026-09-10) from CONCUR/QLM/Chronos/SOLA deep reads. Problems 15-18 added Day 3 (2026-09-10) from FastServe/Shen et al./SLOs-Serve/Continuum deep reads. Each cites the specific paper's own text or design as evidence.
