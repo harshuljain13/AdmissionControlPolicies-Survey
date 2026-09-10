@@ -42,6 +42,22 @@ Draft of Section 8 of the survey. Each item cites specific peer-reviewer or pape
 
 **Evidence**: llm-d, SGLang RadixAttention, Mooncake handle prefix caching at routing/engine level. When admission and prefix-cache placement are decided together, the joint policy space is unexplored.
 
+## 11. Signal granularity: aggregate vs per-session
+
+**Evidence**: CONCUR (arXiv:2601.22705) deep read. CONCUR uses cluster-wide U_t (KV utilization) and H_t (hit rate) averages as its admission signal. The paper does not address whether a small number of long-tail agent sessions can poison the aggregate hit-rate signal and cause the controller to under-admit healthy sessions. Signal-granularity is orthogonal to admission-unit-granularity — an axis nobody has systematically explored.
+
+## 12. Implicit admission via LP constraint relaxation
+
+**Evidence**: SOLA (MLSys 2025) deep read. SOLA's alpha-percentile constraint-loosening in its LP formulation implicitly sacrifices (1-α)% of requests to keep the LP feasible. That is an implicit admission-control decision hidden inside a scheduler. Nobody in the cluster surfaces this as a first-class knob or characterizes its behavior under overload.
+
+## 13. Principled admission fallback when SLO-scheduling is infeasible
+
+**Evidence**: QLM (Patke et al., SoCC '24) deep read. When QLM's LP cannot satisfy all SLOs, the paper punts to "scale up, run EDF, or do admission control." That last option is a direct wedge: SLO-aware queue management and admission control are complementary, not alternatives, and no paper in the cluster closes the loop with a principled admission fallback policy for infeasible LP states.
+
+## 14. Real-engine vs simulator gap for schedulability proofs
+
+**Evidence**: Chronos (Frontiers CS 2026) deep read. Chronos's AC-FCFS ablation (throughput-matched token bucket vs formal admission test) is entirely in-simulator with shared α/β/γ parameters. On a real vLLM/SGLang, a matched-throughput token bucket may queue at the KV-cache admission point rather than the request queue, potentially closing the gap. Real-engine reproduction of AC-FCFS-vs-formal-admission is the obvious next study.
+
 ---
 
-For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are the strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable.
+For the paper: pick 5-7 highest-signal problems; the ones with concrete peer-reviewer or paper-published evidence carry the most weight. Problems 1, 2, 3, 5 are strongest — all backed by CONCUR's ICML 2026 review thread which is publicly citable. Problems 11-14 are new as of Day 2 deep reads (2026-09-10) and each cites the specific paper's own text or design as evidence.

@@ -29,14 +29,43 @@ Working draft. Four axes.
 
 ## Axis 4: Signal used
 
+Refined 2026-09-10 (Day 2 eval) into 4 sub-branches capturing the *structure* of the signal, not just its content.
+
+### Sub-branch 4a: Scalar heuristic
+Single scalar compared to a threshold.
+
 | Signal | Description | Example policies |
 |---|---|---|
-| KV pressure | Aggregate cache usage or per-agent footprint | CONCUR, Fluid-WAIT |
-| Queue depth | Waiting queue length | QLM |
+| KV pressure (scalar) | Aggregate cache usage as one number | Fluid-WAIT |
+| Queue depth | Waiting queue length | (QLM uses this + more) |
 | Estimated output length | Predicted decode duration | Clairvoyant, FastServe |
-| Historical latency | Recent p95/p99 latency | SOLA |
-| Deadline slack | Time until SLO violation | Chronos |
-| Composite | Multi-signal | SLOs-Serve, ProServe |
+| Historical latency | Recent p95/p99 latency | (part of SOLA composite) |
+| Deadline slack | Time until SLO violation | (part of Chronos) |
+
+### Sub-branch 4b: Dual-gate conjunction
+Multiple signals ANDed to distinguish healthy-high-utilization from congested-high-utilization.
+
+| Signal combination | Rationale | Example policies |
+|---|---|---|
+| `U_t > U_high` AND `H_t < H_thresh` (KV util AND hit-rate collapse) | High utilization with high hit-rate is healthy reuse, not thrashing | **CONCUR** (α=2, β=0.5, U_low=0.2, U_high=0.5, H_thresh=0.2) |
+
+### Sub-branch 4c: LP-based composite
+Multi-variable linear program deciding admission jointly with scheduling/routing.
+
+| Approach | Example policies |
+|---|---|
+| LP minimizing SLO-violation penalty over virtual queues | **QLM** (5s solve at 400K requests, Gurobi) |
+| LP over per-iteration state (5+ state vars: request state + systemic state) | **SOLA** (α-percentile constraint relaxation = implicit admission) |
+| DP over token allocations | **SLOs-Serve** |
+
+### Sub-branch 4d: Formal WCRT / capacity bound
+Closed-form worst-case-response-time bound + admission test derived from real-time-systems theory.
+
+| Approach | Example policies |
+|---|---|
+| Sporadic-task WCRT (Liu-Layland lineage) + prefill utilization ρP<1 + TBT capacity theorem | **Chronos** (Theorem 1 + Algorithm 1 + Theorem 3) |
+| Rate-limit derivation from stability proofs | Flow-controlled scheduling (arXiv:2604.11001) |
+| Dynamical-system stability analysis (heterogeneity as stabilizer) | Service-Induced Congestion (arXiv:2606.15555) |
 
 ## Cross-axis observations
 
