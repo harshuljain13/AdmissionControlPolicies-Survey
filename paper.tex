@@ -35,24 +35,29 @@
   linktoc=all
 }
 
-\title{\textbf{Admission Control for LLM Inference Serving:\\ A Systematic Review}}
-\author{
-  Harshul Jain\\
-  Independent Researcher\\
-  \texttt{harshuljain1393@gmail.com}
-  \and
-  Dr.\ Tanmay Sah\\
-  Independent Researcher\\
-  \texttt{tradertanmay@mail.com}
-  \and
-  Tanya Sah\\
-  Independent Researcher\\
-  \texttt{tanyasah20@gmail.com}
-}
-\date{September 11, 2026}
-
 \begin{document}
-\maketitle
+
+\begin{center}
+{\LARGE\bfseries Admission Control for LLM Inference Serving:\\[0.2em] A Systematic Review\par}
+
+\vspace{1em}
+{\color{admitgrey}\rule{0.55\textwidth}{0.6pt}}
+\vspace{1em}
+
+{\normalsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{ccc}
+\textbf{Harshul Jain} & \textbf{Dr.\ Tanmay Sah} & \textbf{Tanya Sah} \\
+Independent Researcher & Independent Researcher & Independent Researcher \\
+{\small\texttt{harshuljain1393@gmail.com}} & {\small\texttt{tradertanmay@mail.com}} & {\small\texttt{tanyasah20@gmail.com}} \\
+\end{tabular}
+}
+
+\vspace{0.8em}
+{\itshape September 11, 2026}
+\end{center}
+
+\vspace{1em}
 
 \begin{abstract}
 \noindent
@@ -200,8 +205,10 @@ Table~\ref{tab:diff} summarizes each and states what this paper adds.
 \caption{Differentiation from prior surveys.}
 \label{tab:diff}
 \small
+\rowcolors{2}{white}{admitgreylight!40}
 \begin{tabular}{p{3.4cm} p{3.2cm} p{2.2cm} p{2.4cm} p{2cm}}
 \toprule
+\rowcolor{admitteallight}
 \textbf{Prior survey} & \textbf{Scope} & \textbf{Admission depth} & \textbf{Taxonomy axes} & \textbf{Grounded open problems} \\
 \midrule
 Zhen et al.\ INLG 2025 & Efficient serving (batching, KV, sched., fair.) & One subsection & Task-oriented & No \\
@@ -716,8 +723,10 @@ column that matters most for this paper's motivation is
 \caption{Overload response mechanisms in nine top-venue LLM serving papers. Not one includes ingress-level admission control.}
 \label{tab:9for9}
 \small
+\rowcolors{2}{white}{admitgreylight!40}
 \begin{tabular}{l l l l}
 \toprule
+\rowcolor{admitteallight}
 \textbf{Paper} & \textbf{Venue} & \textbf{Overload mechanism} & \textbf{Ingress admission?} \\
 \midrule
 Orca & OSDI 2022 & FCFS + KV-slot cap (implicit) & No \\
@@ -758,10 +767,12 @@ admission-primary paper. No two papers share a baseline system.
 \label{tab:baselines}
 \small
 \setlength{\tabcolsep}{4pt}
+\rowcolors{2}{white}{admitgreylight!40}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{l c c c c c c c c c c}
+\begin{tabular}{l *{10}{c}}
 \toprule
-\textbf{Paper} & vLLM & SGLang & Sarathi & Orca & EDF & FCFS & SHEPHERD & CONCUR & Continuum & AC-FCFS \\
+\rowcolor{admitteallight}
+\textbf{Paper} & \textbf{vLLM} & \textbf{SGLang} & \textbf{Sarathi} & \textbf{Orca} & \textbf{EDF} & \textbf{FCFS} & \textbf{SHEPHERD} & \textbf{CONCUR} & \textbf{Continuum} & \textbf{AC-FCFS} \\
 \midrule
 QLM (SoCC 2024)          & \checkmark &            &            & (cite)     & \checkmark & (impl.) & \checkmark &            &            &            \\
 CONCUR (ICML 2026)       &            & \checkmark &            &            &            &         &            &            & \checkmark & \checkmark \\
@@ -814,8 +825,10 @@ identifies the leading signal that would have prevented each.
 \caption{Production incidents mapped to admission signals.}
 \label{tab:incidents}
 \small
+\rowcolors{2}{white}{admitgreylight!40}
 \begin{tabular}{p{2.7cm} p{4.2cm} p{3cm} p{3.4cm}}
 \toprule
+\rowcolor{admitteallight}
 \textbf{Incident} & \textbf{Failure mode} & \textbf{Trusted signal (was)} & \textbf{Leading signal (needed)} \\
 \midrule
 Azure 2016 & Control-plane inferred backend unavailability, returned 429 for 3.5-4 h & HTTP 400 (spurious) & Cross-validated backend liveness \\
