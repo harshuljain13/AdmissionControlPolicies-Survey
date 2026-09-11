@@ -881,4 +881,4 @@ Production incident references (postmortems):
 
 ---
 
-*Version: v0.2 draft, 2026-09-11. Prepared for arXiv preprint and CSUR Emerging Topics submission. Companion artifacts: survey outline (outline.md), taxonomy (taxonomy.md), open problems catalog (open-problems.md), per-paper notes (papers/), reproducibility audit rows and evaluation log (eval-log.md).*
+*Version: v0.2 draft, 2026-09-11. Prepared for arXiv preprint and CSUR Emerging Topics submission. Companion artifacts: survey outline (docs/outline.md), taxonomy (docs/taxonomy.md), open problems catalog (docs/open-problems.md), per-paper notes (notes/), reproducibility audit rows and evaluation log (docs/eval-log.md).*

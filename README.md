@@ -30,14 +30,17 @@
 ```
 survey/
 ├── README.md            ← this file
-├── paper.md             ← full v0.2 draft with 4 tables (T1 differentiation, T2 baseline overlap, T3 9-for-9, T4 incidents)
+├── paper.tex            ← LaTeX source (compiled with tectonic)
+├── paper.md             ← markdown source of truth (884 lines, 7,121 words)
+├── paper.pdf            ← current compiled PDF (15 pp)
 ├── references.bib       ← ~45 BibTeX entries
-├── outline.md           ← original 10-section structural outline
-├── taxonomy.md          ← 4 axes + 4 sub-branches with policy assignments
-├── papers.md            ← 50-paper index tiered by priority
-├── open-problems.md     ← 37 candidate open problems, 7 selected for the paper
-├── eval-log.md          ← bi-daily eval checkpoints (Days 2, 4, 6)
-├── papers/              ← per-paper deep-read notes (25 files, admission-primary + tier-4)
+├── docs/
+│   ├── outline.md            ← original 10-section structural outline
+│   ├── taxonomy.md           ← 4 axes + 4 sub-branches with policy assignments
+│   ├── papers-index.md       ← 50-paper index tiered by priority
+│   ├── open-problems.md      ← 37 candidate open problems, 7 selected for the paper
+│   └── eval-log.md           ← bi-daily eval checkpoints (Days 2, 4, 6)
+├── notes/               ← per-paper deep-read notes (34 files)
 └── figures/             ← empty (figures deferred to v0.3 for CSUR submission)
 ```
 
@@ -54,7 +57,7 @@ All per-paper notes are grounded in cited primary sources. Where a paper's own n
 
 ## Timeline
 
-Executed as a 14-day sprint from 2026-09-10 to 2026-09-11 (accelerated ~10x versus original 21-day plan via parallel deep-read agents). See `../steps.md` and `eval-log.md` for day-by-day.
+Executed as a 14-day sprint from 2026-09-10 to 2026-09-11 (accelerated ~10x versus original 21-day plan via parallel deep-read agents). See `../steps.md` and `docs/eval-log.md` for day-by-day.
 
 ## Citation
 
