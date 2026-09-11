@@ -7,31 +7,29 @@
 \usetikzlibrary{positioning, shapes.geometric, arrows.meta, fit, backgrounds, calc}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{colortbl}
 \usepackage{hyperref}
 \usepackage{caption}
-\usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{microtype}
+\usepackage{array}
 
-% Palette (teal / yellow, matches cohort docs)
+% Palette used ONLY for diagram fills / table row shading (not text)
 \definecolor{admitteal}{HTML}{1E7882}
 \definecolor{admitteallight}{HTML}{D1E7EA}
 \definecolor{admityellow}{HTML}{F0C83C}
 \definecolor{admityellowlight}{HTML}{FBEFC8}
 \definecolor{admitgrey}{HTML}{808080}
 \definecolor{admitgreylight}{HTML}{E5E5E5}
-\definecolor{admitred}{HTML}{C0392B}
 
+% All text black. Hyperlinks black (readable in print).
 \hypersetup{
   colorlinks=true,
-  linkcolor=admitteal,
-  citecolor=admitteal,
-  urlcolor=admitteal
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black,
+  linktoc=all
 }
-
-\titleformat*{\section}{\Large\bfseries\color{admitteal}}
-\titleformat*{\subsection}{\large\bfseries\color{admitteal}}
-\titleformat*{\subsubsection}{\normalsize\bfseries\color{admitteal}}
 
 \title{\textbf{Admission Control for LLM Inference Serving:\\ A Systematic Review}}
 \author{Harshul Jain}
@@ -52,21 +50,21 @@ management. In parallel, thirteen peer-reviewed papers at top venues
 plus one accepted workshop paper and more than a dozen preprints
 propose admission policies operating at request, agent-session, or
 tenant granularity, under online or offline settings, guided by cache
-pressure, deadline slack, queue depth, or joint linear programs. No
-two of these policies have been compared to each other on a common
-trace, engine, or metric. We survey forty admission and
-admission-adjacent works. We propose a four-axis taxonomy with
-sub-branches for signal structure, service-level-objective granularity,
-fairness type, and concurrency context. The canonical intersection
-agent-level $\times$ online $\times$ deadline-aware $\times$ fair is
-empty. We audit reproducibility across the corpus and find that
-thirteen of thirty-four works have released code, refuting the common
-``reproducibility crisis'' framing at the artifact level, while a
-methodology-level crisis persists because no two admission-primary
-papers share a baseline set. We propose a minimal common methodology
-contract to close that gap. We derive seven open problems, each
-grounded in either published peer-review discussion or the primary
-source's own limitation statement.
+pressure, deadline slack, queue depth, or joint linear programs. No two
+of these policies have been compared to each other on a common trace,
+engine, or metric. We survey forty admission and admission-adjacent
+works. We propose a four-axis taxonomy with sub-branches for signal
+structure, service-level-objective granularity, fairness type, and
+concurrency context. The canonical intersection agent-level $\times$
+online $\times$ deadline-aware $\times$ fair is empty. We audit
+reproducibility across the corpus and find that thirteen of thirty-four
+works have released code, refuting the common ``reproducibility
+crisis'' framing at the artifact level, while a methodology-level
+crisis persists because no two admission-primary papers share a
+baseline set. We propose a minimal common methodology contract to close
+that gap. We derive seven open problems, each grounded in either
+published peer-review discussion or the primary source's own limitation
+statement.
 \end{abstract}
 
 \section{Introduction}
@@ -81,8 +79,8 @@ required follow-up. Two years later, on January 21, 2026, Anthropic's
 Sonnet 4.5 tier degraded first in latency and then in error rate over
 roughly ninety minutes. The postmortem cited insufficient compute
 capacity for demand and named earlier detection of capacity constraints
-as a required change. Cloudflare, Azure, and other production
-operators have documented similar sequences.
+as a required change. Cloudflare, Azure, and other production operators
+have documented similar sequences.
 
 Admission control is the decision made before a request enters the
 running batch. It has three actions: admit into service, hold in queue,
@@ -94,13 +92,14 @@ deadline, at which point they consume more capacity being cleaned up.
 
 \begin{figure}[htbp]
 \centering
+\resizebox{0.95\textwidth}{!}{%
 \begin{tikzpicture}[
-  node distance=1.4cm and 1.6cm,
-  box/.style={rectangle, rounded corners, minimum width=2.6cm, minimum height=1.4cm, text centered, draw=admitteal, thick, font=\bfseries, fill=admitteallight, text=admitteal},
-  ybox/.style={rectangle, rounded corners, minimum width=2.6cm, minimum height=1.4cm, text centered, draw=admityellow, thick, font=\bfseries, fill=admityellowlight, text=black!70!admityellow},
-  gbox/.style={rectangle, rounded corners, minimum width=2.6cm, minimum height=1.4cm, text centered, draw=admitgrey, thick, font=\bfseries, fill=admitgreylight},
-  arr/.style={-Stealth, thick, admitgrey},
-  label/.style={font=\footnotesize\itshape, admitgrey}
+  node distance=1.2cm and 1.2cm,
+  box/.style={rectangle, rounded corners, minimum width=2.4cm, minimum height=1.3cm, text centered, draw=black, thick, font=\bfseries, fill=admitteallight},
+  ybox/.style={rectangle, rounded corners, minimum width=2.4cm, minimum height=1.3cm, text centered, draw=black, thick, font=\bfseries, fill=admityellowlight},
+  gbox/.style={rectangle, rounded corners, minimum width=2.4cm, minimum height=1.3cm, text centered, draw=black, thick, font=\bfseries, fill=admitgreylight},
+  arr/.style={-Stealth, thick, black},
+  label/.style={font=\footnotesize\itshape, black}
 ]
 
 \node[gbox] (client) {Client};
@@ -118,10 +117,11 @@ deadline, at which point they consume more capacity being cleaned up.
 \node[below=0.15cm of queue, label] {out of scope};
 \node[below=0.15cm of route, label] {out of scope};
 
-\node[above=0.6cm of admit, text=admitred, font=\footnotesize\bfseries] (rej) {reject (429/503/529)};
-\draw[arr, admitred, dashed] (admit.north) -- (rej.south);
+\node[above=0.6cm of admit, font=\footnotesize\bfseries] (rej) {reject (429/503/529)};
+\draw[arr, dashed] (admit.north) -- (rej.south);
 
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{The Admit--Queue--Route model. Admission is the decision that gates a request into the serving pipeline. Queue and Route are downstream boxes covered by prior surveys. This paper is about the first box.}
 \label{fig:aqr}
 \end{figure}
@@ -131,17 +131,17 @@ The literature on LLM inference has produced systems papers on batching
 \cite{zhong2024distserve, patel2024splitwise}, memory management
 \cite{kwon2023pagedattention, qin2025mooncake}, and scheduling
 \cite{sun2024llumnix, hong2025sola}. Existing surveys cover efficient
-serving broadly \cite{zhen2025titans, li2024surveyllm, heisler2025survey}
-or the queueing-theoretic view of LLM systems specifically
-\cite{mitzenmacher2025queueing}. Table~\ref{tab:diff} differentiates
-this survey from those prior works.
+serving broadly \cite{zhen2025titans, li2024surveyllm,
+heisler2025survey} or the queueing-theoretic view of LLM systems
+specifically \cite{mitzenmacher2025queueing}. Table~\ref{tab:diff}
+differentiates this survey from those prior works.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
 \item A four-axis taxonomy for admission-control policies with four
       sub-branches added during the reading (Section~\ref{sec:taxonomy}).
-\item A per-cluster synthesis of forty admission and
-      admission-adjacent works (Section~\ref{sec:clusters}).
+\item A per-cluster synthesis of forty admission and admission-adjacent
+      works (Section~\ref{sec:clusters}).
 \item An empirical reproducibility audit across the corpus
       (Section~\ref{sec:repro}), showing thirteen of thirty-four works
       have released code and that the real crisis is methodological.
@@ -164,6 +164,16 @@ model, or engine. Third, the taxonomy holds across all forty works with
 four sub-branches added during our reading, none of which required
 backing out an original axis.
 
+\paragraph{Roadmap.} Section~\ref{sec:bg} covers the inference request
+lifecycle and the Admit-Queue-Route model.
+Section~\ref{sec:taxonomy} introduces the four-axis taxonomy.
+Section~\ref{sec:method} describes the systematic-review method.
+Section~\ref{sec:clusters} synthesizes each policy cluster.
+Section~\ref{sec:repro} audits reproducibility and proposes the
+methodology contract. Section~\ref{sec:prod} maps production incidents
+to admission failure modes. Section~\ref{sec:open} lists the seven
+open problems. Section~\ref{sec:conc} concludes.
+
 \subsection{Related surveys and differentiation}
 
 Four broad surveys of LLM inference serving predate this work.
@@ -174,22 +184,22 @@ Table~\ref{tab:diff} summarizes each and states what this paper adds.
 \caption{Differentiation from prior surveys.}
 \label{tab:diff}
 \small
-\begin{tabular}{p{3.6cm} p{3.4cm} p{2.4cm} p{2.6cm} p{2cm}}
+\begin{tabular}{p{3.4cm} p{3.2cm} p{2.2cm} p{2.4cm} p{2cm}}
 \toprule
 \textbf{Prior survey} & \textbf{Scope} & \textbf{Admission depth} & \textbf{Taxonomy axes} & \textbf{Grounded open problems} \\
 \midrule
-Zhen et al. INLG 2025 & Efficient serving (batching, KV, sched., fair.) & One subsection & Task-oriented & No \\
-Heisler et al. TechRxiv 2025 & Scheduling techniques \& trade-offs & Component & Technique-oriented & No \\
-Li et al. IEEE HPEC 2024 & Recent serving advances & In passing & Chronological & No \\
+Zhen et al.\ INLG 2025 & Efficient serving (batching, KV, sched., fair.) & One subsection & Task-oriented & No \\
+Heisler et al.\ TechRxiv 2025 & Scheduling techniques \& trade-offs & Component & Technique-oriented & No \\
+Li et al.\ IEEE HPEC 2024 & Recent serving advances & In passing & Chronological & No \\
 Mitzenmacher \& Shahout SIGMETRICS 2025 & Queueing theory position paper & Tutorial & Queueing-theoretic & Enumerates 25 \\
-\rowcolor{admityellowlight}
+\rowcolor{admitgreylight}
 \textbf{This paper} & \textbf{Admission as primary axis} & \textbf{Full} & \textbf{4 axes + 4 sub-branches} & \textbf{7 grounded} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Zhen et al.\ and Heisler et al.\ treat admission as one component
-among many. Li et al.\ is a survey of recent advances organized
+Zhen et al.\ and Heisler et al.\ treat admission as one component among
+many. Li et al.\ is a survey of recent advances organized
 chronologically. Mitzenmacher and Shahout is a position paper that
 enumerates open queueing problems without a taxonomy or per-paper
 review. None conducts a reproducibility audit or organizes the
@@ -197,6 +207,7 @@ literature by admission granularity, SLO awareness, signal structure,
 or concurrency context.
 
 \section{Background}
+\label{sec:bg}
 
 \subsection{The inference request lifecycle}
 
@@ -276,69 +287,58 @@ production system currently exposes as a signal.
 \label{sec:taxonomy}
 
 We organize admission-control policies along four axes.
-Figure~\ref{fig:taxonomy} shows the two most-cited axes plotted against
-each other with representative policies placed on the grid. The
-canonical intersection agent-level $\times$ online $\times$
-deadline-aware $\times$ fair is empty.
+Figure~\ref{fig:taxonomy} shows the two most-cited axes plotted
+against each other with representative policies placed on the grid.
 
 \begin{figure}[htbp]
 \centering
+\resizebox{0.9\textwidth}{!}{%
 \begin{tikzpicture}[
-  quadbox/.style={rectangle, minimum width=6cm, minimum height=3.6cm, thick, draw=admitteal, font=\small},
-  policy/.style={rectangle, rounded corners, minimum height=0.5cm, inner sep=3pt, fill=admityellowlight, draw=admityellow, thick, font=\footnotesize},
-  axislbl/.style={font=\bfseries\small, admitteal},
-  emptylbl/.style={font=\itshape\small, admitred, align=center}
+  policy/.style={rectangle, rounded corners, minimum height=0.5cm, inner sep=3pt, fill=admityellowlight, draw=black, thin, font=\footnotesize},
+  axislbl/.style={font=\bfseries\small},
+  emptylbl/.style={font=\itshape\small, align=center}
 ]
 
-% Axes
-\draw[thick, admitgrey, -Stealth] (-0.3, 0) -- (12.5, 0) node[right, admitgrey, font=\small] {Unit of admission};
-\draw[thick, admitgrey, -Stealth] (0, -0.3) -- (0, 7.5) node[above, admitgrey, font=\small] {SLO awareness};
+% Frame
+\draw[thick] (0, 0) rectangle (12, 7);
+\draw[thick] (6, 0) -- (6, 7);
+\draw[thick] (0, 3.5) -- (12, 3.5);
 
-% Quadrants (4 axis labels)
-\node[axislbl] at (3, -0.5) {Request};
-\node[axislbl] at (9, -0.5) {Agent-session};
-\node[axislbl, rotate=90] at (-0.5, 2) {Throughput};
-\node[axislbl, rotate=90] at (-0.5, 5.5) {Deadline-aware};
+% Axis labels
+\node[axislbl] at (3, -0.4) {Request-level};
+\node[axislbl] at (9, -0.4) {Agent-session-level};
+\node[axislbl, rotate=90] at (-0.4, 1.75) {Throughput-oriented};
+\node[axislbl, rotate=90] at (-0.4, 5.25) {Deadline-aware};
 
-% Boxes
-\node[quadbox, fill=admitteallight!30] at (3, 2) (q1) {};
-\node[quadbox, fill=admityellowlight!30] at (9, 2) (q2) {};
-\node[quadbox, fill=admitteallight!30] at (3, 5.5) (q3) {};
-\node[quadbox, fill=admitred!10, dashed, draw=admitred, ultra thick] at (9, 5.5) (q4) {};
-
-% Policies in each quadrant
 % Q1: request x throughput
-\node[policy] at (2, 3) {Fluid-WAIT};
-\node[policy] at (4, 2.7) {Flow-Ctrl};
-\node[policy] at (2.5, 2) {Ascendra};
-\node[policy] at (4, 1.4) {SLOs-Serve};
-\node[policy] at (2.5, 1) {ProServe};
+\node[policy] at (1.8, 2.8) {Fluid-WAIT};
+\node[policy] at (4.2, 2.8) {Flow-Ctrl};
+\node[policy] at (1.8, 2.0) {Ascendra};
+\node[policy] at (4.2, 2.0) {Service-Ind.\ Cong.};
+\node[policy] at (3.0, 1.2) {ProServe};
 
 % Q2: agent x throughput
-\node[policy] at (8, 3) {CONCUR};
-\node[policy] at (10, 2.7) {Continuum};
-\node[policy] at (8.5, 2) {ThunderAgent};
+\node[policy] at (7.8, 2.8) {CONCUR};
+\node[policy] at (10.2, 2.8) {Continuum};
+\node[policy] at (7.8, 2.0) {ThunderAgent};
 
 % Q3: request x deadline
-\node[policy] at (2, 6.7) {QLM};
-\node[policy] at (4, 6.4) {Chronos};
-\node[policy] at (2.5, 5.7) {SOLA};
-\node[policy] at (4, 5.1) {FastServe};
-\node[policy] at (2, 4.7) {SLOs-Serve};
+\node[policy] at (1.8, 6.3) {QLM};
+\node[policy] at (4.2, 6.3) {Chronos};
+\node[policy] at (1.8, 5.5) {SOLA};
+\node[policy] at (4.2, 5.5) {FastServe};
+\node[policy] at (3.0, 4.7) {SLOs-Serve};
 
 % Q4: empty
-\node[emptylbl] at (9, 5.5) {(empty)\\Open Problem 1};
+\draw[dashed, ultra thick, fill=admitgreylight!40] (6.1, 3.6) rectangle (11.9, 6.9);
+\node[emptylbl] at (9, 5.25) {(empty)\\ Open Problem 1};
 
-% Tenant column (partial, aside)
-\node[axislbl, rotate=90] at (12, 4) {tenant $\to$};
-\node[policy, minimum width=1cm] at (11.5, 3.5) {VTC};
-\node[policy, minimum width=1cm] at (11.5, 2.5) {Equinox};
-
-\end{tikzpicture}
-\caption{Policy taxonomy on Unit of admission $\times$ SLO awareness.
-The upper-right (agent-session $\times$ deadline-aware, dashed red) is
-empty; no published policy sits in that intersection. This is the seed
-for Open Problem~1.}
+\end{tikzpicture}%
+}
+\caption{Policy taxonomy on Unit of admission (horizontal) $\times$
+SLO awareness (vertical). The upper-right quadrant (agent-session
+$\times$ deadline-aware) is empty; no published policy sits in that
+intersection. This is the seed for Open Problem~1.}
 \label{fig:taxonomy}
 \end{figure}
 
@@ -389,10 +389,10 @@ multi-turn application. Only SLOs-Serve models the per-stage case.
 
 \paragraph{Sub-branch: Fairness type.}
 Task-fairness allocates GPU cycles equitably between prefill and
-decode tasks within one batch (FairBatching \cite{lyu2025fairbatching}).
-Tenant-fairness equalizes served tokens or SLO attainment across users
-(VTC \cite{sheng2024vtc}, Equinox \cite{lu2025equinox}). These share no
-mechanism.
+decode tasks within one batch (FairBatching
+\cite{lyu2025fairbatching}). Tenant-fairness equalizes served tokens
+or SLO attainment across users (VTC \cite{sheng2024vtc}, Equinox
+\cite{lu2025equinox}). These share no mechanism.
 
 \subsection{Axis 4: Signal used}
 
@@ -409,7 +409,7 @@ prefix cache hit rate is low, because high utilization with high hit
 rate is healthy reuse rather than thrashing:
 %
 \begin{equation}
-\text{congested} \;\Longleftrightarrow\; \bigl(U_t > U_{\text{high}}\bigr) \wedge \bigl(H_t < H_{\text{thresh}}\bigr)
+\text{congested} \;\iff\; \bigl(U_t > U_{\text{high}}\bigr) \,\wedge\, \bigl(H_t < H_{\text{thresh}}\bigr)
 \label{eq:concur-dualgate}
 \end{equation}
 %
@@ -460,30 +460,71 @@ intersection.
 \section{Method}
 \label{sec:method}
 
-We conducted a systematic review following an adapted PRISMA
-workflow. Search dates ran from May 2022 (Orca) through September 2026.
-Sources: DBLP, arXiv, OpenReview, USENIX, ACM Digital Library, IEEE
-Xplore, ICML and NeurIPS proceedings, and Google Scholar for
-cross-references.
+We conducted a systematic review following an adapted PRISMA workflow.
+
+\paragraph{Search dates and sources.} Search dates ran from May 2022
+(Orca) through September 2026. Sources: DBLP; arXiv (cs.DC, cs.LG,
+cs.OS, cs.PF categories); OpenReview forums for ICLR, NeurIPS, ICML,
+MLSys; USENIX conference proceedings for OSDI, NSDI, ATC, FAST; ACM
+Digital Library for SOSP, SoCC, ASPLOS, EuroSys, SIGMETRICS; IEEE
+Xplore for HPCA, ISCA; Google Scholar for cross-reference discovery.
+
+\paragraph{Search strings.} Admission-control terms (``admission
+control'', ``queue management'', ``load shedding'', ``request
+rejection'', ``request dropping'', ``SLO-aware admission'',
+``throttling'', ``backpressure'', ``gating'') were combined with
+LLM-serving terms (``LLM inference'', ``LLM serving'', ``language
+model inference'', ``agentic inference'', ``continuous batching'',
+``KV cache''). Boolean expansion followed each hit's related-work
+section for backward-citation discovery.
 
 \paragraph{Inclusion.} A paper was included if all four conditions
 held: (i)~published or preprinted between 2022-05-01 and 2026-09-11;
-(ii)~primary application domain is LLM inference; (iii)~either
-admission control is the primary contribution, or the paper is a
-top-venue scheduling / KV-management / fairness work whose mechanism
-has direct admission-adjacency; (iv)~full text was accessible.
+(ii)~primary application domain is LLM inference (not general DNN
+serving or generic queueing theory); (iii)~either admission control is
+the primary contribution, or the paper is a top-venue scheduling /
+KV-management / fairness work whose mechanism has direct
+admission-adjacency; (iv)~full text was accessible via arXiv HTML,
+venue PDF, or OpenReview.
 
-\paragraph{Tier structure.} Tier~1 (15 papers): admission-primary.
-Tier~2 (8): queueing theory or fairness-primary. Tier~3 (6):
-KV-cache-management with admission implications. Tier~4 (9): top-venue
-scheduling with admission as secondary or missing (Table~\ref{tab:9for9}).
-Tier~5 (6): foundational. Tier~6 (5): prior broad surveys.
+\paragraph{Exclusion.} A paper was excluded if any held: (i)~pure
+model-side optimization (quantization, pruning, distillation) without
+a serving-time admission component; (ii)~vision or speech inference
+without LLM applicability; (iii)~marketing materials or blog posts
+without a peer-reviewed or arXiv-preprint anchor.
+
+\paragraph{Tier structure.} We organized the corpus into six tiers
+based on admission-primacy. Tier~1 (15 papers): admission-primary,
+one policy per paper. Tier~2 (8 papers): queueing theory or
+fairness-primary with admission-adjacency. Tier~3 (6 papers):
+KV-cache-management papers whose mechanism has admission
+implications. Tier~4 (9 papers): top-venue scheduling papers with
+admission as a secondary or missing component. Tier~5 (6 papers):
+foundational works cited for background. Tier~6 (5 papers): prior
+broad surveys used for differentiation. Total after inclusion and
+de-duplication: 40 papers deep-read; approximately 50 additional
+cite-only references.
 
 \paragraph{Per-paper protocol.} For each work we recorded venue,
-identifiers, code availability, taxonomy placement, contribution,
-baseline set, evaluation setup with configuration qualifiers, headline
-numbers, and open questions. Notes were written in a common template
-to make cross-work comparison tractable.
+authors, arXiv or DOI identifier, code availability, taxonomy
+placement across all four axes, primary contribution, baseline set,
+evaluation setup (model, engine, workload, hardware), claimed headline
+numbers with configuration qualifiers, fidelity notes, and open
+questions surfaced. Notes were written in a common markdown template
+to make cross-work comparison tractable. The complete per-paper corpus
+is public at the survey's artifact repository.
+
+\paragraph{Reviewer discussion evidence.} For several open problems
+(Section~\ref{sec:open}) we cite public OpenReview discussion or venue
+meta-reviews as evidence that a gap is practitioner-recognized. Where
+a peer reviewer explicitly asked a question that the paper's rebuttal
+did not answer, we treat that as grounded evidence for an open
+problem.
+
+\paragraph{Non-experiments.} We did not run experiments. Where papers
+report conflicting numbers, we report each source's number as stated
+with the operating-point qualifier the source specifies, and flag the
+conflict rather than adjudicate.
 
 \section{Policy clusters}
 \label{sec:clusters}
@@ -521,8 +562,8 @@ scheduler.
 FastServe \cite{wu2026fastserve} argues for token-granularity
 preemption rather than reject-on-arrival admission. The 31.4$\times$
 average-latency throughput improvement is measured on OPT-175B across
-16 A100 GPUs against vLLM v0.1.7 on ShareGPT. Code is public but
-runs on the SwiftTransformer engine.
+16 A100 GPUs against vLLM v0.1.7 on ShareGPT. Code is public but runs
+on the SwiftTransformer engine.
 
 SLOs-Serve \cite{chen2025slosserve} is the only paper in our corpus
 that handles per-stage-of-agent SLOs. Multi-SLO DP admits requests
@@ -577,8 +618,8 @@ limiting collapses throughput to 340 tok/s. Artifact-evaluated code at
 FairBatching \cite{lyu2025fairbatching} attacks fairness between
 prefill and decode tasks within a batch. Achieves 2.29$\times$ tail
 latency reduction, 20 percent single-node capacity improvement, and
-54.3 percent cluster-level capacity improvement. Implementation is only
-90 lines of invasive vLLM changes.
+54.3 percent cluster-level capacity improvement. Implementation is
+only 90 lines of invasive vLLM changes.
 
 Equinox \cite{lu2025equinox} argues that equal tokens do not imply
 equal user experience. Requires a Model of Prediction Ensemble to
@@ -594,15 +635,15 @@ Equation~\ref{eq:throughput-bound}).
 
 Flow-Controlled Scheduling \cite{dong2026flowcontrolled} proves
 necessary and sufficient stability conditions using a static
-token-bucket. LIFO eviction inverts fairness for interactive workloads.
+token-bucket. LIFO eviction inverts fairness for interactive
+workloads.
 
 Fluid-WAIT \cite{ao2025fluidwait} derives a threshold admission rule
 from a fluid-model equilibrium.
 
-Shen et al.\ \cite{shen2026twolayer} prove
-$\tilde{O}(\sqrt{K T})$ regret for joint online configuration
-selection and admission control under an i.i.d.\ reward-resource
-assumption per configuration:
+Shen et al.\ \cite{shen2026twolayer} prove $\tilde{O}(\sqrt{K T})$
+regret for joint online configuration selection and admission control
+under an i.i.d.\ reward-resource assumption per configuration:
 %
 \begin{equation}
 \text{Reg}^{\text{mix}}(T) \;\le\; C_1 \alpha \sqrt{K T \cdot d \log T} + C_2 \sqrt{T \log T} + K R_{\max}
@@ -621,9 +662,10 @@ Mitzenmacher and Shahout \cite{mitzenmacher2025queueing} enumerate 25
 open problems at the intersection of queueing theory and LLM serving.
 
 Clairvoyant \cite{sundaresan2026clairvoyant} is the sole entry in the
-serial-edge concurrency-context sub-branch. Predictive shortest-job-first
-using an XGBoost classifier over 19 lexical features delivers 70 to 76
-percent short-request $p_{50}$ latency reduction on an RTX 4090.
+serial-edge concurrency-context sub-branch. Predictive
+shortest-job-first using an XGBoost classifier over 19 lexical
+features delivers 70 to 76 percent short-request $p_{50}$ latency
+reduction on an RTX 4090.
 
 Ascendra \cite{elnikety2025ascendra} uses an SLO-risk predictor to
 promote requests between low-priority and high-priority queues.
@@ -662,15 +704,15 @@ column that matters most for this paper's motivation is
 \toprule
 \textbf{Paper} & \textbf{Venue} & \textbf{Overload mechanism} & \textbf{Ingress admission?} \\
 \midrule
-Orca & OSDI 2022 & FCFS + KV-slot cap (implicit) & \textcolor{admitred}{No} \\
-Sarathi-Serve & OSDI 2024 & Chunked prefill batching & \textcolor{admitred}{No} \\
-Llumnix & OSDI 2024 & Live request migration & \textcolor{admitred}{No} \\
-DistServe & OSDI 2024 & P/D disaggregation, static split & \textcolor{admitred}{No} \\
+Orca & OSDI 2022 & FCFS + KV-slot cap (implicit) & No \\
+Sarathi-Serve & OSDI 2024 & Chunked prefill batching & No \\
+Llumnix & OSDI 2024 & Live request migration & No \\
+DistServe & OSDI 2024 & P/D disaggregation, static split & No \\
 Past-Future & ASPLOS 2025 & Memory projection at batch boundary & Internal only \\
-Aegaeon & SOSP 2025 & Per-token autoscaling & \textcolor{admitred}{No} \\
-Jenga & SOSP 2025 & Memory heterogeneity mgmt & \textcolor{admitred}{No} \\
-AdaServe & EuroSys 2026 & SLO-customized spec decode & \textcolor{admitred}{No} \\
-PASCAL & HPCA 2026 & Runtime phase detection & \textcolor{admitred}{No} \\
+Aegaeon & SOSP 2025 & Per-token autoscaling & No \\
+Jenga & SOSP 2025 & Memory heterogeneity mgmt & No \\
+AdaServe & EuroSys 2026 & SLO-customized spec decode & No \\
+PASCAL & HPCA 2026 & Runtime phase detection & No \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -696,7 +738,7 @@ admission-primary paper. No two papers share a baseline system.
 
 \begin{table}[htbp]
 \centering
-\caption{Baseline overlap across admission-primary papers. Rows are papers surveyed; columns are baselines. Zero column has more than three ticks; no two papers share a baseline set.}
+\caption{Baseline overlap across admission-primary papers. No column has more than three ticks; no two papers share a baseline set.}
 \label{tab:baselines}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -712,7 +754,7 @@ FastServe (NSDI 2026)    & \checkmark &            &            &            &  
 SLOs-Serve (2025)        & \checkmark &            & \checkmark &            &            &         &            &            &            &            \\
 FairBatching (2025)      &            &            & \checkmark &            &            &         &            &            &            &            \\
 Ascendra (2025)          &            &            &            &            &            &         & \checkmark &            &            &            \\
-Fluid-WAIT (2025)        & (unnamed ``widely used baselines'') & & & & & & & & & \\
+Fluid-WAIT (2025)        & \multicolumn{10}{l}{(unnamed ``widely used baselines'')} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -739,8 +781,8 @@ against a minimum common configuration:
       engine version, hardware, workload subset, and SLO target.
 \end{itemize}
 
-This is a methodology contract, not a benchmark, and is compatible with
-each paper's own primary evaluation.
+This is a methodology contract, not a benchmark, and is compatible
+with each paper's own primary evaluation.
 
 \section{Production evidence}
 \label{sec:prod}
@@ -754,7 +796,7 @@ identifies the leading signal that would have prevented each.
 \caption{Production incidents mapped to admission signals.}
 \label{tab:incidents}
 \small
-\begin{tabular}{p{3cm} p{4.5cm} p{3cm} p{3cm}}
+\begin{tabular}{p{2.7cm} p{4.2cm} p{3cm} p{3.4cm}}
 \toprule
 \textbf{Incident} & \textbf{Failure mode} & \textbf{Trusted signal (was)} & \textbf{Leading signal (needed)} \\
 \midrule
@@ -824,37 +866,38 @@ artifacts'' framing. What the field lacks is a common methodology
 contract (Section~\ref{sec:repro}).
 
 \section{Conclusion}
+\label{sec:conc}
 
 Admission control for LLM inference serving is a distinct sub-problem
-that governs whether downstream batching, KV management, and preemption
-have the capacity headroom to succeed. Between 2022 and 2026 the field
-produced thirteen admission-primary works at peer-reviewed top venues
-plus one accepted workshop paper and more than a dozen preprints. We
-surveyed forty works across admission-primary, admission-adjacent, and
-scheduling clusters.
+that governs whether downstream batching, KV management, and
+preemption have the capacity headroom to succeed. Between 2022 and
+2026 the field produced thirteen admission-primary works at
+peer-reviewed top venues plus one accepted workshop paper and more
+than a dozen preprints. We surveyed forty works across
+admission-primary, admission-adjacent, and scheduling clusters.
 
 Our four-axis taxonomy with four sub-branches organizes the corpus
-without redundancy. The canonical agent-level $\times$ online $\times$
-deadline-aware $\times$ fair intersection is empty
+without redundancy. The canonical agent-level $\times$ online
+$\times$ deadline-aware $\times$ fair intersection is empty
 (Figure~\ref{fig:taxonomy}).
 
-Nine top-venue scheduling papers do not include ingress-level admission
-control (Table~\ref{tab:9for9}). Production postmortems
+Nine top-venue scheduling papers do not include ingress-level
+admission control (Table~\ref{tab:9for9}). Production postmortems
 (Table~\ref{tab:incidents}) show that overload originating from a
 mis-specified admission signal propagates faster than downstream
-batching, migration, or autoscaling can absorb, so these techniques are
-insufficient on their own.
+batching, migration, or autoscaling can absorb, so these techniques
+are insufficient on their own.
 
-Reproducibility of individual artifacts is higher than commonly framed
-at thirteen of thirty-four. Reproducibility of cross-paper comparison
-is essentially zero (Table~\ref{tab:baselines}). The methodology
-contract in Section~\ref{sec:repro} would close this gap.
+Reproducibility of individual artifacts is higher than commonly
+framed at thirteen of thirty-four. Reproducibility of cross-paper
+comparison is essentially zero (Table~\ref{tab:baselines}). The
+methodology contract in Section~\ref{sec:repro} would close this gap.
 
 Seven open problems each carry either public peer-review evidence or
 the primary source's own limitation statement. The most tractable
-candidates are OP1 (request-level versus agent-level cross-comparison),
-OP2 (online admission for agentic workloads), and OP7 (methodology
-contract).
+candidates for near-term progress are OP1 (request-level versus
+agent-level cross-comparison), OP2 (online admission for agentic
+workloads), and OP7 (methodology contract).
 
 \bibliographystyle{plain}
 \bibliography{references}
