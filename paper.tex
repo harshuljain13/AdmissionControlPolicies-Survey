@@ -14,6 +14,10 @@
 \usepackage{microtype}
 \usepackage{array}
 
+% Loosen line-breaking on paragraphs with long compound words
+\emergencystretch=3em
+\hyphenation{roof-line-derived reasoning-versus-chat throughput-oriented deadline-aware admission-control cross-comparison per-tenant per-request per-stage}
+
 % Palette used ONLY for diagram fills / table row shading (not text)
 \definecolor{admitteal}{HTML}{1E7882}
 \definecolor{admitteallight}{HTML}{D1E7EA}
@@ -742,6 +746,7 @@ admission-primary paper. No two papers share a baseline system.
 \label{tab:baselines}
 \small
 \setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l c c c c c c c c c c}
 \toprule
 \textbf{Paper} & vLLM & SGLang & Sarathi & Orca & EDF & FCFS & SHEPHERD & CONCUR & Continuum & AC-FCFS \\
@@ -756,7 +761,8 @@ FairBatching (2025)      &            &            & \checkmark &            &  
 Ascendra (2025)          &            &            &            &            &            &         & \checkmark &            &            &            \\
 Fluid-WAIT (2025)        & \multicolumn{10}{l}{(unnamed ``widely used baselines'')} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 Reading the literature top to bottom, a practitioner cannot answer

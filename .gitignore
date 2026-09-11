@@ -12,3 +12,10 @@ __pycache__/
 *.fls
 *.synctex.gz
 paper.pdf
+paper.log
+paper.blg
+paper.aux
+paper.bbl
+paper.out
+paper.toc
+preview*.png
