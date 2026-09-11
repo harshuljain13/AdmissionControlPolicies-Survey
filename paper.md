@@ -628,8 +628,8 @@ indicate no comparison.
 
 | Paper | vLLM | SGLang | Sarathi | Orca | EDF | FCFS | SHEPHERD | CONCUR | QLM | Continuum | HiCache | AC-FCFS | SLAI | DistServe | Llumnix |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| QLM (SoCC 2024) | ✓ | | | (cite) | ✓ | (implicit) | ✓ | | — | | | | | | |
-| CONCUR (ICML 2026) | | ✓ | | | | | | — | | ✓ (rebuttal) | ✓ | | | | |
+| QLM (SoCC 2024) | ✓ | | | (cite) | ✓ | (implicit) | ✓ | | self | | | | | | |
+| CONCUR (ICML 2026) | | ✓ | | | | | | self | | ✓ (rebuttal) | ✓ | | | | |
 | Chronos (Frontiers 2026) | | | | | ✓ | ✓ | | | | | | ✓ | ✓ | | |
 | SOLA (MLSys 2025) | ✓ | | ✓ (reimpl SplitFuse) | | | | | | | | | | | ✓ | |
 | FastServe (NSDI 2026) | ✓ (v0.1.7) | | | | | | | | | | | | | | |
