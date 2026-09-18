@@ -19,3 +19,7 @@ paper.bbl
 paper.out
 paper.toc
 preview*.png
+
+# Planning stays local. The repo carries the paper, its evidence and its
+# notes, not the plan that produced them.
+.spec-dev/
