@@ -68,7 +68,7 @@ Independent Researcher & Independent Researcher & Independent Researcher \\
 \noindent
 Serving large language models at scale is a distributed systems problem
 whose overload behavior is governed at the ingress. We conduct an
-adapted-PRISMA systematic review of forty-four admission and
+adapted-PRISMA systematic review of fifty-two admission and
 admission-adjacent works published between 2022 and 2026, drawn from
 OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA,
 and arXiv preprints. Our analysis reveals four key findings.
@@ -79,10 +79,14 @@ policy; all nine absorb overload through batching, migration,
 placement, autoscaling, or memory management. Token Pools (CAIS
 2026) implements gateway-level admission tied to autoscaling but
 sits outside this seven-venue slice and has a single-node
-evaluation. \textbf{Second}, of fourteen
-admission-primary papers we audited, no two share a baseline system,
-metric definition, trace, model, or engine, which makes cross-paper
-comparison impossible from the literature alone. \textbf{Third}, no
+evaluation. \textbf{Second}, of sixteen
+admission-primary papers we audited, the only baseline shared by more
+than one paper is an unconfigured serving engine, which is the absence
+of admission control rather than an alternative to it. Exactly one
+published admission policy is used as a baseline by two papers. Policies
+are measured against doing nothing, almost never against each other,
+which makes cross-paper comparison impossible from the literature
+alone. \textbf{Third}, no
 published policy occupies the intersection with all four properties:
 agent-level admission, online serving, explicit TTFT and TBT
 deadlines, and per-tenant fairness. SAGA (arXiv:2605.00528) is the
@@ -91,10 +95,10 @@ bounded-deviation Agent Fair Share metric and reporting 99.2\% SLO
 attainment, but online mode, the explicit TTFT/TBT decomposition,
 and per-tenant (rather than per-task) fairness are not established. \textbf{Finally}, artifact-level reproducibility is
 higher than the common ``reproducibility crisis'' framing suggests:
-thirteen of thirty-eight deep-read works have released code, but a
+thirteen of forty deep-read works have released code, but a
 methodology-level crisis persists in the absence of a shared baseline
-contract. We contribute a three-level orthogonal taxonomy (unit,
-decision moment, signal grounding) with four sub-branches, a master
+contract. We contribute a four-axis taxonomy (unit, setting, SLO
+awareness, signal) with four sub-branches, a master
 classification table with GRADE-style evidence ratings, formal
 definitions of the admission-decision, goodput-under-admission, and
 fairness-index primitives, an admission-signal overhead synthesis, a
@@ -175,10 +179,17 @@ differentiates this survey from those prior works.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
-\item \textbf{Systematic coverage} of forty-four admission and
+\item \textbf{Systematic coverage} of fifty-two admission and
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
+\item \textbf{AdmitPerf}, the framework this paper contributes: a
+      taxonomy for describing admission policies, a methodology contract
+      for reporting them, and an open-source reference implementation
+      that enforces the contract and produced the sensitivity results in
+      Section~\ref{sec:repro}. Named components are referred to as the
+      AdmitPerf taxonomy, the AdmitPerf contract, and the AdmitPerf
+      harness (\url{https://github.com/harshuljain13/AdmitPerf}).
 \item \textbf{Unified taxonomy} with four axes and four sub-branches,
       plus short codes (\textsc{unit-req/agt/ten},
       \textsc{sig-sca/dg/lp/wcrt}) used across the master table
@@ -192,7 +203,7 @@ differentiates this survey from those prior works.
 \item \textbf{Admission-signal overhead synthesis} that identifies the
       cost-versus-lift tradeoff across scalar, dual-gate, LP, and
       formal-WCRT signals (Section~\ref{sec:overhead}).
-\item \textbf{Reproducibility audit} finding thirteen of thirty-eight
+\item \textbf{Reproducibility audit} finding thirteen of forty
       works have released code, together with a minimal methodology
       contract to close the cross-paper-comparison gap
       (Section~\ref{sec:repro}).
@@ -210,9 +221,12 @@ policy; overload is absorbed by batching, migration, placement,
 autoscaling, or memory management. Token Pools (CAIS 2026) sits
 outside this seven-venue slice and does implement gateway-level
 admission tied to autoscaling, which we treat as a partial
-counter-example. Second, of fourteen admission-primary papers we
-audited, no two share a baseline system, metric definition, trace,
-model, or engine. Third, the taxonomy holds across all forty-four
+counter-example. Second, of sixteen admission-primary papers we
+audited, the only baseline shared by more than one paper is an
+unconfigured serving engine. Exactly one published admission policy,
+SHEPHERD, is used as a baseline by two papers. Policies are measured
+against the absence of admission control, almost never against one
+another. Third, the taxonomy holds across all fifty-two
 works after integrating Token Pools, ProServe, and SAGA, with four
 sub-branches added during our reading, none of which required
 backing out an original axis.
@@ -1204,7 +1218,7 @@ Section~\ref{sec:repro}, and the target of the AdmitPerf harness
 \label{sec:repro}
 
 We audited public code availability across our corpus. Thirteen of
-thirty-eight deep-read works have released code as of September 2026:
+forty deep-read works have released code as of September 2026:
 QLM, Chronos (simulator), FastServe (SwiftTransformer engine), Shen et
 al., Continuum, Clairvoyant, AQUA, VTC, KVFlow, InferCept, Pie,
 ThunderAgent, and Cake. This is higher than the ``reproducibility
@@ -1392,7 +1406,7 @@ with roofline-derived parameters, never measured on real silicon.
 Probabilistic WCET analysis and mixed-criticality models are open.
 
 \paragraph{OP7: Reproducibility at the methodology level.}
-Thirteen of thirty-eight works have released code, refuting the ``no
+Thirteen of forty works have released code, refuting the ``no
 artifacts'' framing. What the field lacks is a common methodology
 contract (Section~\ref{sec:repro}).
 
@@ -1404,7 +1418,7 @@ that governs whether downstream batching, KV management, and
 preemption have the capacity headroom to succeed. Between 2022 and
 2026 the field produced thirteen admission-primary works at
 peer-reviewed top venues plus one accepted workshop paper and more
-than a dozen preprints. We surveyed forty-four works across
+than a dozen preprints. We surveyed fifty-two works across
 admission-primary, admission-adjacent, and scheduling clusters.
 
 Our four-axis taxonomy with four sub-branches organizes the corpus
@@ -1425,7 +1439,7 @@ batching, migration, or autoscaling can absorb, so these techniques
 are insufficient on their own.
 
 Reproducibility of individual artifacts is higher than commonly
-framed at thirteen of thirty-eight. Reproducibility of cross-paper
+framed at thirteen of forty. Reproducibility of cross-paper
 comparison is essentially zero (Table~\ref{tab:baselines}). The
 methodology contract in Section~\ref{sec:repro} would close this gap.
 

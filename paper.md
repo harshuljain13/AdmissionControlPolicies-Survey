@@ -68,7 +68,13 @@ This paper contributes:
 
 1. A four-axis taxonomy for admission-control policies with four
    sub-branches added during the reading (Section 3).
-2. A per-cluster synthesis of forty admission and admission-adjacent
+2. **AdmitPerf**, the framework this paper contributes: a taxonomy for
+   describing admission policies, a methodology contract for reporting
+   them, and an open-source reference implementation that enforces the
+   contract and produced the sensitivity results in Section 6. We refer
+   to the AdmitPerf taxonomy, the AdmitPerf contract and the AdmitPerf
+   harness (https://github.com/harshuljain13/AdmitPerf).
+3. A per-cluster synthesis of fifty-two admission and admission-adjacent
    works (Section 5).
 3. An empirical reproducibility audit across the corpus (Section 6),
    showing thirteen of thirty-four works have released code and that
@@ -85,9 +91,9 @@ We ground three headline observations. First, of nine top-venue
 scheduling papers we audited (Table 3), none includes an
 ingress-level admission policy; overload is absorbed by batching,
 migration, placement, autoscaling, or memory management. Second, of
-fourteen admission-primary papers we audited (Table 2), no two share a
+sixteen admission-primary papers we audited, the only shared baseline is a
 baseline system, metric definition, trace, model, or engine. Third, the
-taxonomy holds across all forty works with four sub-branches added
+taxonomy holds across all fifty-two works with four sub-branches added
 during our reading, none of which required backing out an original axis.
 
 ## 1.1 Related surveys and differentiation
@@ -324,8 +330,8 @@ A paper was excluded if any held:
 
 We organized the corpus into six tiers based on admission-primacy:
 
-- **Tier 1 (15 papers)**: admission-primary, one policy per paper.
-- **Tier 2 (8 papers)**: queueing theory or fairness-primary with
+- **Tier 1 (16 papers)**: admission-primary, one policy per paper.
+- **Tier 2 (9 papers)**: queueing theory or fairness-primary with
   admission-adjacency.
 - **Tier 3 (6 papers)**: KV-cache-management papers whose mechanism has
   admission implications.
@@ -333,11 +339,12 @@ We organized the corpus into six tiers based on admission-primacy:
   secondary or missing component (Table 3).
 - **Tier 5 (6 papers)**: foundational works (Orca, PagedAttention,
   SHEPHERD, PreQuaL, Kleinrock, Little's Law) cited for background.
-- **Tier 6 (5 papers)**: prior broad surveys used for differentiation
+- **Tier 6 (6 papers)**: prior broad surveys used for differentiation
   (Table 1).
 
-Total after inclusion and de-duplication: 40 papers deep-read; ~50
-additional cite-only references in Section 9.
+Tiers 1 through 4 are the deep-read corpus: 40 papers. Tiers 5 and 6
+are 12 further works read for background and differentiation. Roughly 50
+additional references are cited without deep reading (Section 9).
 
 ## 4.3 Per-paper protocol
 
@@ -612,7 +619,7 @@ for treating admission as an under-explored primary contribution.
 # 6. Reproducibility and comparison methodology
 
 We audited public code availability across our corpus. Thirteen of
-thirty-four deep-read works have released code as of September 2026:
+forty deep-read works have released code as of September 2026:
 QLM, Chronos (simulator), FastServe (on SwiftTransformer engine),
 Shen et al., Continuum, Clairvoyant, AQUA, VTC, KVFlow, InferCept, Pie,
 ThunderAgent, and Cake. This is higher than the "reproducibility crisis"
@@ -622,9 +629,11 @@ The real crisis is at the methodology level. Table 2 shows the baseline
 set used by each admission-primary paper. No two papers share a
 baseline system.
 
-**Table 2.** Baseline sets for admission-primary papers. Rows are papers
-we surveyed; columns are baselines they compare against. Empty cells
-indicate no comparison.
+**Table 2.** Baseline sets for the admission-primary papers whose
+evaluation names its baselines. Rows are papers; columns are the systems
+they compare against. Empty cells indicate no comparison. Ten of the
+sixteen Tier 1 papers are listed; the remainder do not name a baseline
+set precisely enough to tabulate, which is itself part of the finding.
 
 | Paper | vLLM | SGLang | Sarathi | Orca | EDF | FCFS | SHEPHERD | CONCUR | QLM | Continuum | HiCache | AC-FCFS | SLAI | DistServe | Llumnix |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -637,9 +646,16 @@ indicate no comparison.
 | FairBatching (2025) | | | ✓ | | | | | | | | | | | | |
 | Ascendra (2025) | | | | | | | ✓ | | | | | | | | |
 | Fluid-WAIT (2025) | (unnamed "widely used baselines") | | | | | | | | | | | | | | |
+| Scorpio (WISE 2026) | ✓ | | | | | | | | | | | | | | |
 
-Zero column has more than three ticks. No two policies share a baseline
-set. Model choices, engine choices, workload traces, and metric
+Read the columns by what they contain. vLLM, SGLang, Sarathi, Orca,
+DistServe and Llumnix are engines and schedulers: comparing against them
+measures a policy against the absence of admission control, not against
+an alternative to it. The columns that hold actual admission policies
+are almost empty. Exactly one published admission policy, SHEPHERD, is
+used as a baseline by more than one paper (QLM and Ascendra). Every
+policy in this corpus is measured against doing nothing, and almost
+never against another policy. Model choices, engine choices, workload traces, and metric
 definitions also diverge across the corpus. Reading the literature top
 to bottom, a practitioner cannot answer "which admission policy wins on
 my workload."
@@ -795,7 +811,7 @@ Frontiers CS 2026, SOLA MLSys 2025, FastServe NSDI 2026, AQUA ASPLOS
 2025, VTC OSDI 2024, KVFlow NeurIPS 2025, Cake ICML 2025, InferCept
 ICML 2024, Pie SOSP 2025, ThunderAgent ICML 2026 Spotlight) plus one
 accepted workshop paper (Continuum ICLR 2026 Workshop on Lifelong
-Agents) and more than a dozen preprints. We surveyed forty works
+Agents) and more than a dozen preprints. We surveyed fifty-two works
 across admission-primary, admission-adjacent, and scheduling clusters.
 
 Our four-axis taxonomy (unit, setting, SLO-awareness, signal used) with
