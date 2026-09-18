@@ -80,13 +80,13 @@ placement, autoscaling, or memory management. Token Pools (CAIS
 2026) implements gateway-level admission tied to autoscaling but
 sits outside this seven-venue slice and has a single-node
 evaluation. \textbf{Second}, of sixteen
-admission-primary papers we audited, the only baseline shared by more
-than one paper is an unconfigured serving engine, which is the absence
-of admission control rather than an alternative to it. Exactly one
-published admission policy is used as a baseline by two papers. Policies
-are measured against doing nothing, almost never against each other,
-which makes cross-paper comparison impossible from the literature
-alone. \textbf{Third}, no
+admission-primary papers we audited, no two share a baseline
+set, and the only baselines shared by more than one paper are
+unconfigured serving engines and classical scheduling disciplines.
+Exactly one published admission system is used as a baseline by two
+papers. Policies are measured against the absence of admission control,
+almost never against one another, which makes cross-paper comparison
+impossible from the literature alone. \textbf{Third}, no
 published policy occupies the intersection with all four properties:
 agent-level admission, online serving, explicit TTFT and TBT
 deadlines, and per-tenant fairness. SAGA (arXiv:2605.00528) is the
@@ -222,11 +222,11 @@ autoscaling, or memory management. Token Pools (CAIS 2026) sits
 outside this seven-venue slice and does implement gateway-level
 admission tied to autoscaling, which we treat as a partial
 counter-example. Second, of sixteen admission-primary papers we
-audited, the only baseline shared by more than one paper is an
-unconfigured serving engine. Exactly one published admission policy,
-SHEPHERD, is used as a baseline by two papers. Policies are measured
-against the absence of admission control, almost never against one
-another. Third, the taxonomy holds across all fifty-two
+audited, no two share a baseline set, and the only
+baselines shared by more than one paper are unconfigured serving engines
+and classical scheduling disciplines. Exactly one published admission
+system, SHEPHERD, is used as a baseline by two papers (QLM and
+Ascendra). Third, the taxonomy holds across all fifty-two
 works after integrating Token Pools, ProServe, and SAGA, with four
 sub-branches added during our reading, none of which required
 backing out an original axis.
@@ -441,7 +441,7 @@ the eviction-free equilibrium is globally asymptotically stable. This
 is a workload-arithmetic property of admission decisions that no
 production system currently exposes as a signal.
 
-\section{Taxonomy}
+\section{The AdmitPerf taxonomy}
 \label{sec:taxonomy}
 
 We organize admission-control policies along four \emph{descriptive}
@@ -639,6 +639,35 @@ is fixed overhead. Algorithm~1 of \cite{marref2026chronos} rejects on
 arrival if $\rho_P \ge 1$, if the bound exceeds the TTFT deadline, or
 if a TBT capacity check fails.
 
+\subsection{What the Signal axis predicts}
+\label{sec:signal-predicts}
+
+A taxonomy earns its place by doing more than filing. The Signal axis is
+testable: a policy can act only when the quantity it reads moves, and
+which quantity moves is a property of the deployment rather than of the
+policy. On a small model with a low concurrency cap, the cap binds and
+the wait queue moves while KV occupancy stays near zero. On a large
+model with long contexts and large batches, KV memory binds and queue
+depth is the quieter signal.
+
+This yields a falsifiable prediction. A KV-pressure policy deployed on a
+small model cannot refuse anything, whatever threshold it is given, and
+its results will be indistinguishable from an uncontrolled baseline.
+
+We tested it with the AdmitPerf harness. Running a KV-threshold policy
+with a 0.9 threshold against Qwen2.5-0.5B-Instruct on one A10G with a
+concurrency cap of ten, the observed KV occupancy across 485 admission
+decisions ranged from 0.0000 to 0.0046. The policy admitted every
+request in all three repeats, and its offered-SLO attainment of 0.5537
+lies within run-to-run spread of the uncontrolled baseline's 0.5553. The
+policy was structurally incapable of acting, and a results table alone
+would not reveal it.
+
+This is why the methodology contract in
+Section~\ref{sec:repro} asks for the observed range of the signal a
+policy reads. It is also why the Signal axis is more than descriptive:
+it states in advance which policies can function in which regime.
+
 \subsection{The unclaimed intersection}
 
 Plotting the corpus (Figure~\ref{fig:taxonomy}) shows that
@@ -821,6 +850,34 @@ we classify it as such in Table~\ref{tab:master}. Baselines include
 vLLM-FCFS, Sarathi-FCFS, Sarathi-Priority, Weighted VTC, and
 FairBatching. No code released.
 
+Scorpio \cite{he2026scorpio} is the most recent admission-primary entry
+and splits the decision across three stages: admission, queue
+management, and batch selection. Its TTFT Guard reorders by least
+deadline first and rejects requests whose first-token deadline is
+unattainable, estimating attainability from the cumulative prefill time
+of everything already queued. Its TPOT Guard admits only when the
+predicted per-token latency for the resulting virtual batch stays under
+the tightest TPOT target in the running set. Both guards read a
+predicted output length from a fine-tuned OPT-125M classifier over 100
+bins, which places Scorpio in the dual-gate signal class with learned
+rather than analytic grounding. It is evaluated on vLLM with
+Llama-3.1-8B and Gemma-2-27B on four A100s, against vLLM, S3 and
+Mooncake, reporting up to 14.4 times goodput and 46.5 percent better SLO
+adherence under high load.
+
+Two details matter beyond those numbers. First, Mooncake is itself an
+early-rejection admission mechanism, which makes Scorpio one of the few
+policy-versus-policy comparisons in the corpus
+(Table~\ref{tab:baselines}). Second, Scorpio computes goodput with every
+arriving request in the denominator, so a rejected request counts as an
+SLO miss. That is the discipline we adopt in
+Section~\ref{sec:defs} for goodput-under-admission, arrived at
+independently. A metric counting only admitted requests flatters
+shedding: refuse 95 percent of traffic, serve the rest perfectly, and it
+reads 100 percent. Two efforts converging on the same denominator by
+separate routes is the strongest argument available that it is the
+correct one.
+
 \subsection{Agent-session-level admission}
 
 CONCUR \cite{chen2026concur} identifies middle-phase thrashing in
@@ -947,6 +1004,15 @@ reduction on an RTX 4090.
 
 Ascendra \cite{elnikety2025ascendra} uses an SLO-risk predictor to
 promote requests between low-priority and high-priority queues.
+
+Niyama \cite{goel2025niyama} sits adjacent to admission rather than
+inside it. It co-schedules mixed workloads on shared infrastructure with
+fine-grained QoS classes and a hybrid fairness-efficiency priority
+policy, and under overload it applies selective request relegation,
+degrading service for lower classes rather than refusing work at the
+door. We include it because relegation and admission answer the same
+question with different verbs, and because its overload behaviour is
+directly comparable to that of a deferring admission policy.
 
 \subsection{KV-cache management adjacent}
 
@@ -1093,6 +1159,7 @@ SOLA                    & MLSys      & 2025 & req & mf  & lp   & M \\
 FastServe               & NSDI       & 2026 & req & mf  & sca  & M \\
 SLOs-Serve              & preprint   & 2025 & req & ing & lp   & L \\
 Fluid-WAIT              & preprint   & 2025 & req & ing & sca  & L \\
+Scorpio                 & WISE       & 2026 & req & ing & dg   & M \\
 Ascendra                & preprint   & 2025 & req & qb  & sca  & L \\
 Flow-Ctrl scheduling    & preprint   & 2026 & req & ing & wcrt & L \\
 Service-Induced Cong.   & preprint   & 2026 & req & ing & wcrt & M \\
@@ -1231,7 +1298,7 @@ admission-primary paper. No two papers share a baseline system.
 
 \begin{table}[htbp]
 \centering
-\caption{Baseline overlap across admission-primary papers. The most-used baseline (vLLM) appears in five papers; no other baseline appears in more than three; no two papers share the same baseline set. Rows for CONCUR, Continuum, SAGA, and Token Pools are also omitted from column headers (a paper cannot baseline against itself); Continuum appears only as CONCUR's rebuttal-added comparator. Empty rows for SAGA and Token Pools indicate baselines that are not extractable from the current text of those preprints.}
+\caption{Baseline overlap across admission-primary papers. The most-used baseline (vLLM) appears in six papers; no other baseline appears in more than three; no two papers share the same baseline set. Read by what the columns contain: vLLM, SGLang, Sarathi and Orca are serving engines, so a tick there measures a policy against the absence of admission control rather than against an alternative to it, and EDF and FCFS are classical disciplines rather than published systems. Exactly one published admission system, SHEPHERD, is used as a baseline by two papers (QLM and Ascendra). Scorpio's comparison against Mooncake is the corpus's clearest instance of one admission mechanism measured against another. Rows for CONCUR, Continuum, SAGA, and Token Pools are also omitted from column headers (a paper cannot baseline against itself); Continuum appears only as CONCUR's rebuttal-added comparator. Empty rows for SAGA and Token Pools indicate baselines that are not extractable from the current text of those preprints.}
 \label{tab:baselines}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -1254,6 +1321,7 @@ ProServe (2025)          & \checkmark &            & \checkmark &            &  
 SAGA (2026)              & \multicolumn{10}{l}{(baselines not extractable from preprint abstract; body-text extraction failed via WebFetch)} \\
 Token Pools (CAIS 2026)  & \multicolumn{10}{l}{(single-node evaluation; no external policy baselines reported)} \\
 Fluid-WAIT (2025)        & \multicolumn{10}{l}{(unnamed ``widely used baselines'')} \\
+Scorpio (WISE 2026)      & \checkmark & \multicolumn{9}{l}{\ + S3 and Mooncake, the latter itself an early-rejection mechanism} \\
 \bottomrule
 \end{tabular}%
 }

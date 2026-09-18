@@ -66,3 +66,7 @@ Not yet published. Preprint pending.
 ## License
 
 CC-BY 4.0 for text and tables. Per-paper notes are derivative summaries of cited primary sources.
+
+> **`paper.tex` is the source of truth.** `paper.md` is an earlier draft kept for
+> reference only; it lacks the Master classification, Signal-overhead and
+> Production evidence sections and should not be edited.
