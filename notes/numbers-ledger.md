@@ -63,3 +63,28 @@ than the sentence it replaces.
   classified. Each needs either a tier or a stated exclusion.
 - `paper.md` and `paper.tex` have drifted before. Decide which is authoritative
   and say so in the README.
+
+---
+
+## Source-of-truth divergence, 2026-09-17
+
+`paper.md` and `paper.tex` are drifting, and the gap widened today.
+
+| Content | paper.md | paper.tex |
+|---|---|---|
+| corrected counts, restated finding 2, four-axis abstract, AdmitPerf named | yes | yes |
+| Scorpio synthesis and Table 2 row | yes | **no** |
+| Niyama | yes | **no** |
+| Section 3.5, what the Signal axis predicts | yes | **no** |
+| taxonomy titled "The AdmitPerf taxonomy" | yes | partial |
+| Table 1 with Ma et al. | yes | yes |
+
+The README calls `paper.md` the source of truth; `paper.tex` is what compiles to
+the PDF a reviewer reads. Both cannot be true. New prose has been written into
+`paper.md` only, because duplicating it by hand doubles the surface for exactly
+the kind of inconsistency this ledger exists to catch.
+
+**Decision needed before submission.** Either `paper.md` is authoritative and
+`paper.tex` is generated from it, or `paper.tex` is authoritative and
+`paper.md` is retired. Until then, the PDF is missing Scorpio, Niyama and
+Section 3.5.

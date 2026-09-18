@@ -107,7 +107,16 @@ summarizes each and states what this paper adds.
 | Heisler et al., TechRxiv Nov 2025 "LLM Inference Scheduling Survey" | Scheduling techniques, frameworks, trade-offs | Component of scheduling | Technique-oriented | No | No |
 | Li et al., IEEE HPEC 2024 "LLM Inference Serving Survey" | Recent advances in serving | Cited in passing | Chronological | No | No |
 | Mitzenmacher and Shahout, SIGMETRICS 2025 tutorial | Queueing theory for LLM serving | Position/tutorial | Queueing-theoretic | No | Enumerates 25 problems |
+| Ma et al., SSRN 2026 "Control-Oriented Survey of Load Balancing" | Load balancing as a coupled control problem | Routing and placement, not ingress | Control-theoretic | No | No |
 | **This paper** | **Admission control as primary axis** | **Full coverage** | **4 axes + 4 sub-branches** | **Yes, corpus-wide** | **Yes, 7 problems** |
+
+Ma et al. is the closest neighbour and the most recent. It treats
+serving as a control problem and organizes the literature by control
+loop, covering routing, replica selection and placement. Admission is
+adjacent to that work rather than inside it: load balancing decides
+where a request goes, admission decides whether it is taken at all.
+The two are complementary, and we adopt their framing of phase
+asymmetry where it bears on admission signals.
 
 Zhen et al. and Heisler et al. treat admission as one component among
 many. Li et al. is a survey of recent advances organized
@@ -199,7 +208,7 @@ into eviction cycles. This is a workload-arithmetic property of
 admission decisions that no production system currently exposes as a
 signal.
 
-# 3. Taxonomy
+# 3. The AdmitPerf taxonomy
 
 We organize admission-control policies along four axes. Sub-branches
 were added during our reading and are called out explicitly.
@@ -287,7 +296,34 @@ worst-case execution time proportional to input length, then derives a
 closed-form WCRT bound whose feasibility test decides admission on each
 arrival.
 
-## 3.5 The unclaimed intersection
+## 3.5 What the Signal axis predicts
+
+A taxonomy earns its place by doing more than filing. The Signal axis is
+testable: a policy can only act when the quantity it reads moves, and
+which quantity moves is a property of the deployment rather than of the
+policy. On a small model with a low concurrency cap, the cap binds and
+the wait queue moves while KV occupancy stays near zero. On a large
+model with long contexts and large batches, KV memory binds and queue
+depth is the quieter signal.
+
+This yields a falsifiable prediction: a KV-pressure policy deployed on a
+small model cannot refuse anything, whatever threshold it is given, and
+its results will be indistinguishable from an uncontrolled baseline.
+
+We tested it. Running a KV-threshold policy with a 0.9 threshold against
+Qwen2.5-0.5B on one A10G with a concurrency cap of ten, the observed KV
+occupancy across 485 admission decisions ranged from 0.0000 to 0.0046.
+The policy admitted every request in all three repeats, and its SLO
+attainment of 0.5537 is within run-to-run spread of the uncontrolled
+baseline's 0.5553. The policy was structurally incapable of acting, and
+a results table alone would not show it.
+
+This is why the methodology contract in Section 6.1 asks for the
+observed range of the signal a policy reads. It is also why the Signal
+axis is more than descriptive: it tells you in advance which policies
+can function in which regime.
+
+## 3.6 The unclaimed intersection
 
 Plotting the corpus on Unit × SLO-awareness shows that
 agent-level × online × deadline-aware × fair is empty. CONCUR is
@@ -435,6 +471,32 @@ Reasoning) across OPT-7B/13B/30B, ToolLlama-7B, and DeepSeek-R1-1.5B, it
 reports 2.2× geometric-mean per-GPU serving capacity. Preprint only as
 of September 2026.
 
+Scorpio (WISE 2026, arXiv:2505.23022) is the most recent
+admission-primary entry and splits the decision across three stages:
+admission, queue management, and batch selection. Its TTFT Guard
+reorders by least deadline first and rejects requests whose first-token
+deadline is unattainable, estimating attainability from the cumulative
+prefill time of everything already queued. Its TPOT Guard admits only
+when the predicted per-token latency for the resulting virtual batch
+stays under the tightest TPOT target in the running set. Both guards
+read a predicted output length from a fine-tuned OPT-125M classifier
+over 100 bins, which places Scorpio in the dual-gate signal class with
+learned rather than analytic grounding. It is evaluated on vLLM with
+Llama-3.1-8B and Gemma-2-27B on four A100s, against vLLM, S3 and
+Mooncake, and reports up to 14.4 times goodput and 46.5 percent better
+SLO adherence under high load.
+
+Two details matter beyond the numbers. First, Mooncake is itself an
+early-rejection admission mechanism, which makes Scorpio one of the few
+policy-versus-policy comparisons in the corpus. Second, Scorpio computes
+goodput with every arriving request in the denominator, so a rejected
+request counts as an SLO miss. That is the same discipline we adopt in
+Section 2.3 for goodput-under-admission, arrived at independently. A
+metric that counts only admitted requests flatters shedding: a policy
+that refuses 95 percent of traffic and serves the rest perfectly scores
+100 percent. Two efforts reaching the same denominator by separate
+routes is the strongest argument we have that this is the right one.
+
 ## 5.2 Agent-session-level admission
 
 CONCUR (Chen et al., ICML 2026) identifies middle-phase thrashing in
@@ -505,6 +567,15 @@ router) to predict output length, latency, throughput, and GPU
 utilization from prompt text. Reported thirteen percent fairness
 improvement is measured against Equinox's own holistic fairness metric,
 not a mechanism-independent metric.
+
+Niyama (Goel et al., 2025) sits adjacent to admission rather than inside
+it. It co-schedules mixed workloads on shared infrastructure with
+fine-grained QoS classes and a hybrid fairness-efficiency priority
+policy, and under overload it applies selective request relegation,
+degrading service for lower classes rather than refusing work at the
+door. We include it because relegation and admission answer the same
+question with different verbs, and because its overload behaviour is
+directly comparable to a deferring admission policy.
 
 ## 5.4 Queueing-theoretic and algorithmic
 
