@@ -186,8 +186,12 @@ differentiates this survey from those prior works.
 \item \textbf{AdmitPerf}, the framework this paper contributes: a
       taxonomy for describing admission policies, a methodology contract
       for reporting them, and an open-source reference implementation
-      that enforces the contract and produced the sensitivity results in
-      Section~\ref{sec:repro}. Named components are referred to as the
+      that instruments the contract's reporting requirements and produced
+      the signal-range measurement in Section~\ref{sec:signal-predicts}. The
+      harness shows the contract is implementable against a live serving
+      stack and records the provenance it asks for; it does not yet
+      satisfy the contract's own baseline, trace, and fairness
+      requirements, which remain open (Section~\ref{sec:open}). Named components are referred to as the
       AdmitPerf taxonomy, the AdmitPerf contract, and the AdmitPerf
       harness (\url{https://github.com/harshuljain13/AdmitPerf}).
 \item \textbf{Unified taxonomy} with four axes and four sub-branches,
@@ -207,7 +211,7 @@ differentiates this survey from those prior works.
       works have released code, together with a minimal methodology
       contract to close the cross-paper-comparison gap
       (Section~\ref{sec:repro}).
-\item \textbf{Production evidence mapping} that ties six public
+\item \textbf{Production evidence mapping} that ties eight public
       postmortems to admission failure modes (Section~\ref{sec:prod}).
 \item \textbf{Structured research agenda} of seven open problems, each
       grounded in either public peer review or the primary source's
@@ -656,12 +660,15 @@ its results will be indistinguishable from an uncontrolled baseline.
 
 We tested it with the AdmitPerf harness. Running a KV-threshold policy
 with a 0.9 threshold against Qwen2.5-0.5B-Instruct on one A10G with a
-concurrency cap of ten, the observed KV occupancy across 485 admission
-decisions ranged from 0.0000 to 0.0046. The policy admitted every
-request in all three repeats, and its offered-SLO attainment of 0.5537
-lies within run-to-run spread of the uncontrolled baseline's 0.5553. The
-policy was structurally incapable of acting, and a results table alone
-would not reveal it.
+concurrency cap of ten, the observed KV occupancy across 1{,}479
+admission decisions in three repeats ranged from 0.0000 to 0.0071, two
+orders of magnitude below the threshold. The policy admitted every
+request in all three repeats, and its median offered-SLO attainment of
+0.5537 lies within run-to-run spread of the uncontrolled baseline's
+0.5553. The policy was structurally incapable of acting, and a results
+table alone would not reveal it. This is a single deployment regime, not
+a general result: it establishes that the failure mode occurs, not how
+often.
 
 This is why the methodology contract in
 Section~\ref{sec:repro} asks for the observed range of the signal a
@@ -1294,7 +1301,9 @@ crisis'' framing common in prior surveys of the space would suggest.
 
 The real crisis is at the methodology level.
 Table~\ref{tab:baselines} shows the baseline set used by each
-admission-primary paper. No two papers share a baseline system.
+admission-primary paper. No two papers share a baseline \emph{set}; the
+baselines that do recur across papers are unconfigured serving engines
+and classical scheduling disciplines, not admission policies.
 
 \begin{table}[htbp]
 \centering

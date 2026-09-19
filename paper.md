@@ -16,13 +16,13 @@ abstract: |
   agent-session, or tenant granularity, under online or offline settings,
   guided by cache pressure, deadline slack, queue depth, or joint linear
   programs. No two of these policies have been compared to each other on
-  a common trace, engine, or metric (Table 2). This paper surveys forty
-  admission and admission-adjacent works. We propose a four-axis taxonomy
+  a common trace, engine, or metric (Table 2). This paper surveys
+  fifty-two admission and admission-adjacent works. We propose a four-axis taxonomy
   with sub-branches for signal structure, service-level-objective
   granularity, fairness type, and concurrency context. The canonical
   intersection agent-level × online × deadline-aware × fair is empty. We
   audit reproducibility across the corpus and find that thirteen of
-  thirty-four works have released code, refuting the common
+  forty deep-read works have released code, refuting the common
   "reproducibility crisis" framing at the artifact level, while a
   methodology-level crisis persists because no two admission-primary
   papers share a baseline set. We propose a minimal common methodology
@@ -70,29 +70,36 @@ This paper contributes:
    sub-branches added during the reading (Section 3).
 2. **AdmitPerf**, the framework this paper contributes: a taxonomy for
    describing admission policies, a methodology contract for reporting
-   them, and an open-source reference implementation that enforces the
-   contract and produced the sensitivity results in Section 6. We refer
-   to the AdmitPerf taxonomy, the AdmitPerf contract and the AdmitPerf
-   harness (https://github.com/harshuljain13/AdmitPerf).
+   them, and an open-source reference implementation that instruments
+   the contract's reporting requirements and produced the signal-range
+   measurement in Section 3.5. The harness shows the contract is
+   implementable against a live serving stack and records the provenance
+   it asks for; it does not yet satisfy the contract's own baseline,
+   trace, and fairness requirements, which remain open (Section 8). We
+   refer to the AdmitPerf taxonomy, the AdmitPerf contract and the
+   AdmitPerf harness (https://github.com/harshuljain13/AdmitPerf).
 3. A per-cluster synthesis of fifty-two admission and admission-adjacent
    works (Section 5).
-3. An empirical reproducibility audit across the corpus (Section 6),
-   showing thirteen of thirty-four works have released code and that
+4. An empirical reproducibility audit across the corpus (Section 6),
+   showing thirteen of forty deep-read works have released code and that
    the real crisis is methodological.
-4. A proposed minimal common methodology contract that would enable
+5. A proposed minimal common methodology contract that would enable
    cross-paper comparison without demanding that any paper change its
    primary evaluation (Section 6).
-5. A mapping of production incidents to admission failure modes (Section
+6. A mapping of production incidents to admission failure modes (Section
    7, Table 4).
-6. Seven open problems, each with cited evidence from either public peer
+7. Seven open problems, each with cited evidence from either public peer
    review or the primary source's own limitations (Section 8).
 
 We ground three headline observations. First, of nine top-venue
 scheduling papers we audited (Table 3), none includes an
 ingress-level admission policy; overload is absorbed by batching,
 migration, placement, autoscaling, or memory management. Second, of
-sixteen admission-primary papers we audited, the only shared baseline is a
-baseline system, metric definition, trace, model, or engine. Third, the
+sixteen admission-primary papers we audited, no two share a baseline
+set, and the only baselines shared by more than one paper are
+unconfigured serving engines and classical scheduling disciplines.
+Exactly one published admission system, SHEPHERD, is used as a baseline
+by two papers (QLM and Ascendra). Third, the
 taxonomy holds across all fifty-two works with four sub-branches added
 during our reading, none of which required backing out an original axis.
 
@@ -312,11 +319,14 @@ its results will be indistinguishable from an uncontrolled baseline.
 
 We tested it. Running a KV-threshold policy with a 0.9 threshold against
 Qwen2.5-0.5B on one A10G with a concurrency cap of ten, the observed KV
-occupancy across 485 admission decisions ranged from 0.0000 to 0.0046.
-The policy admitted every request in all three repeats, and its SLO
+occupancy across 1,479 admission decisions in three repeats ranged from
+0.0000 to 0.0071, two orders of magnitude below the threshold. The
+policy admitted every request in all three repeats, and its median SLO
 attainment of 0.5537 is within run-to-run spread of the uncontrolled
 baseline's 0.5553. The policy was structurally incapable of acting, and
-a results table alone would not show it.
+a results table alone would not show it. This is a single deployment
+regime, not a general result: it establishes that the failure mode
+occurs, not how often.
 
 This is why the methodology contract in Section 6.1 asks for the
 observed range of the signal a policy reads. It is also why the Signal
@@ -698,7 +708,9 @@ framing common in prior surveys of the space would suggest.
 
 The real crisis is at the methodology level. Table 2 shows the baseline
 set used by each admission-primary paper. No two papers share a
-baseline system.
+baseline *set*; the baselines that do recur across papers are
+unconfigured serving engines and classical scheduling disciplines, not
+admission policies.
 
 **Table 2.** Baseline sets for the admission-primary papers whose
 evaluation names its baselines. Rows are papers; columns are the systems
@@ -755,7 +767,7 @@ one additional experiment configuration to satisfy.
 # 7. Production evidence
 
 Real inference-fleet incidents map directly onto admission failure
-modes. Table 4 lists six public postmortems and identifies the leading
+modes. Table 4 lists eight public postmortems and identifies the leading
 signal that would have prevented each.
 
 **Table 4.** Production incidents mapped to admission signals.
@@ -863,7 +875,7 @@ open.
 
 ## 8.7 Reproducibility at the methodology level
 
-Thirteen of thirty-four deep-read works have released code, refuting
+Thirteen of forty deep-read works have released code, refuting
 the common framing that the field has no artifacts. What the field
 lacks is a common methodology contract: a shared baseline set, trace
 subset, and metric suite that would make cross-paper comparison
@@ -900,7 +912,7 @@ or autoscaling can absorb, so these techniques are insufficient on
 their own.
 
 Reproducibility of individual artifacts is higher than commonly framed
-at thirteen of thirty-four. Reproducibility of cross-paper comparison
+at thirteen of forty. Reproducibility of cross-paper comparison
 is essentially zero (Table 2). The methodology contract we propose in
 Section 6.1 would close this gap without demanding that any paper
 change its primary evaluation.
