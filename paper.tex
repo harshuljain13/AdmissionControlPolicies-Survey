@@ -79,7 +79,7 @@ policy; all nine absorb overload through batching, migration,
 placement, autoscaling, or memory management. Token Pools (CAIS
 2026) implements gateway-level admission tied to autoscaling but
 sits outside this seven-venue slice and has a single-node
-evaluation. \textbf{Second}, of sixteen
+evaluation. \textbf{Second}, of fifteen
 admission-primary papers we audited, no two share a baseline
 set, and the only baselines shared by more than one paper are
 unconfigured serving engines and classical scheduling disciplines.
@@ -95,7 +95,8 @@ bounded-deviation Agent Fair Share metric and reporting 99.2\% SLO
 attainment, but online mode, the explicit TTFT/TBT decomposition,
 and per-tenant (rather than per-task) fairness are not established. \textbf{Finally}, artifact-level reproducibility is
 higher than the common ``reproducibility crisis'' framing suggests:
-thirteen of forty deep-read works have released code, but a
+seven of the fifteen admission-primary papers have released code, as
+have five of the six KV-cache-adjacent works, but a
 methodology-level crisis persists in the absence of a shared baseline
 contract. We contribute a four-axis taxonomy (unit, setting, SLO
 awareness, signal) with four sub-branches, a master
@@ -207,9 +208,9 @@ differentiates this survey from those prior works.
 \item \textbf{Admission-signal overhead synthesis} that identifies the
       cost-versus-lift tradeoff across scalar, dual-gate, LP, and
       formal-WCRT signals (Section~\ref{sec:overhead}).
-\item \textbf{Reproducibility audit} finding thirteen of forty
-      works have released code, together with a minimal methodology
-      contract to close the cross-paper-comparison gap
+\item \textbf{Reproducibility audit} finding seven of the fifteen
+      admission-primary papers have released code, together with seven
+      reporting items whose inconsistency blocks cross-paper comparison
       (Section~\ref{sec:repro}).
 \item \textbf{Production evidence mapping} that ties eight public
       postmortems to admission failure modes (Section~\ref{sec:prod}).
@@ -225,7 +226,7 @@ policy; overload is absorbed by batching, migration, placement,
 autoscaling, or memory management. Token Pools (CAIS 2026) sits
 outside this seven-venue slice and does implement gateway-level
 admission tied to autoscaling, which we treat as a partial
-counter-example. Second, of sixteen admission-primary papers we
+counter-example. Second, of fifteen admission-primary papers we
 audited, no two share a baseline set, and the only
 baselines shared by more than one paper are unconfigured serving engines
 and classical scheduling disciplines. Exactly one published admission
@@ -1292,12 +1293,25 @@ Section~\ref{sec:repro}, and the target of the AdmitPerf harness
 \section{Reproducibility and comparison methodology}
 \label{sec:repro}
 
-We audited public code availability across our corpus. Thirteen of
-forty deep-read works have released code as of September 2026:
-QLM, Chronos (simulator), FastServe (SwiftTransformer engine), Shen et
-al., Continuum, Clairvoyant, AQUA, VTC, KVFlow, InferCept, Pie,
-ThunderAgent, and Cake. This is higher than the ``reproducibility
-crisis'' framing common in prior surveys of the space would suggest.
+We audited public code availability across our corpus, scoped to the
+tiers where releasing an implementation is a well-formed expectation.
+Seven of the fifteen admission-primary papers have released code as of
+September 2026 (QLM, Chronos, FastServe, Shen et al., Continuum,
+Clairvoyant, AQUA), as have five of the six KV-cache-adjacent works
+(KVFlow, InferCept, Pie, ThunderAgent, Cake) and one of the eight
+fairness and queueing-theory works (VTC). Two qualifications apply to
+the admission-primary count: Chronos released a discrete-event
+simulator rather than a real-engine implementation, and AQUA is
+included in this corpus as the canonical preemption-based foil to
+admission control rather than as an admission policy itself.
+
+Artifact availability is therefore higher than the ``reproducibility
+crisis'' framing common in prior surveys would suggest, and is higher
+in the adjacent literature than in the admission literature itself.
+We do not report a single corpus-wide rate: the full corpus includes
+foundational works, textbooks, and prior surveys for which code release
+is not a meaningful question, and a denominator spanning them would not
+measure anything.
 
 The real crisis is at the methodology level.
 Table~\ref{tab:baselines} shows the baseline set used by each
@@ -1484,9 +1498,9 @@ with roofline-derived parameters, never measured on real silicon.
 Probabilistic WCET analysis and mixed-criticality models are open.
 
 \paragraph{OP7: Reproducibility at the methodology level.}
-Thirteen of forty works have released code, refuting the ``no
-artifacts'' framing. What the field lacks is a common methodology
-contract (Section~\ref{sec:repro}).
+Seven of the fifteen admission-primary papers have released code,
+refuting the ``no artifacts'' framing. What the field lacks is a
+common methodology contract (Section~\ref{sec:repro}).
 
 \section{Conclusion}
 \label{sec:conc}
@@ -1517,9 +1531,10 @@ batching, migration, or autoscaling can absorb, so these techniques
 are insufficient on their own.
 
 Reproducibility of individual artifacts is higher than commonly
-framed at thirteen of forty. Reproducibility of cross-paper
-comparison is essentially zero (Table~\ref{tab:baselines}). The
-methodology contract in Section~\ref{sec:repro} would close this gap.
+framed, at seven of the fifteen admission-primary papers.
+Reproducibility of cross-paper comparison is essentially zero
+(Table~\ref{tab:baselines}). The seven reporting items in
+Section~\ref{sec:repro} are what would close that gap.
 
 Seven open problems each carry either public peer-review evidence or
 the primary source's own limitation statement. The most tractable

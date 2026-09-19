@@ -14,15 +14,15 @@
 - Four-axis taxonomy for admission-control policies: unit (request / agent / tenant), setting (online / offline / hybrid), SLO awareness (deadline / throughput / fairness / cost), signal (scalar / dual-gate / LP-composite / formal WCRT).
 - Four sub-branches added during reading: signal structure, SLO granularity (job / request / per-stage), fairness type (task / tenant / priority), concurrency context (concurrent-batch server / serial edge).
 - Per-cluster synthesis of fifty-two admission and admission-adjacent works.
-- Reproducibility audit: 13 of 40 deep-read works have released code.
-- Methodology contract proposal to enable cross-paper comparison.
+- Reproducibility audit: 7 of the 15 admission-primary papers have released code, as have 5 of the 6 KV-cache-adjacent works.
+- Seven reporting items whose inconsistency blocks cross-paper comparison.
 - Mapping of eight public production incidents (OpenAI × 4, Anthropic × 3, Azure × 1) to admission failure modes.
 - Seven open problems, each grounded in either public peer review or the primary source's own limitations.
 
 ## Three headline findings
 
 1. **9-for-9 no ingress admission**: nine top-venue LLM serving papers (Orca OSDI '22, Sarathi-Serve OSDI '24, Llumnix OSDI '24, DistServe OSDI '24, Past-Future ASPLOS '25, Aegaeon SOSP '25, Jenga SOSP '25, AdaServe EuroSys '26, PASCAL HPCA 2026) include no ingress-level admission control. All respond to overload via batching, migration, placement, autoscaling, or memory management.
-2. **Zero baseline overlap**: 16 admission-primary papers, no two share a baseline *set*. The only baselines that recur are unconfigured engines and classical disciplines; exactly one published admission system (SHEPHERD) is used as a baseline by two papers. Cross-paper comparison is impossible from the literature alone.
+2. **Zero baseline overlap**: 15 admission-primary papers, no two share a baseline *set*. The only baselines that recur are unconfigured engines and classical disciplines; exactly one published admission system (SHEPHERD) is used as a baseline by two papers. Cross-paper comparison is impossible from the literature alone.
 3. **Empty intersection**: `agent-level × online × deadline-aware × fair` has no published entry. Direct seed for future work.
 
 ## Layout
