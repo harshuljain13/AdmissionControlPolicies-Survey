@@ -1,6 +1,11 @@
 # Open Problems — Admission Control for LLM Serving
 
-Draft of Section 8 of the survey. Each item cites specific peer-reviewer or paper evidence where possible.
+**Status (2026-09-19)**: this is the *candidate pool*, not Section 8. Thirty-seven
+candidates were drafted here; **seven** were selected for the paper as OP1–OP7. The
+numbering below is the pool's own and does **not** correspond to the paper's OP
+numbers. Where this file and `paper.tex` disagree, the paper is authoritative.
+
+Each item cites specific peer-reviewer or paper evidence where possible.
 
 ## 1. Request-level vs agent-level admission — head-to-head unresolved
 
@@ -20,7 +25,19 @@ Draft of Section 8 of the survey. Each item cites specific peer-reviewer or pape
 
 ## 5. Reproducibility crisis
 
-**Evidence**: Of 15+ admission-control papers surveyed, only Chronos has released code (simulator). CONCUR, Fluid-WAIT, FairBatching, ProServe, QLM, SOLA, Continuum: no released code as of 2026-09-10. Field cannot cross-verify claims.
+> **CORRECTED 2026-09-19.** The claim below was written on 2026-09-10, before the
+> artifact audit, and is wrong. Web verification on 2026-09-17 found released code
+> for QLM, Chronos, FastServe, Shen et al., Continuum, Clairvoyant and AQUA —
+> **seven of the sixteen** admission-primary papers, not one. Five of the six
+> KV-cache-adjacent works have also released code.
+>
+> The paper's finding is the opposite of a crisis at the artifact level: artifacts
+> are more available than the framing suggests, and more available in the adjacent
+> literature than in the admission literature. What is missing is a shared account
+> of what must be *reported* for two results to be comparable, which became the
+> paper's OP7. See `paper.tex` §6 and §6.1.
+
+**Original (superseded) evidence**: Of 15+ admission-control papers surveyed, only Chronos has released code (simulator). CONCUR, Fluid-WAIT, FairBatching, ProServe, QLM, SOLA, Continuum: no released code as of 2026-09-10. Field cannot cross-verify claims.
 
 ## 6. Multi-tenant admission with per-tenant SLOs
 
