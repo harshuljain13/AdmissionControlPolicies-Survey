@@ -7,7 +7,7 @@
 
 - **Main draft**: `paper.tex` — the single source. Build with `make pdf`; `make check` fails on unresolved refs.
 - **BibTeX references**: `references.bib` (~45 entries)
-- **Zero em-dashes** (per author preference, verified via `grep -c "—" paper.tex`)
+- **Zero em-dashes** (per author preference, verified via `make check`, which greps both `—` and LaTeX `---`)
 
 ## Contribution
 

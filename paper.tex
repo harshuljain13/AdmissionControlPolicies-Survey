@@ -453,13 +453,13 @@ classification'' for the master table's compact form.
 
 \paragraph{Decision moment (folded).} Every admission decision can
 be located at one of three points in the serving pipeline:
-\textsc{ing} (\emph{ingress}) --- the decision is taken before the
+under \textsc{ing} (\emph{ingress}), the decision is taken before the
 request enters any server-side queue, based on request features and
-system state at arrival time; \textsc{qb} (\emph{queue boundary})
---- the decision is taken when the request is popped from a waiting
+system state at arrival time; under \textsc{qb} (\emph{queue
+boundary}), it is taken when the request is popped from a waiting
 queue for batch admission, informed by both the request and the
-current batch state; \textsc{mf} (\emph{mid-flight}) --- the decision
-is taken during the request's decode, either as a preemption to a
+current batch state; under \textsc{mf} (\emph{mid-flight}), it is
+taken during the request's decode, either as a preemption to a
 lower priority class or as a reclamation of committed KV cache. The
 master table uses these three codes because they discriminate
 sharply across the corpus; the descriptive Setting axis
@@ -639,25 +639,27 @@ if a TBT capacity check fails.
 \subsection{What the Signal axis predicts}
 \label{sec:signal-predicts}
 
-A taxonomy earns its place by doing more than filing. The Signal axis
-carries a structural consequence: a policy can discriminate only on a
-quantity that varies. Where a policy's chosen signal is effectively
-constant over the operating range of a deployment, the policy admits or
-refuses uniformly whatever threshold it is given, and its behaviour is
-indistinguishable from no admission control at all. The threshold is not
-wrong; it is unreachable.
+The Signal axis has a consequence for how published results should be
+read. A policy discriminates by comparing a measured quantity against a
+threshold, so it can discriminate only when that quantity varies over
+the operating range of the deployment. Where the signal is effectively
+constant, the comparison returns the same answer for every arrival, and
+the policy admits or refuses uniformly regardless of how its threshold
+is set. Its observable behaviour in that case matches an uncontrolled
+baseline.
 
-Two things follow. The first is a reading instruction: a reported
-improvement is interpretable only if the signal the policy reads was
-free to move during the evaluation, and no paper in this corpus reports
-that range (Section~\ref{sec:repro}, item~3). A policy that could not
-have acted and a policy that chose not to act produce the same table.
+The two cases are not distinguishable from a results table. A policy
+whose signal never approached its threshold and a policy that evaluated
+a varying signal and declined to reject will report the same admission
+counts and the same downstream latencies. Separating them requires the
+observed range of the signal over the evaluation, which no paper in this
+corpus reports (Section~\ref{sec:repro}, item~3).
 
-The second is a limit on what this survey can tell a practitioner. Which
-deployments hold which signals constant is an empirical question about
-engines, models, and workloads, not a bibliographic one. We do not answer
-it here, and we are not aware of published measurements that do. It is
-stated as Open Problem~7 and is the subject of companion work.
+This also bounds what the present survey can establish. Which
+deployments hold which signals constant depends on the engine, the
+model, and the workload, and is an empirical question rather than a
+bibliographic one. We do not answer it here, and we are not aware of
+published measurements that do; it is stated as Open Problem~7.
 
 \subsection{The unclaimed intersection}
 
@@ -1288,15 +1290,15 @@ simulator rather than a real-engine implementation, and AQUA is
 included in this corpus as the canonical preemption-based foil to
 admission control rather than as an admission policy itself.
 
-Artifact availability is therefore higher than the ``reproducibility
-crisis'' framing common in prior surveys would suggest, and is higher
-in the adjacent literature than in the admission literature itself.
-We do not report a single corpus-wide rate: the full corpus includes
-foundational works, textbooks, and prior surveys for which code release
-is not a meaningful question, and a denominator spanning them would not
-measure anything.
+These rates are higher than the ``reproducibility crisis'' framing
+common in prior surveys would suggest, and the adjacent literature
+releases code more often than the admission literature does. We report
+rates per tier rather than a single corpus-wide figure because the full
+corpus includes foundational works, textbooks and prior surveys, for
+which code release is not a meaningful expectation; a denominator
+spanning them would not be interpretable.
 
-The real crisis is at the methodology level.
+The more consequential gap is at the methodology level.
 Table~\ref{tab:baselines} shows the baseline set used by each
 admission-primary paper. No two papers share a baseline \emph{set}; the
 baselines that do recur across papers are unconfigured serving engines
@@ -1341,48 +1343,49 @@ Reading the literature top to bottom, a practitioner cannot answer
 
 Reading the corpus for what would be needed to place a result against a
 deployment, seven properties recur as the points of divergence. Six are
-reported inconsistently; one is reported by no paper we surveyed. Each
-is of the form \emph{report what you did}, not \emph{run what we say}:
-none of them asks a paper to change its evaluation.
+reported inconsistently; one is reported by no paper we surveyed. All
+seven concern disclosure of what was done rather than prescription of
+what to run, so none of them asks a paper to change its evaluation.
 
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
-\item \textbf{Capacity-relative load} --- offered load expressed as a
+\item \textbf{Capacity-relative load}. Offered load expressed as a
       multiple of the deployment's measured serveable capacity, rather
-      than as a raw arrival rate or an unquantified ``high load''.
-      Without it, two papers reporting the same rate may be describing
-      opposite regimes.
-\item \textbf{Calibrated deadlines} --- SLO targets expressed relative
-      to unloaded latency on the same model and hardware. An absolute
-      millisecond target is a different experiment on every deployment.
-\item \textbf{Signal liveness} --- the observed range of the quantity
-      the policy reads, over the evaluation. \emph{No paper in this
-      corpus reports this.} Without it, a policy that could not have
-      acted and a policy that chose not to act are indistinguishable
+      than as a raw arrival rate or an unquantified ``high load''. Two
+      papers reporting the same arrival rate on different hardware may
+      be operating in different regimes.
+\item \textbf{Calibrated deadlines}. SLO targets expressed relative to
+      unloaded latency on the same model and hardware. The difficulty
+      of meeting a fixed millisecond target varies with the deployment,
+      so absolute targets are not comparable across papers.
+\item \textbf{Signal liveness}. The observed range of the quantity the
+      policy reads, over the evaluation. No paper in this corpus
+      reports it. Without it, a policy whose signal never approached its
+      threshold cannot be distinguished from one that evaluated a
+      varying signal and declined to reject
       (Section~\ref{sec:signal-predicts}).
-\item \textbf{Repeats and spread} --- the number of repeats and the
-      observed spread, not a single run or a median alone.
-\item \textbf{Parameter provenance} --- for each parameter, whether it
-      was fitted on the evaluated deployment, inherited from the source
-      paper, or left at a default. Policies with hardware-dependent
-      cost constants are otherwise unreproducible by construction.
-\item \textbf{Metric definition} --- in particular the goodput
+\item \textbf{Repeats and spread}. The number of repeats and the
+      observed spread, rather than a single run or a median alone.
+\item \textbf{Parameter provenance}. For each parameter, whether it was
+      fitted on the evaluated deployment, inherited from the source
+      paper, or left at a default. Policies carrying hardware-dependent
+      cost constants cannot otherwise be reproduced.
+\item \textbf{Metric definition}, in particular the goodput
       denominator: whether rejected requests count as misses
       (Definition~\ref{def:goodput}) or are excluded. The two
-      conventions are not comparable, and a metric counting only
-      admitted requests flatters shedding.
-\item \textbf{Configuration disclosure} --- model, engine version,
+      conventions yield different numbers for the same run, and the
+      difference grows with the rejection rate.
+\item \textbf{Configuration disclosure}. Model, engine version,
       hardware, workload subset, offered load, SLO tuple, and the
       identity of the baseline actually run.
 \end{enumerate}
 
-We do not claim this set is minimal, sufficient, or that its items
-matter equally. It is what divergence in the corpus surfaced, and each
-item is stated so that a reader could check a paper against it. Which
-of the seven are load-bearing --- in the sense that omitting one lets a
-reported result move without a reader being able to detect it --- is not
-answerable by reading, because it requires running the same policy under
-controlled variation of each item in turn. We state it as Open
-Problem~7.
+We do not claim this set is minimal or sufficient, or that its items
+matter equally; it records where the corpus diverges, stated so that a
+reader can check a paper against it. Determining which of the seven are
+load-bearing, in the sense that omitting one allows a reported result to
+move without a reader detecting the change, is not answerable by
+reading. It requires running the same policy under controlled variation
+of each item in turn, and we state it as Open Problem~7.
 
 Per-paper coding sheets, taxonomy placements, and inclusion and
 exclusion decisions for this survey are released at
@@ -1497,27 +1500,26 @@ with roofline-derived parameters, never measured on real silicon.
 Probabilistic WCET analysis and mixed-criticality models are open.
 
 \paragraph{OP7: Which reporting items are load-bearing?}
-Seven of the sixteen admission-primary papers have released code,
-refuting the ``no artifacts'' framing. What the field lacks is not
-artifacts but a shared account of what must be reported for two results
-to be comparable. Section~\ref{sec:items} identifies seven items that
-diverge across the corpus, but identifying them is not the same as
-establishing that they matter.
+Seven of the sixteen admission-primary papers have released code, which
+weakens the ``no artifacts'' framing. The remaining obstacle to
+comparison is the absence of a shared account of what must be reported
+for two results to be read against each other.
+Section~\ref{sec:items} identifies seven items that diverge across the
+corpus. Their identification does not establish that they matter.
 
 The open problem is to determine, for each item, whether omitting it
-permits a reported result to move without a reader being able to detect
-the change. This is not answerable by reading, because it requires
-running a fixed policy on a fixed deployment under controlled variation
-of each item in turn, and observing whether the headline number moves
-while the paper's disclosure stays constant. An item for which no such
-variation can be constructed is not load-bearing, and the set should
-shrink accordingly.
+permits a reported result to move without a reader detecting the
+change. Answering it requires running a fixed policy on a fixed
+deployment under controlled variation of each item in turn, and
+observing whether the headline number moves while the paper's
+disclosure stays constant. An item for which no such variation can be
+constructed would not be load-bearing, and the set should shrink
+accordingly.
 
-Item~3 (signal liveness) is the sharpest case, because no paper reports
-it at all: the question there is not whether papers disagree but
-whether the omission is consequential. Companion work in preparation
-(\emph{AdmitPerf}) takes this as its subject. We state the problem here
-rather than the answer.
+Item~3 (signal liveness) is the clearest case to test, since no paper
+reports it: the question is not whether papers disagree but whether the
+omission changes what a reader should conclude. Companion work in
+preparation (\emph{AdmitPerf}) takes this as its subject.
 
 \section{Conclusion}
 \label{sec:conc}
