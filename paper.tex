@@ -79,7 +79,7 @@ policy; all nine absorb overload through batching, migration,
 placement, autoscaling, or memory management. Token Pools (CAIS
 2026) implements gateway-level admission tied to autoscaling but
 sits outside this seven-venue slice and has a single-node
-evaluation. \textbf{Second}, of fifteen
+evaluation. \textbf{Second}, of sixteen
 admission-primary papers we audited, no two share a baseline
 set, and the only baselines shared by more than one paper are
 unconfigured serving engines and classical scheduling disciplines.
@@ -102,8 +102,8 @@ contract. We contribute a four-axis taxonomy (unit, setting, SLO
 awareness, signal) with four sub-branches, a master
 classification table with GRADE-style evidence ratings, formal
 definitions of the admission-decision, goodput-under-admission, and
-fairness-index primitives, an admission-signal overhead synthesis, a
-minimal common methodology contract, a mapping of eight public
+fairness-index primitives, an admission-signal overhead synthesis, seven reporting items whose
+inconsistency blocks cross-paper comparison, a mapping of eight public
 production incidents to admission failure modes, and seven open
 problems each grounded in published peer review or the primary
 source's own limitation statement.
@@ -184,17 +184,6 @@ differentiates this survey from those prior works.
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
-\item \textbf{AdmitPerf}, the framework this paper contributes: a
-      taxonomy for describing admission policies, a methodology contract
-      for reporting them, and an open-source reference implementation
-      that instruments the contract's reporting requirements and produced
-      the signal-range measurement in Section~\ref{sec:signal-predicts}. The
-      harness shows the contract is implementable against a live serving
-      stack and records the provenance it asks for; it does not yet
-      satisfy the contract's own baseline, trace, and fairness
-      requirements, which remain open (Section~\ref{sec:open}). Named components are referred to as the
-      AdmitPerf taxonomy, the AdmitPerf contract, and the AdmitPerf
-      harness (\url{https://github.com/harshuljain13/AdmitPerf}).
 \item \textbf{Unified taxonomy} with four axes and four sub-branches,
       plus short codes (\textsc{unit-req/agt/ten},
       \textsc{sig-sca/dg/lp/wcrt}) used across the master table
@@ -208,7 +197,7 @@ differentiates this survey from those prior works.
 \item \textbf{Admission-signal overhead synthesis} that identifies the
       cost-versus-lift tradeoff across scalar, dual-gate, LP, and
       formal-WCRT signals (Section~\ref{sec:overhead}).
-\item \textbf{Reproducibility audit} finding seven of the fifteen
+\item \textbf{Reproducibility audit} finding seven of the sixteen
       admission-primary papers have released code, together with seven
       reporting items whose inconsistency blocks cross-paper comparison
       (Section~\ref{sec:repro}).
@@ -246,7 +235,7 @@ policy cluster. Section~\ref{sec:master} presents the master
 classification with GRADE-adapted evidence ratings.
 Section~\ref{sec:overhead} presents the admission-signal overhead
 cross-paper synthesis. Section~\ref{sec:repro} audits reproducibility
-and proposes the methodology contract. Section~\ref{sec:prod} maps
+and identifies the seven divergent reporting items. Section~\ref{sec:prod} maps
 production incidents to admission failure modes.
 Section~\ref{sec:open} lists the seven open problems.
 Section~\ref{sec:conc} concludes.
@@ -383,9 +372,9 @@ agent-session workloads it is a job-level end-to-end budget
 ($\mathrm{JCT}_r \le \tau_{\text{JCT}}$), optionally with per-stage
 sub-budgets as in SLOs-Serve. Cross-paper comparison of
 $G_\pi$ requires the SLO tuple to be specified, since aggregating
-across different tuples produces incomparable numbers; the
-methodology contract (Section~\ref{sec:repro}) prescribes an SLO
-tuple per workload class.
+across different tuples produces incomparable numbers; item~7 of
+Section~\ref{sec:items} asks for the SLO tuple to be stated per
+workload class.
 \end{definition}
 
 \begin{definition}[Fairness Index]
@@ -446,7 +435,7 @@ the eviction-free equilibrium is globally asymptotically stable. This
 is a workload-arithmetic property of admission decisions that no
 production system currently exposes as a signal.
 
-\section{The AdmitPerf taxonomy}
+\section{A taxonomy of admission-control policies}
 \label{sec:taxonomy}
 
 We organize admission-control policies along four \emph{descriptive}
@@ -647,34 +636,25 @@ if a TBT capacity check fails.
 \subsection{What the Signal axis predicts}
 \label{sec:signal-predicts}
 
-A taxonomy earns its place by doing more than filing. The Signal axis is
-testable: a policy can act only when the quantity it reads moves, and
-which quantity moves is a property of the deployment rather than of the
-policy. On a small model with a low concurrency cap, the cap binds and
-the wait queue moves while KV occupancy stays near zero. On a large
-model with long contexts and large batches, KV memory binds and queue
-depth is the quieter signal.
+A taxonomy earns its place by doing more than filing. The Signal axis
+carries a structural consequence: a policy can discriminate only on a
+quantity that varies. Where a policy's chosen signal is effectively
+constant over the operating range of a deployment, the policy admits or
+refuses uniformly whatever threshold it is given, and its behaviour is
+indistinguishable from no admission control at all. The threshold is not
+wrong; it is unreachable.
 
-This yields a falsifiable prediction. A KV-pressure policy deployed on a
-small model cannot refuse anything, whatever threshold it is given, and
-its results will be indistinguishable from an uncontrolled baseline.
+Two things follow. The first is a reading instruction: a reported
+improvement is interpretable only if the signal the policy reads was
+free to move during the evaluation, and no paper in this corpus reports
+that range (Section~\ref{sec:repro}, item~3). A policy that could not
+have acted and a policy that chose not to act produce the same table.
 
-We tested it with the AdmitPerf harness. Running a KV-threshold policy
-with a 0.9 threshold against Qwen2.5-0.5B-Instruct on one A10G with a
-concurrency cap of ten, the observed KV occupancy across 1{,}479
-admission decisions in three repeats ranged from 0.0000 to 0.0071, two
-orders of magnitude below the threshold. The policy admitted every
-request in all three repeats, and its median offered-SLO attainment of
-0.5537 lies within run-to-run spread of the uncontrolled baseline's
-0.5553. The policy was structurally incapable of acting, and a results
-table alone would not reveal it. This is a single deployment regime, not
-a general result: it establishes that the failure mode occurs, not how
-often.
-
-This is why the methodology contract in
-Section~\ref{sec:repro} asks for the observed range of the signal a
-policy reads. It is also why the Signal axis is more than descriptive:
-it states in advance which policies can function in which regime.
+The second is a limit on what this survey can tell a practitioner. Which
+deployments hold which signals constant is an empirical question about
+engines, models, and workloads, not a bibliographic one. We do not answer
+it here, and we are not aware of published measurements that do. It is
+stated as Open Problem~7 and is the subject of companion work.
 
 \subsection{The unclaimed intersection}
 
@@ -1285,10 +1265,10 @@ absence of normalized evidence for it.
 using the rubric in Section~\ref{sec:master}. Each anchor cites its
 source paper's own numbers under that paper's own operating point;
 no head-to-head comparison exists in the literature
-(Table~\ref{tab:baselines}). Closing this identification gap is the
-core purpose of the methodology contract proposed in
-Section~\ref{sec:repro}, and the target of the AdmitPerf harness
-(Section~\ref{sec:open}, OP7).
+(Table~\ref{tab:baselines}). Closing this identification gap is what
+the reporting items in Section~\ref{sec:repro} are meant to enable, and
+establishing which of them are load-bearing is Open Problem~7
+(Section~\ref{sec:open}).
 
 \section{Reproducibility and comparison methodology}
 \label{sec:repro}
@@ -1353,42 +1333,58 @@ Scorpio (WISE 2026)      & \checkmark & \multicolumn{9}{l}{\ + S3 and Mooncake, 
 Reading the literature top to bottom, a practitioner cannot answer
 ``which admission policy wins on my workload.''
 
-\subsection{Proposed minimal methodology contract}
+\subsection{Seven reporting items that vary across the corpus}
+\label{sec:items}
 
-We propose that future admission-control papers commit to reporting
-against a minimum common configuration:
+Reading the corpus for what would be needed to place a result against a
+deployment, seven properties recur as the points of divergence. Six are
+reported inconsistently; one is reported by no paper we surveyed. Each
+is of the form \emph{report what you did}, not \emph{run what we say}:
+none of them asks a paper to change its evaluation.
 
-\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
-\item \textbf{Baseline set}: vLLM default (control), plus at least one
-      policy from each of \{CONCUR, Chronos, QLM\}.
-\item \textbf{Trace set}: Azure LLM Inference Trace plus at least one
-      agentic trace corpus (SWE-Bench, $\tau$-bench, GAIA, or
-      BrowserComp). For synthetic supplementation we recommend
-      ServeGen \cite{xiang2025servegen} (NSDI '26), the open-source
-      client-level workload generator that composes traffic on a
-      per-client basis from Alibaba production characterization,
-      because aggregate-Poisson replay hides the per-client
-      heterogeneity that admission decisions must actually resolve.
-\item \textbf{Metric suite}: goodput at target SLO
-      (Definition~\ref{def:goodput}, with the SLO tuple specified
-      per workload class), TTFT $p_{50}/p_{95}/p_{99}$, TBT
-      $p_{95}$, agent-completion rate for agentic workloads,
-      per-tenant Jain fairness index (Definition~\ref{def:fairness}),
-      and an admission-decision histogram (admit/defer/reject
-      counts with rejection reasons).
-\item \textbf{Reporting}: every headline number quoted with model,
-      engine version, hardware, workload subset, offered load, and
-      SLO tuple.
-\item \textbf{Public artifact}: per-paper coding sheets, taxonomy
-      placements, and inclusion/exclusion decisions for this survey
-      are released at the survey's GitHub repository
-      (\texttt{harshuljain13/}\allowbreak\texttt{AdmissionControlPolicies-Survey})
-      to support third-party audit and to reproduce the master
-      table.
-\end{itemize}
+\begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
+\item \textbf{Capacity-relative load} --- offered load expressed as a
+      multiple of the deployment's measured serveable capacity, rather
+      than as a raw arrival rate or an unquantified ``high load''.
+      Without it, two papers reporting the same rate may be describing
+      opposite regimes.
+\item \textbf{Calibrated deadlines} --- SLO targets expressed relative
+      to unloaded latency on the same model and hardware. An absolute
+      millisecond target is a different experiment on every deployment.
+\item \textbf{Signal liveness} --- the observed range of the quantity
+      the policy reads, over the evaluation. \emph{No paper in this
+      corpus reports this.} Without it, a policy that could not have
+      acted and a policy that chose not to act are indistinguishable
+      (Section~\ref{sec:signal-predicts}).
+\item \textbf{Repeats and spread} --- the number of repeats and the
+      observed spread, not a single run or a median alone.
+\item \textbf{Parameter provenance} --- for each parameter, whether it
+      was fitted on the evaluated deployment, inherited from the source
+      paper, or left at a default. Policies with hardware-dependent
+      cost constants are otherwise unreproducible by construction.
+\item \textbf{Metric definition} --- in particular the goodput
+      denominator: whether rejected requests count as misses
+      (Definition~\ref{def:goodput}) or are excluded. The two
+      conventions are not comparable, and a metric counting only
+      admitted requests flatters shedding.
+\item \textbf{Configuration disclosure} --- model, engine version,
+      hardware, workload subset, offered load, SLO tuple, and the
+      identity of the baseline actually run.
+\end{enumerate}
 
-This is a methodology contract, not a benchmark, and is compatible
-with each paper's own primary evaluation.
+We do not claim this set is minimal, sufficient, or that its items
+matter equally. It is what divergence in the corpus surfaced, and each
+item is stated so that a reader could check a paper against it. Which
+of the seven are load-bearing --- in the sense that omitting one lets a
+reported result move without a reader being able to detect it --- is not
+answerable by reading, because it requires running the same policy under
+controlled variation of each item in turn. We state it as Open
+Problem~7.
+
+Per-paper coding sheets, taxonomy placements, and inclusion and
+exclusion decisions for this survey are released at
+\texttt{harshuljain13/}\allowbreak\texttt{AdmissionControlPolicies-Survey}
+to support third-party audit and to reproduce the master table.
 
 \section{Production evidence}
 \label{sec:prod}
@@ -1497,10 +1493,28 @@ Chronos derives closed-form WCRT bounds under a linear kernel model
 with roofline-derived parameters, never measured on real silicon.
 Probabilistic WCET analysis and mixed-criticality models are open.
 
-\paragraph{OP7: Reproducibility at the methodology level.}
+\paragraph{OP7: Which reporting items are load-bearing?}
 Seven of the sixteen admission-primary papers have released code,
-refuting the ``no artifacts'' framing. What the field lacks is a
-common methodology contract (Section~\ref{sec:repro}).
+refuting the ``no artifacts'' framing. What the field lacks is not
+artifacts but a shared account of what must be reported for two results
+to be comparable. Section~\ref{sec:items} identifies seven items that
+diverge across the corpus, but identifying them is not the same as
+establishing that they matter.
+
+The open problem is to determine, for each item, whether omitting it
+permits a reported result to move without a reader being able to detect
+the change. This is not answerable by reading, because it requires
+running a fixed policy on a fixed deployment under controlled variation
+of each item in turn, and observing whether the headline number moves
+while the paper's disclosure stays constant. An item for which no such
+variation can be constructed is not load-bearing, and the set should
+shrink accordingly.
+
+Item~3 (signal liveness) is the sharpest case, because no paper reports
+it at all: the question there is not whether papers disagree but
+whether the omission is consequential. Companion work in preparation
+(\emph{AdmitPerf}) takes this as its subject. We state the problem here
+rather than the answer.
 
 \section{Conclusion}
 \label{sec:conc}
@@ -1534,7 +1548,7 @@ Reproducibility of individual artifacts is higher than commonly
 framed, at seven of the sixteen admission-primary papers.
 Reproducibility of cross-paper comparison is essentially zero
 (Table~\ref{tab:baselines}). The seven reporting items in
-Section~\ref{sec:repro} are what would close that gap.
+Section~\ref{sec:items} are what would enable closing it.
 
 Seven open problems each carry either public peer-review evidence or
 the primary source's own limitation statement. The most tractable
@@ -1542,8 +1556,8 @@ candidates for near-term progress are OP1 (agent-level admission
 with per-tenant fairness under online arrivals, sharpened by SAGA
 as partial occupant), OP2 (online admission for agentic workloads
 with reject/defer accounting), OP5 (cross-validation of coupled
-admission and autoscaling on top of Token Pools), and OP7
-(methodology contract).
+admission and autoscaling on top of Token Pools), and OP7 (which
+reporting items are load-bearing).
 
 \bibliographystyle{plain}
 \bibliography{references}
