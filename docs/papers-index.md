@@ -82,7 +82,38 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 49 | Li et al. KV Cache Management Survey | arXiv:2412.19442 |
 | 50 | Existing broader surveys — from Tensor Buffer to Distributed Memory | arXiv:2607.02574 |
 
-Total: 50 papers. Roughly 40 will get first-class treatment; 10 will appear in citations only.
+## Tier 7 — Late additions (found during verification, after the original index)
+
+These three are cited, classified in `tab:master`, and discussed in dedicated
+paragraphs in the paper — the same treatment every other corpus member receives —
+but they postdate the original index and were never back-filled into it. They are
+counted in the corpus total. Added 2026-09-19.
+
+| # | Paper | Venue | Tier it belongs to | Note file |
+|---|---|---|---|---|
+| 51 | Scorpio (He et al.) | **WISE 2026** | **Tier 1 — admission-primary.** The paper calls it "the most recent admission-primary entry"; dual-gate signal (TTFT Guard + TPOT Guard) over a fine-tuned OPT-125M length predictor. Its comparison against Mooncake is the corpus's clearest policy-versus-policy baseline. | ⛔ missing |
+| 52 | Token Pools | CAIS 2026 | Tier 4 — scheduling with admission components. Outside the seven-venue slice; discussed as the partial counter-example to the nine-of-nine finding. | ⛔ missing |
+| 53 | SAGA (Guo et al.) | arXiv:2605.00528 | Tier 2 — admission-adjacent. Agent-workflow scheduling; classified agent-level, mid-flight, scalar-signal. Whether its session-affinity batching reduces to ingress admission is not established. | ⛔ missing |
+
+**Total: 53 papers.** Tier 1 (admission-primary) is **16** including Scorpio.
+
+Artifact availability is audited per tier rather than corpus-wide, because the
+denominator would otherwise span foundational works and textbooks for which code
+release is not a meaningful question:
+
+| Tier | Released code | Of |
+|---|---|---|
+| Tier 1 — admission-primary | 7 | 16 |
+| Tier 2 — fairness / queueing | 1 | 8 |
+| Tier 3 — KV-cache adjacent | 5 | 6 |
+
+Scorpio's artifact status was not established during the audit and it is therefore
+not counted in the Tier 1 numerator. If it has released code the figure is 8 of 16.
+
+⛔ **Outstanding**: none of the three has a `notes/` deep-read file, so the paper's
+discussion of them is not backed by the same note trail as the rest of the corpus.
+Writing those notes is not in the two-week Paper A scope but should be recorded as a
+known gap.
 
 ## Reading order (Week 1)
 

@@ -68,7 +68,7 @@ Independent Researcher & Independent Researcher & Independent Researcher \\
 \noindent
 Serving large language models at scale is a distributed systems problem
 whose overload behavior is governed at the ingress. We conduct an
-adapted-PRISMA systematic review of fifty-two admission and
+adapted-PRISMA systematic review of fifty-three admission and
 admission-adjacent works published between 2022 and 2026, drawn from
 OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA,
 and arXiv preprints. Our analysis reveals four key findings.
@@ -95,7 +95,7 @@ bounded-deviation Agent Fair Share metric and reporting 99.2\% SLO
 attainment, but online mode, the explicit TTFT/TBT decomposition,
 and per-tenant (rather than per-task) fairness are not established. \textbf{Finally}, artifact-level reproducibility is
 higher than the common ``reproducibility crisis'' framing suggests:
-seven of the fifteen admission-primary papers have released code, as
+seven of the sixteen admission-primary papers have released code, as
 have five of the six KV-cache-adjacent works, but a
 methodology-level crisis persists in the absence of a shared baseline
 contract. We contribute a four-axis taxonomy (unit, setting, SLO
@@ -180,7 +180,7 @@ differentiates this survey from those prior works.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
-\item \textbf{Systematic coverage} of fifty-two admission and
+\item \textbf{Systematic coverage} of fifty-three admission and
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
@@ -226,12 +226,12 @@ policy; overload is absorbed by batching, migration, placement,
 autoscaling, or memory management. Token Pools (CAIS 2026) sits
 outside this seven-venue slice and does implement gateway-level
 admission tied to autoscaling, which we treat as a partial
-counter-example. Second, of fifteen admission-primary papers we
+counter-example. Second, of sixteen admission-primary papers we
 audited, no two share a baseline set, and the only
 baselines shared by more than one paper are unconfigured serving engines
 and classical scheduling disciplines. Exactly one published admission
 system, SHEPHERD, is used as a baseline by two papers (QLM and
-Ascendra). Third, the taxonomy holds across all fifty-two
+Ascendra). Third, the taxonomy holds across all fifty-three
 works after integrating Token Pools, ProServe, and SAGA, with four
 sub-branches added during our reading, none of which required
 backing out an original axis.
@@ -1295,7 +1295,7 @@ Section~\ref{sec:repro}, and the target of the AdmitPerf harness
 
 We audited public code availability across our corpus, scoped to the
 tiers where releasing an implementation is a well-formed expectation.
-Seven of the fifteen admission-primary papers have released code as of
+Seven of the sixteen admission-primary papers have released code as of
 September 2026 (QLM, Chronos, FastServe, Shen et al., Continuum,
 Clairvoyant, AQUA), as have five of the six KV-cache-adjacent works
 (KVFlow, InferCept, Pie, ThunderAgent, Cake) and one of the eight
@@ -1498,7 +1498,7 @@ with roofline-derived parameters, never measured on real silicon.
 Probabilistic WCET analysis and mixed-criticality models are open.
 
 \paragraph{OP7: Reproducibility at the methodology level.}
-Seven of the fifteen admission-primary papers have released code,
+Seven of the sixteen admission-primary papers have released code,
 refuting the ``no artifacts'' framing. What the field lacks is a
 common methodology contract (Section~\ref{sec:repro}).
 
@@ -1510,7 +1510,7 @@ that governs whether downstream batching, KV management, and
 preemption have the capacity headroom to succeed. Between 2022 and
 2026 the field produced thirteen admission-primary works at
 peer-reviewed top venues plus one accepted workshop paper and more
-than a dozen preprints. We surveyed fifty-two works across
+than a dozen preprints. We surveyed fifty-three works across
 admission-primary, admission-adjacent, and scheduling clusters.
 
 Our four-axis taxonomy with four sub-branches organizes the corpus
@@ -1531,7 +1531,7 @@ batching, migration, or autoscaling can absorb, so these techniques
 are insufficient on their own.
 
 Reproducibility of individual artifacts is higher than commonly
-framed, at seven of the fifteen admission-primary papers.
+framed, at seven of the sixteen admission-primary papers.
 Reproducibility of cross-paper comparison is essentially zero
 (Table~\ref{tab:baselines}). The seven reporting items in
 Section~\ref{sec:repro} are what would close that gap.
