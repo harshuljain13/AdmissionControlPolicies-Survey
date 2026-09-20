@@ -43,7 +43,7 @@ Not spot/preemptible instances. "On the market" refers to the **model marketplac
 
 ## Fidelity / reproducibility
 - No code release; production cluster claims are not independently reproducible
-- PDF text extraction failed on the ennanzhai.github.io mirror — several details in this note (baselines, exact SLO thresholds, presence/absence of admission gating) are inferred from the ACM listing and Alibaba's marketing blog and must be **verified on a second reading pass** before quoting in the survey
+- ~~PDF text extraction failed on the ennanzhai.github.io mirror~~ — **resolved 2026-09-20**, full text extracted; presence/absence of admission gating is now verified (see below). Baselines and exact SLO thresholds remain from the ACM listing and are not quoted in the survey.
 - Production trace is Alibaba-proprietary; the 0.01–1.13 rps range and 0.037 mean are the only characteristics disclosed
 
 ## Relevance to survey
@@ -52,8 +52,41 @@ Not spot/preemptible instances. "On the market" refers to the **model marketplac
 - **Contrast with market-focused admission work** (Concur, FairBatching): those gate by tenant/deadline; Aegaeon gates by *nothing* and instead makes the shared pool cheaper. Interesting axis to callout — "admission by elasticity" as an alternative to "admission by gate."
 
 ## Open questions surfaced
-- **Does Aegaeon ever refuse or queue-drop a request?** Cannot confirm from available sources. If SLO is unmeetable even with token-level swap, is there a documented reject/defer path? Needs paper §4 or §5 reread.
+- ~~**Does Aegaeon ever refuse or queue-drop a request?**~~ **CLOSED 2026-09-20** — no. See the verification section above.
 - **Token-swap cost floor**. 97% reduction is impressive but the *absolute* switch cost per token (µs? tens of µs?) sets the ceiling on how many models can coexist. Not reported in summaries.
 - **Interaction with continuous batching**. Standard vLLM-style continuous batching assumes homogeneous model weights across the batch. Does Aegaeon serialize models per token (harming batch efficiency) or shard the forward pass? Mechanism detail matters for the survey's throughput analysis.
 - **Fairness across models**. With per-model arrival rates spanning 100× (0.01 → 1.13), what prevents a high-rate model from monopolizing GPU cycles? Any weighted-fair scheduler? Blog is silent.
 - **Applicability outside marketplaces**. Aegaeon's ROI depends on *long-tail low-utilization models*. A single high-QPS model gains nothing from token-level swap. Scope this carefully in the survey — do not overclaim generality.
+
+## VERIFIED 2026-09-20 — second reading pass, full text
+
+The PDF text layer extracted successfully this time (16 pages, complete
+through references). The open question below is now closed.
+
+**Aegaeon performs no admission control. The survey's "No" in Table 3 is correct.**
+
+Term counts over the full text:
+
+| term | count | what it actually refers to |
+|---|---|---|
+| admission, admit, reject, discard, defer | **0** | absent entirely |
+| drop | 1 | "performance drop" under longer inputs, not request drop |
+| refus | 1 | MuxServe's *placement optimizer* refusing to co-locate models |
+| overload | 2 | both describe the problem (bursts overload reserved GPUs), never a response |
+| queue | 10 | job queues for dispatch and batching |
+
+Algorithm 1 (prefill dispatch) is decisive: on arrival of request r, Aegaeon either
+appends r to an existing same-model group or creates a group on the **least loaded**
+job queue. Every arrival is placed. There is no bounded queue length, no deadline
+discard, and no return path that refuses service. SLO violations are addressed by a
+weighted round-robin decoding scheduler that *minimises tokens violating TBT*, and
+SLO attainment is defined as the percentage of token generation times meeting their
+deadlines — a measurement of the outcome, not a gate on the input.
+
+**On the third-party characterization.** FaaScale (MLSys 2026) describes Aegaeon as
+optimizing "resource sharing, admission control, and request scheduling across
+tenants." That is loose: nothing in Aegaeon's text supports the middle term. If a
+reviewer raises it, the answer is the term counts and Algorithm 1 above.
+
+This also confirms the note's original inference from the blog and ACM listing:
+"admission by elasticity" rather than admission by gate.
