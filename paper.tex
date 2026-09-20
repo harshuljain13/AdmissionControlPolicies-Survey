@@ -248,9 +248,10 @@ audited, no two share a baseline set, and the only
 baselines shared by more than one paper are unconfigured serving engines
 and classical scheduling disciplines. Exactly one published admission
 system, SHEPHERD, is used as a baseline by two papers (QLM and
-Ascendra). Third, the taxonomy holds across all fifty-four
-works, including the five added during verification (Token Pools,
-ProServe, SAGA, Scorpio and FairServe), with four
+Ascendra). Third, the taxonomy accommodates every corpus work that proposes or
+embeds an admission mechanism, twenty-eight in total
+(Table~\ref{tab:master}), including the five added during verification
+(Token Pools, ProServe, SAGA, Scorpio and FairServe), with four
 sub-branches added during our reading, none of which required
 backing out an original axis.
 
@@ -737,8 +738,9 @@ The two cases are not distinguishable from a results table. A policy
 whose signal never approached its threshold and a policy that evaluated
 a varying signal and declined to reject will report the same admission
 counts and the same downstream latencies. Separating them requires the
-observed range of the signal over the evaluation, which no paper in this
-corpus reports (Section~\ref{sec:items}, item~3).
+observed range of the signal over the evaluation. We did not find that
+range reported in any paper we examined (Section~\ref{sec:items},
+item~3).
 
 This also bounds what the present survey can establish. Which
 deployments hold which signals constant depends on the engine, the
@@ -1174,8 +1176,8 @@ require.
 \section{Master classification}
 \label{sec:master}
 
-Table~\ref{tab:master} classifies every admission-primary or
-admission-adjacent paper in the corpus along the three orthogonal
+Table~\ref{tab:master} classifies twenty-eight of the fifty-four works
+in the corpus along the three orthogonal
 taxonomy levels (Unit, Moment, Signal grounding), plus a
 GRADE-adapted evidence rating for the strength of empirical support
 behind each work's headline claims. Unit codes: \textsc{req} request,
@@ -1184,6 +1186,25 @@ behind each work's headline claims. Unit codes: \textsc{req} request,
 mid-flight (during decode). Signal codes: \textsc{sca} scalar,
 \textsc{dg} dual-gate, \textsc{lp} linear-program, \textsc{wcrt}
 formal worst-case-response-time bound.
+
+\paragraph{What the table does not classify.} Twenty-six corpus works
+carry no row. Twelve are foundational systems, textbooks, or prior
+surveys, for which an admission taxonomy is not defined. Nine are
+scheduling papers from the seven-venue slice that contain no admission
+mechanism to classify, which is the nine-of-nine finding of
+Section~\ref{sec:clusters} rather than an omission here. The remaining
+five are AQUA, Chiron, Mooncake, Throughput-Optimal Scheduling and
+Beyond Prediction, each of which touches admission indirectly:
+AQUA and Mooncake through reclamation and early rejection, Chiron
+through autoscaling, and the last two through queueing-theoretic
+results that do not specify a decision rule. Mooncake is the one we
+would most expect a reader to look for, since it functions as an
+early-rejection mechanism and appears as a baseline in
+Table~\ref{tab:baselines}; we leave it unclassified because its
+rejection behaviour is a consequence of its cache-transfer design
+rather than a stated admission policy, and placing it on the Signal
+axis would require attributing a decision rule the paper does not
+claim.
 
 \paragraph{GRADE rubric (operationalized).}
 We assign each work one of four evidence levels using four criteria:
@@ -1368,7 +1389,7 @@ tiers where releasing an implementation is a well-formed expectation.
 Seven of the sixteen admission-primary papers have released code as of
 September 2026 (QLM, Chronos, FastServe, Shen et al., Continuum,
 Clairvoyant, AQUA), as have five of the six KV-cache-adjacent works
-(KVFlow, InferCept, Pie, ThunderAgent, Cake) and one of the nine
+(KVFlow, InferCept, Pie, ThunderAgent, Cake) and one of the ten
 fairness and queueing-theory works (VTC). Two qualifications apply to
 the admission-primary count: Chronos released a discrete-event
 simulator rather than a real-engine implementation, and AQUA is
@@ -1428,7 +1449,8 @@ Reading the literature top to bottom, a practitioner cannot answer
 
 Reading the corpus for what would be needed to place a result against a
 deployment, seven properties recur as the points of divergence. Six are
-reported inconsistently; one is reported by no paper we surveyed. All
+reported inconsistently, and we did not find the seventh reported at
+all. All
 seven concern disclosure of what was done rather than prescription of
 what to run, so none of them asks a paper to change its evaluation.
 
@@ -1443,8 +1465,13 @@ what to run, so none of them asks a paper to change its evaluation.
       of meeting a fixed millisecond target varies with the deployment,
       so absolute targets are not comparable across papers.
 \item \textbf{Signal liveness}. The observed range of the quantity the
-      policy reads, over the evaluation. No paper in this corpus
-      reports it. Without it, a policy whose signal never approached its
+      policy reads, over the evaluation. We did not find it reported
+      in any paper we examined.\footnote{This is an absence in our
+      extraction rather than a verified exhaustive check. We recorded
+      each paper's evaluation setup, including the signal its policy
+      reads, but no paper we read stated the range that signal took
+      during the evaluation. A paper reporting it outside the sections
+      we extracted would not have been captured.} Without it, a policy whose signal never approached its
       threshold cannot be distinguished from one that evaluated a
       varying signal and declined to reject
       (Section~\ref{sec:signal-predicts}).
@@ -1601,8 +1628,8 @@ disclosure stays constant. An item for which no such variation can be
 constructed would not be load-bearing, and the set should shrink
 accordingly.
 
-Item~3 (signal liveness) is the clearest case to test, since no paper
-reports it: the question is not whether papers disagree but whether the
+Item~3 (signal liveness) is the clearest case to test, since we found
+no paper reporting it: the question is not whether papers disagree but whether the
 omission changes what a reader should conclude. \companionwork
 
 \section{Conclusion}

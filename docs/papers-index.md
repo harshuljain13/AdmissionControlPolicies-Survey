@@ -22,7 +22,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 14 | ProServe | arXiv:2512.12928 | Multi-priority |
 | 15 | Clairvoyant | arXiv:2606.07248 | Predictive SJF |
 
-## Tier 2 — Fairness + Queueing theory (~9 papers, incl. FairServe at #54)
+## Tier 2 — Fairness + Queueing theory (~10 papers, incl. SAGA #53 and FairServe #54)
 
 | # | Paper | Venue | Cluster |
 |---|---|---|---|
@@ -46,7 +46,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 28 | ThunderAgent (Kang et al.) | **ICML 2026 Spotlight** — arXiv:2602.13692 — integrated into NVIDIA Dynamo 2.0; code at github.com/ThunderAgent-org/ThunderAgent |
 | 29 | Mooncake | **FAST '25** |
 
-## Tier 4 — Scheduling papers with admission components (~8 papers)
+## Tier 4 — Scheduling papers with admission components (~10 papers, incl. Token Pools #52)
 
 | # | Paper | Venue |
 |---|---|---|
@@ -96,7 +96,24 @@ counted in the corpus total. Added 2026-09-19.
 | 53 | SAGA (Guo et al.) | arXiv:2605.00528 | Tier 2 — admission-adjacent. Agent-workflow scheduling; classified agent-level, mid-flight, scalar-signal. Whether its session-affinity batching reduces to ingress admission is not established. | ⛔ missing |
 | 54 | FairServe (Khan et al.) | preprint, 2024 (Microsoft) | Tier 2 — fairness. Ingress, dual-gate, on real Copilot traffic. Classified tenant-level with a dagger: it is the only corpus work operating at user/application-interaction granularity rather than request, agent-session or organizational tenant. | ⛔ missing |
 
-**Total: 54 papers.** Tier 1 (admission-primary) is **16** including Scorpio.
+**Total: 54 papers.** Tier membership after the Tier 7 additions:
+
+| Tier | Count | Classified in `tab:master` |
+|---|---|---|
+| 1 — admission-primary | 16 | 15 (AQUA absent) |
+| 2 — fairness / queueing | 10 | 6 (Throughput-Optimal, Beyond Prediction, Chiron absent) |
+| 3 — KV-cache adjacent | 6 | 5 (Mooncake absent) |
+| 4 — scheduling w/ admission components | 10 | 1 (Token Pools) |
+| 5 — foundational | 7 | 0 (not classifiable: textbooks, engines) |
+| 6 — prior surveys | 5 | 0 (not classifiable) |
+| **total** | **54** | **28** |
+
+`tab:master` classifies 28 of 54. Tiers 5 and 6 are correctly absent: an
+admission taxonomy does not apply to Kleinrock's textbook or to a prior survey.
+The five absences worth revisiting are AQUA, Mooncake, Chiron, Throughput-Optimal
+and Beyond Prediction. **Mooncake is the notable one**: the paper's own Table 2
+caption calls it "itself an early-rejection mechanism", so it is an admission
+mechanism that the master table does not place.
 
 Found by diffing every classified row of `tab:master` against this index, after
 Scorpio/Token Pools/SAGA were added on 2026-09-19 and FairServe was still missed.
@@ -110,7 +127,7 @@ release is not a meaningful question:
 | Tier | Released code | Of |
 |---|---|---|
 | Tier 1 — admission-primary | 7 | 16 |
-| Tier 2 — fairness / queueing | 1 | 9 |
+| Tier 2 — fairness / queueing | 1 | 10 |
 | Tier 3 — KV-cache adjacent | 5 | 6 |
 
 Scorpio's artifact status was not established during the audit and it is therefore
