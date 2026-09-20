@@ -1391,30 +1391,30 @@ and classical scheduling disciplines, not admission policies.
 
 \begin{table}[htbp]
 \centering
-\caption{Baseline overlap across admission-primary papers. The most-used baseline (vLLM) appears in six papers; no other baseline appears in more than three; no two papers share the same baseline set. Read by what the columns contain: vLLM, SGLang, Sarathi and Orca are serving engines, so a tick there measures a policy against the absence of admission control rather than against an alternative to it, and EDF and FCFS are classical disciplines rather than published systems. Exactly one published admission system, SHEPHERD, is used as a baseline by two papers (QLM and Ascendra). Scorpio's comparison against Mooncake is the corpus's clearest instance of one admission mechanism measured against another. Rows for CONCUR, Continuum, SAGA, and Token Pools are also omitted from column headers (a paper cannot baseline against itself); Continuum appears only as CONCUR's rebuttal-added comparator. Empty rows for SAGA and Token Pools indicate baselines that are not extractable from the current text of those preprints.}
+\caption{Baseline overlap across admission-primary papers. The most-used baseline (vLLM) appears in six papers and Sarathi in four; no other appears in more than two; and no two papers share the same baseline set. Read by what the columns contain: vLLM, SGLang, Sarathi, DistServe and Orca are serving engines, so a tick there measures a policy against the absence of admission control rather than against an alternative to it, and EDF, FCFS and SJF are classical disciplines rather than published systems. SOLA's Sarathi entry is marked \emph{re-impl.} because it reimplements chunked prefill on vLLM rather than comparing against upstream Sarathi-Serve. Among published admission systems, SHEPHERD is used as a baseline by two papers (QLM and Ascendra); AC-FCFS also appears twice, but it is a throughput-matched token bucket constructed as an ablation rather than a system published in its own right. Scorpio's comparison against Mooncake is the corpus's clearest instance of one admission mechanism measured against another. Rows for CONCUR, Continuum, SAGA, and Token Pools are also omitted from column headers (a paper cannot baseline against itself); Continuum appears only as CONCUR's rebuttal-added comparator. Empty rows for SAGA and Token Pools indicate baselines that are not extractable from the current text of those preprints.}
 \label{tab:baselines}
 \small
 \setlength{\tabcolsep}{4pt}
 \rowcolors{2}{white}{admitgreylight!40}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{l *{10}{c}}
+\begin{tabular}{l *{12}{c}}
 \toprule
 \rowcolor{admitteallight}
-\textbf{Paper} & \textbf{vLLM} & \textbf{SGLang} & \textbf{Sarathi} & \textbf{Orca} & \textbf{EDF} & \textbf{FCFS} & \textbf{SHEPHERD} & \textbf{Weighted VTC} & \textbf{Continuum} & \textbf{AC-FCFS} \\
+\textbf{Paper} & \textbf{vLLM} & \textbf{SGLang} & \textbf{Sarathi} & \textbf{DistServe} & \textbf{Orca} & \textbf{EDF} & \textbf{FCFS} & \textbf{SJF} & \textbf{SHEPHERD} & \textbf{Weighted VTC} & \textbf{Continuum} & \textbf{AC-FCFS} \\
 \midrule
-QLM (SoCC 2024)          & \checkmark &            &            & (cite)     & \checkmark & (impl.) & \checkmark &            &            &            \\
-CONCUR (ICML 2026)       &            & \checkmark &            &            &            &         &            &            & \checkmark & \checkmark \\
-Chronos (Frontiers 2026) &            &            &            &            & \checkmark & \checkmark &        &            &            & \checkmark \\
-SOLA (MLSys 2025)        & \checkmark &            & \checkmark &            &            &         &            &            &            &            \\
-FastServe (NSDI 2026)    & \checkmark &            &            &            &            &         &            &            &            &            \\
-SLOs-Serve (2025)        & \checkmark &            & \checkmark &            &            &         &            &            &            &            \\
-FairBatching (2025)      &            &            & \checkmark &            &            &         &            &            &            &            \\
-Ascendra (2025)          &            &            &            &            &            &         & \checkmark &            &            &            \\
-ProServe (2025)          & \checkmark &            & \checkmark &            &            & \checkmark &       & \checkmark &            &            \\
-SAGA (2026)              & \multicolumn{10}{l}{(baselines not extractable from preprint abstract; body-text extraction failed via WebFetch)} \\
-Token Pools (CAIS 2026)  & \multicolumn{10}{l}{(single-node evaluation; no external policy baselines reported)} \\
-Fluid-WAIT (2025)        & \multicolumn{10}{l}{(unnamed ``widely used baselines'')} \\
-Scorpio (WISE 2026)      & \checkmark & \multicolumn{9}{l}{\ + S3 and Mooncake, the latter itself an early-rejection mechanism} \\
+QLM (SoCC 2024)          & \checkmark &            &            &            & (cite)     & \checkmark & (impl.) &            & \checkmark &            &            &            \\
+CONCUR (ICML 2026)       &            & \checkmark &            &            &            &            &         &            &            &            & \checkmark & \checkmark \\
+Chronos (Frontiers 2026) &            &            &            &            &            & \checkmark & \checkmark &         &            &            &            & \checkmark \\
+SOLA (MLSys 2025)        & \checkmark &            & re-impl.   &            &            &            &         & \checkmark &            &            &            &            \\
+FastServe (NSDI 2026)    & \checkmark &            &            &            &            &            &         &            &            &            &            &            \\
+SLOs-Serve (2025)        & \checkmark &            & \checkmark & \checkmark &            &            &         &            &            &            &            &            \\
+FairBatching (2025)      &            &            & \checkmark &            &            &            &         &            &            &            &            &            \\
+Ascendra (2025)          &            &            &            &            &            &            &         &            & \checkmark &            &            &            \\
+ProServe (2025)          & \checkmark &            & \checkmark &            &            &            & \checkmark &         &            & \checkmark &            &            \\
+SAGA (2026)              & \multicolumn{12}{l}{(baselines not extractable from preprint abstract; body-text extraction failed via WebFetch)} \\
+Token Pools (CAIS 2026)  & \multicolumn{12}{l}{(single-node evaluation; no external policy baselines reported)} \\
+Fluid-WAIT (2025)        & \multicolumn{12}{l}{(unnamed ``widely used baselines'')} \\
+Scorpio (WISE 2026)      & \checkmark & \multicolumn{11}{l}{\ + S3 and Mooncake, the latter itself an early-rejection mechanism} \\
 \bottomrule
 \end{tabular}%
 }
