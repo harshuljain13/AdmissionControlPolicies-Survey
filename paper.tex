@@ -97,44 +97,27 @@
 Serving large language models at scale is a distributed systems problem
 whose overload behavior is governed at the ingress. We conduct an
 adapted-PRISMA systematic review of fifty-four admission and
-admission-adjacent works published between 2022 and 2026, drawn from
-OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA,
-and arXiv preprints. Our analysis reveals four key findings.
-\textbf{First}, of nine LLM serving papers we audited across
-OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, and HPCA between 2022 and
-2026, not one includes an explicit ingress-level admission control
-policy; all nine absorb overload through batching, migration,
-placement, autoscaling, or memory management. Token Pools (CAIS
-2026) implements gateway-level admission tied to autoscaling but
-sits outside this seven-venue slice and has a single-node
-evaluation. \textbf{Second}, of sixteen
-admission-primary papers we audited, no two share a baseline
-set, and the only baselines shared by more than one paper are
-unconfigured serving engines and classical scheduling disciplines.
-Exactly one published admission system is used as a baseline by two
-papers. Policies are measured against the absence of admission control,
-almost never against one another, which makes cross-paper comparison
-impossible from the literature alone. \textbf{Third}, no
-published policy occupies the intersection with all four properties:
-agent-level admission, online serving, explicit TTFT and TBT
-deadlines, and per-tenant fairness. SAGA (arXiv:2605.00528) is the
-closest known work, satisfying agent-level scheduling with a
-bounded-deviation Agent Fair Share metric and reporting 99.2\% SLO
-attainment, but online mode, the explicit TTFT/TBT decomposition,
-and per-tenant (rather than per-task) fairness are not established. \textbf{Finally}, artifact-level reproducibility is
-higher than the common ``reproducibility crisis'' framing suggests:
-seven of the sixteen admission-primary papers have released code, as
-have five of the six KV-cache-adjacent works, but a
-methodology-level crisis persists in the absence of a shared baseline
-contract. We contribute a four-axis taxonomy (unit, setting, SLO
-awareness, signal) with four sub-branches, a master
-classification table with GRADE-style evidence ratings, formal
-definitions of the admission-decision, goodput-under-admission, and
-fairness-index primitives, an admission-signal overhead synthesis, seven reporting items whose
-inconsistency blocks cross-paper comparison, a mapping of eight public
-production incidents to admission failure modes, and seven open
-problems each grounded in published peer review or the primary
-source's own limitation statement.
+admission-adjacent works published between 2022 and 2026 across OSDI,
+SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA and
+arXiv, and report three findings. First, of nine LLM serving papers
+audited across a seven-venue slice, none includes an explicit
+ingress-level admission policy; all nine absorb overload through
+batching, migration, placement, autoscaling or memory management.
+Second, of sixteen admission-primary papers, no two share a baseline
+set: policies are measured against the absence of admission control
+and almost never against one another, so the literature alone cannot
+say which policy suits a given deployment. Third, artifact
+availability is higher than the usual ``reproducibility crisis''
+framing suggests, at seven of sixteen admission-primary papers, while
+the obstacle to comparison lies in what papers report rather than in
+what they release. We contribute a taxonomy of unit, setting,
+SLO awareness and signal, with a master classification carrying
+GRADE-style evidence ratings; formal definitions of the
+admission-decision, goodput-under-admission and fairness-index
+primitives; seven reporting items whose inconsistency blocks
+cross-paper comparison; a mapping of eight public production incidents
+to admission failure modes; and seven open problems, each grounded in
+published peer review or in a primary source's own limitations.
 \end{abstract}
 
 \section{Introduction}
@@ -149,7 +132,7 @@ required follow-up. Two years later, on January 21, 2026, Anthropic's
 Sonnet 4.5 tier degraded first in latency and then in error rate over
 roughly ninety minutes. The postmortem cited insufficient compute
 capacity for demand and named earlier detection of capacity constraints
-as a required change. Cloudflare, Azure, and other production operators
+as a required change. Cloudflare \citep{cloudflare_ratelimit_2017,cloudflare_ratelimit_2022}, Azure, and other production operators
 have documented similar sequences.
 
 Admission control is the decision made before a request enters the
@@ -247,11 +230,11 @@ counter-example. Second, of sixteen admission-primary papers we
 audited, no two share a baseline set, and the only
 baselines shared by more than one paper are unconfigured serving engines
 and classical scheduling disciplines. Exactly one published admission
-system, SHEPHERD, is used as a baseline by two papers (QLM and
+system, SHEPHERD \citep{shepherd2023}, is used as a baseline by two papers (QLM and
 Ascendra). Third, the taxonomy accommodates every corpus work that proposes or
 embeds an admission mechanism, twenty-eight in total
 (Table~\ref{tab:master}), including the five added during verification
-(Token Pools, ProServe, SAGA, Scorpio and FairServe), with four
+(Token Pools, ProServe \citep{huang2026proserve}, SAGA, Scorpio and FairServe), with four
 sub-branches added during our reading, none of which required
 backing out an original axis.
 
@@ -1148,11 +1131,11 @@ Orca & OSDI 2022 & FCFS + KV-slot cap (implicit) & No \\
 Sarathi-Serve & OSDI 2024 & Chunked prefill batching & No \\
 Llumnix & OSDI 2024 & Live request migration & No \\
 DistServe & OSDI 2024 & P/D disaggregation, static split & No \\
-Past-Future & ASPLOS 2025 & Memory projection at batch boundary & Internal only \\
-Aegaeon & SOSP 2025 & Per-token autoscaling & No \\
-Jenga & SOSP 2025 & Memory heterogeneity mgmt & No \\
-AdaServe & EuroSys 2026 & SLO-customized spec decode & No \\
-PASCAL & HPCA 2026 & Runtime phase detection & No \\
+Past-Future \citep{pastfuture2025} & ASPLOS 2025 & Memory projection at batch boundary & Internal only \\
+Aegaeon \citep{aegaeon2025} & SOSP 2025 & Per-token autoscaling & No \\
+Jenga \citep{jenga2025} & SOSP 2025 & Memory heterogeneity mgmt & No \\
+AdaServe \citep{adaserve2026} & EuroSys 2026 & SLO-customized spec decode & No \\
+PASCAL \citep{pascal2026} & HPCA 2026 & Runtime phase detection & No \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1202,7 +1185,7 @@ surveys, for which an admission taxonomy is not defined. Nine are
 scheduling papers from the seven-venue slice that contain no admission
 mechanism to classify, which is the nine-of-nine finding of
 Section~\ref{sec:clusters} rather than an omission here. The remaining
-five are AQUA, Chiron, Mooncake, Throughput-Optimal Scheduling and
+five are AQUA \citep{kumar2025aqua}, Chiron, Mooncake, Throughput-Optimal Scheduling and
 Beyond Prediction, each of which touches admission indirectly:
 AQUA and Mooncake through reclamation and early rejection, Chiron
 through autoscaling, and the last two through queueing-theoretic
@@ -1273,7 +1256,7 @@ Flow-Ctrl scheduling    & preprint   & 2026 & req & ing & wcrt & L \\
 Service-Induced Cong.   & preprint   & 2026 & req & ing & wcrt & M \\
 Jaillet et al.\         & preprint   & 2026 & req & ing & lp   & M \\
 Shen et al.\            & ICML       & 2026 & req & ing & lp   & M \\
-ProServe                & preprint   & 2025 & req & qb  & lp   & L \\
+ProServe \citep{huang2026proserve} & preprint & 2025 & req & qb & lp & L \\
 \midrule
 \multicolumn{7}{l}{\textit{Agent-session-level admission}} \\
 CONCUR                  & ICML       & 2026 & agt & ing & dg   & M \\
@@ -1421,7 +1404,7 @@ and classical scheduling disciplines, not admission policies.
 
 \begin{table}[htbp]
 \centering
-\caption{Baseline overlap across admission-primary papers. The most-used baseline (vLLM) appears in six papers and Sarathi in four; no other appears in more than two; and no two papers share the same baseline set. Read by what the columns contain: vLLM, SGLang, Sarathi, DistServe and Orca are serving engines, so a tick there measures a policy against the absence of admission control rather than against an alternative to it, and EDF, FCFS and SJF are classical disciplines rather than published systems. SOLA's Sarathi entry is marked \emph{re-impl.} because it reimplements chunked prefill on vLLM rather than comparing against upstream Sarathi-Serve. Among published admission systems, SHEPHERD is used as a baseline by two papers (QLM and Ascendra); AC-FCFS also appears twice, but it is a throughput-matched token bucket constructed as an ablation rather than a system published in its own right. Scorpio's comparison against Mooncake is the corpus's clearest instance of one admission mechanism measured against another. Rows for CONCUR, Continuum, SAGA, and Token Pools are also omitted from column headers (a paper cannot baseline against itself); Continuum appears only as CONCUR's rebuttal-added comparator. Empty rows for SAGA and Token Pools indicate baselines that are not extractable from the current text of those preprints.}
+\caption{Baseline overlap across admission-primary papers. The most-used baseline (vLLM) appears in six papers and Sarathi in four; no other appears in more than two; and no two papers share the same baseline set. Read by what the columns contain: vLLM, SGLang, Sarathi, DistServe and Orca are serving engines, so a tick there measures a policy against the absence of admission control rather than against an alternative to it, and EDF, FCFS and SJF are classical disciplines rather than published systems. SOLA's Sarathi entry is marked \emph{re-impl.} because it reimplements chunked prefill on vLLM rather than comparing against upstream Sarathi-Serve. Among published admission systems, SHEPHERD \citep{shepherd2023} is used as a baseline by two papers (QLM and Ascendra); AC-FCFS also appears twice, but it is a throughput-matched token bucket constructed as an ablation rather than a system published in its own right. Scorpio's comparison against Mooncake is the corpus's clearest instance of one admission mechanism measured against another. Rows for CONCUR, Continuum, SAGA, and Token Pools are also omitted from column headers (a paper cannot baseline against itself); Continuum appears only as CONCUR's rebuttal-added comparator. Empty rows for SAGA and Token Pools indicate baselines that are not extractable from the current text of those preprints.}
 \label{tab:baselines}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -1540,12 +1523,12 @@ gap is our own analytic reconstruction, not stated by the operator.
 \textbf{Incident} & \textbf{Failure mode} & \textbf{Trusted signal (was)} & \textbf{Leading signal (needed)} & \textbf{Source} & \textbf{Conf.} \\
 \midrule
 Azure Mar 2016 & Control-plane inferred backend unavailability, returned 429 for 3.5--4\,h & HTTP 400 (spurious) & Cross-validated backend liveness & Azure status archive & V \\
-OpenAI DALL$\cdot$E queue collapse & Work admitted past client cancellation timeout & Queue depth & Queue age at admission & OpenAI status archive & I \\
-OpenAI Nov 8 2023 & Routing nodes crossed soak point; adding replicas insufficient & Utilization & Rate of change of utilization & OpenAI status \texttt{00f8yyc9pj9r} & V \\
-OpenAI Dec 11 2024 & Telemetry API storm; stale DNS for 20\,min then failed at TTL expiry & Aggregate utilization dashboards & Control-plane health independent of data-plane cache & OpenAI status \texttt{ctrsv3lwd797} & V \\
-OpenAI Apr 2025 & Control-plane OOM; failover overloaded second cluster; misleading errors & Cluster availability & Correct 429/503 propagation on failover & OpenAI status archive & V \\
-Anthropic Jan 21 2026 & Insufficient compute for demand; latency then errors for $\sim$90\,min & Metrics dashboard refresh cycle & Sub-minute capacity-constraint detection & Anthropic status archive & I \\
-Anthropic Aug 29 2025 & LB moved short-context traffic to servers configured for 1M-token contexts & Pool-level utilization & Per-configuration utilization decomposition & Anthropic eng.\ postmortem blog & V \\
+OpenAI DALL$\cdot$E queue collapse & Work admitted past client cancellation timeout & Queue depth & Queue age at admission & \citep{openai_dalle_postmortem} & I \\
+OpenAI Nov 8 2023 & Routing nodes crossed soak point; adding replicas insufficient & Utilization & Rate of change of utilization & \citep{openai_nov2023} & V \\
+OpenAI Dec 11 2024 & Telemetry API storm; stale DNS for 20\,min then failed at TTL expiry & Aggregate utilization dashboards & Control-plane health independent of data-plane cache & \citep{openai_dec2024} & V \\
+OpenAI Apr 2025 & Control-plane OOM; failover overloaded second cluster; misleading errors & Cluster availability & Correct 429/503 propagation on failover & \citep{openai_apr2025} & V \\
+Anthropic Jan 21 2026 & Insufficient compute for demand; latency then errors for $\sim$90\,min & Metrics dashboard refresh cycle & Sub-minute capacity-constraint detection & \citep{anthropic_jan2026} & I \\
+Anthropic Aug 29 2025 & LB moved short-context traffic to servers configured for 1M-token contexts & Pool-level utilization & Per-configuration utilization decomposition & \citep{anthropic_aug2025} & V \\
 Anthropic HTTP 529 semantics & Provider-overloaded distinct from client-rate-limited & Single 429/503 signal & Dedicated 529 semantics & \citep{anthropic_api_errors} & V \\
 \bottomrule
 \end{tabular}%
