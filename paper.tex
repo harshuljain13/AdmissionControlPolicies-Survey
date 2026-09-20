@@ -1,7 +1,13 @@
-\documentclass[11pt,letterpaper]{article}
+\documentclass[10pt]{article} % TMLR
 
 \PassOptionsToPackage{table}{xcolor}
-\usepackage[margin=1in]{geometry}
+\usepackage{tmlr}
+% Anonymous by default: the tmlr package hides the author block unless
+% [accepted] or [preprint] is passed. Non-anonymous submissions are
+% rejected without review.
+%   \usepackage[preprint]{tmlr}   % de-anonymised, for arXiv
+%   \usepackage[accepted]{tmlr}   % camera-ready
+
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{graphicx}
 \usepackage{tikz}
@@ -9,11 +15,11 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{url}
 \usepackage{caption}
 \usepackage{enumitem}
 \usepackage{microtype}
 \usepackage{array}
-\usepackage{amsthm}
 
 % Definition environment for foundational definitions
 \theoremstyle{definition}
@@ -40,32 +46,51 @@
   linktoc=all
 }
 
+\title{Admission Control for LLM Inference Serving:\\ A Systematic Review}
+
+% Hidden unless [accepted] or [preprint] is passed to the tmlr package.
+\author{\name Harshul Jain \email harshuljain1393@gmail.com \\
+      \addr Independent Researcher, Audible
+      \AND
+      \name Tanmay Sah \email tradertanmay@mail.com \\
+      \addr Independent Researcher
+      \AND
+      \name Tanya Sah \email tanyasah20@gmail.com \\
+      \addr Independent Researcher
+      \AND
+      \name Parv Khatri \email khatriparv@gmail.com \\
+      \addr Independent Researcher, SAP}
+
+\def\month{09}
+\def\year{2026}
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
+
+% Artifact URL de-anonymises the submission, so it is withheld under
+% double-blind review and revealed in the preprint and camera-ready
+% builds. \if@accepted is set by both the [accepted] and [preprint]
+% options of the tmlr package.
+\makeatletter
+\if@accepted
+  \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
+\else
+  \newcommand{\artifacturl}{repository withheld for double-blind review;
+    the coding sheets are included as supplementary material}
+\fi
+% Naming the companion harness de-anonymises the submission, since its
+% repository carries the author names.
+\if@accepted
+  \newcommand{\companionwork}{Companion work in preparation
+    (\emph{AdmitPerf}) takes this as its subject.}
+\else
+  \newcommand{\companionwork}{Companion work by the present authors,
+    in preparation, takes this as its subject; it is not cited here so
+    as to preserve anonymity.}
+\fi
+\makeatother
+
 \begin{document}
 
-\begin{center}
-{\LARGE\bfseries Admission Control for LLM Inference Serving:\\[0.2em] A Systematic Review\par}
-
-\vspace{1em}
-{\color{admitgrey}\rule{0.55\textwidth}{0.6pt}}
-\vspace{1em}
-
-{\normalsize
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{cc}
-\textbf{Harshul Jain} & \textbf{Dr.\ Tanmay Sah} \\
-Independent Researcher, Audible & Independent Researcher \\
-{\small\texttt{harshuljain1393@gmail.com}} & {\small\texttt{tradertanmay@mail.com}} \\[0.7em]
-\textbf{Tanya Sah} & \textbf{Parv Khatri} \\
-Independent Researcher & Independent Researcher, SAP \\
-{\small\texttt{tanyasah20@gmail.com}} & {\small\texttt{khatriparv@gmail.com}} \\
-\end{tabular}
-}
-
-\vspace{0.8em}
-{\itshape September 19, 2026}
-\end{center}
-
-\vspace{1em}
+\maketitle
 
 \begin{abstract}
 \noindent
@@ -172,13 +197,13 @@ deadline, at which point they consume more capacity being cleaned up.
 \end{figure}
 
 The literature on LLM inference has produced systems papers on batching
-\cite{yu2022orca, agrawal2024sarathi}, disaggregation
-\cite{zhong2024distserve, patel2024splitwise}, memory management
-\cite{kwon2023pagedattention, qin2025mooncake}, and scheduling
-\cite{sun2024llumnix, hong2025sola}. Existing surveys cover efficient
-serving broadly \cite{zhen2025titans, li2024surveyllm,
+\citep{yu2022orca, agrawal2024sarathi}, disaggregation
+\citep{zhong2024distserve, patel2024splitwise}, memory management
+\citep{kwon2023pagedattention, qin2025mooncake}, and scheduling
+\citep{sun2024llumnix, hong2025sola}. Existing surveys cover efficient
+serving broadly \citep{zhen2025titans, li2024surveyllm,
 heisler2025survey} or the queueing-theoretic view of LLM systems
-specifically \cite{mitzenmacher2025queueing}. Table~\ref{tab:diff}
+specifically \citep{mitzenmacher2025queueing}. Table~\ref{tab:diff}
 differentiates this survey from those prior works.
 
 \paragraph{Contributions.}
@@ -287,9 +312,9 @@ A large language model inference request passes through prefill,
 decode, and completion. Prefill computes the key-value tensors for
 every input token. Decode generates output tokens one at a time,
 reading the accumulated KV cache and appending a new pair per step.
-Continuous batching \cite{yu2022orca} reuses a single GPU-resident
+Continuous batching \citep{yu2022orca} reuses a single GPU-resident
 engine across many concurrent requests by interleaving iterations at
-token granularity. PagedAttention \cite{kwon2023pagedattention} manages
+token granularity. PagedAttention \citep{kwon2023pagedattention} manages
 the KV cache in fixed-size blocks to reduce fragmentation and enable
 prefix sharing.
 
@@ -312,7 +337,7 @@ receives the request. This paper is about the first box.
 The error contract matters. HTTP 429 signals a client-side rate limit
 exceeded. HTTP 503 signals a temporarily unavailable service.
 Anthropic uses HTTP 529 to signal a provider-overloaded state distinct
-from either \cite{anthropic_api_errors}. A well-designed admission
+from either \citep{anthropic_api_errors}. A well-designed admission
 policy chooses among these codes based on which signal the client's
 backoff logic should trust.
 
@@ -324,7 +349,7 @@ arrival and the first generated token. Time-between-tokens (TBT),
 sometimes called inter-token latency or time-per-output-token (TPOT),
 is the delay between consecutive generated tokens. Goodput is the
 completed-request rate that met their service-level objective, distinct
-from raw throughput \cite{zhong2024distserve}. For agentic workloads,
+from raw throughput \citep{zhong2024distserve}. For agentic workloads,
 agent-completion rate measures the fraction of multi-turn sessions
 that finish within an end-to-end budget.
 
@@ -384,7 +409,7 @@ workload class.
 \label{def:fairness}
 For $n$ tenants (or agents, or classes) with weights $w_i$ and served
 tokens $s_i$ over interval $[0, T]$, we use \emph{Jain's fairness
-index} \cite{jain1984fairness} in weighted form. Jain, Chiu, and Hawe
+index} \citep{jain1984fairness} in weighted form. Jain, Chiu, and Hawe
 introduced this index in 1984 as a scale-independent measure of how
 equitably a set of quantities is distributed across users; it has
 been the standard fairness primitive in network scheduling and
@@ -401,7 +426,7 @@ and $J = 1/n$ denotes maximal concentration on a single tenant. Chosen
 as the primitive because it composes cleanly across the three
 fairness types in the taxonomy (task, tenant, priority-weighted).
 
-The Jain index is a coarse instrument. Equinox \cite{lu2025equinox}
+The Jain index is a coarse instrument. Equinox \citep{lu2025equinox}
 and related utility-centric work argue that equal tokens do not imply
 equal user experience, and that a fairness measure grounded in
 predicted response quality or user-perceived latency is more
@@ -414,7 +439,7 @@ substitution risk explicitly rather than hide it.
 \subsection{Why admission control is hard}
 \label{sec:whyhard}
 
-Ao, Dong, Luo, and Simchi-Levi \cite{ao2026sic} formalize the core
+Ao, Dong, Luo, and Simchi-Levi \citep{ao2026sic} formalize the core
 problem. In a discrete-time model of continuous batching under a memory
 budget, the service process itself creates future capacity pressure
 because each active request's KV footprint grows with each generated
@@ -530,14 +555,14 @@ seed for Open Problem~1.}
 
 Admission decisions can be made at three granularities.
 \textbf{Request-level} (\textsc{unit-req}) policies admit or reject
-each incoming prompt independently (QLM \cite{patke2024qlm}; Chronos
-\cite{marref2026chronos}; FastServe \cite{wu2026fastserve}; SOLA
-\cite{hong2025sola}). \textbf{Agent-session-level} (\textsc{unit-agt})
+each incoming prompt independently (QLM \citep{patke2024qlm}; Chronos
+\citep{marref2026chronos}; FastServe \citep{wu2026fastserve}; SOLA
+\citep{hong2025sola}). \textbf{Agent-session-level} (\textsc{unit-agt})
 policies admit or reject entire multi-turn agent trajectories (CONCUR
-\cite{chen2026concur}; Continuum \cite{li2026continuum}; ThunderAgent
-\cite{kang2026thunderagent}). \textbf{Tenant-level} (\textsc{unit-ten})
+\citep{chen2026concur}; Continuum \citep{li2026continuum}; ThunderAgent
+\citep{kang2026thunderagent}). \textbf{Tenant-level} (\textsc{unit-ten})
 policies gate admission per user or per organization (VTC
-\cite{sheng2024vtc}).
+\citep{sheng2024vtc}).
 
 \subsection{Axis 2: Setting}
 
@@ -548,7 +573,7 @@ per its ICML 2026 meta-review. Hybrid settings mix both.
 
 \paragraph{Sub-branch: Concurrency context.}
 We add a sub-branch after finding that Clairvoyant
-\cite{sundaresan2026clairvoyant} solves an admission problem that
+\citep{sundaresan2026clairvoyant} solves an admission problem that
 server-side policies cannot generalize to. Concurrent-batch servers
 (vLLM, SGLang, TensorRT-LLM) admit at iteration granularity, contend
 for KV blocks across many active requests, and can preempt mid-decode.
@@ -567,7 +592,7 @@ FairBatching, Equinox). Cost-oriented policies minimize dollars or
 energy per token.
 
 \paragraph{Sub-branch: SLO granularity.}
-SLOs-Serve \cite{chen2025slosserve} exposes a design axis nobody else
+SLOs-Serve \citep{chen2025slosserve} exposes a design axis nobody else
 covers. Job-level SLOs specify a single deadline per multi-turn agent
 job. Request-level SLOs specify one deadline per prompt (most of the
 field). Per-stage SLOs specify distinct deadlines per stage of a
@@ -576,9 +601,9 @@ multi-turn application. Only SLOs-Serve models the per-stage case.
 \paragraph{Sub-branch: Fairness type.}
 Task-fairness allocates GPU cycles equitably between prefill and
 decode tasks within one batch (FairBatching
-\cite{lyu2025fairbatching}). Tenant-fairness equalizes served tokens
-or SLO attainment across users (VTC \cite{sheng2024vtc}, Equinox
-\cite{lu2025equinox}). These share no mechanism.
+\citep{lyu2025fairbatching}). Tenant-fairness equalizes served tokens
+or SLO attainment across users (VTC \citep{sheng2024vtc}, Equinox
+\citep{lu2025equinox}). These share no mechanism.
 
 \subsection{Axis 4: Signal used}
 
@@ -632,7 +657,7 @@ R_i \;\le\; \frac{\rho_P \cdot D_{\text{TTFT}}}{1 - \rho_P} + p_i(\alpha B + \ga
 where $\rho_P$ is prefill utilization, $D_{\text{TTFT}}$ is the TTFT
 deadline, $p_i = \lceil \ell_i / B \rceil$ is the number of chunks,
 $\alpha$ is prefill kernel throughput, $B$ is chunk size, and $\gamma$
-is fixed overhead. Algorithm~1 of \cite{marref2026chronos} rejects on
+is fixed overhead. Algorithm~1 of \citep{marref2026chronos} rejects on
 arrival if $\rho_P \ge 1$, if the bound exceeds the TTFT deadline, or
 if a TBT capacity check fails.
 
@@ -669,7 +694,7 @@ per-tenant-fair is not fully occupied by any published policy.
 CONCUR is agent-level but offline and throughput-oriented. Chronos
 is deadline-aware but request-level. FairBatching is fair but
 task-level not tenant-level. SAGA
-\cite{guo2026saga} is the closest work: it schedules at the
+\citep{guo2026saga} is the closest work: it schedules at the
 agent-workflow level with a bounded-deviation Agent Fair Share
 metric and reports 99.2\% SLO attainment, but the paper does not
 establish that Agent Fair Share reduces to per-tenant fairness in
@@ -791,7 +816,7 @@ conflict rather than adjudicate.
 
 \subsection{Request-level SLO-aware admission}
 
-QLM \cite{patke2024qlm} is the canonical peer-reviewed
+QLM \citep{patke2024qlm} is the canonical peer-reviewed
 admission-primary paper for online serving. It maintains virtual
 queues per model and formulates request scheduling as the linear
 program in Equation~\ref{eq:qlm-lp}. A Request Waiting Time Estimator
@@ -803,7 +828,7 @@ heterogeneous 30 A10 plus 50 A100 cluster serving Mistral-7B,
 Vicuna-13B, and LLaMA-70B on ShareGPT. Code is public at
 \url{https://github.com/QLM-project/QLM}.
 
-Chronos \cite{marref2026chronos} derives a formal schedulability
+Chronos \citep{marref2026chronos} derives a formal schedulability
 condition (Equation~\ref{eq:chronos-wcrt}) for LLM inference. On a 7B
 model in a discrete-event simulator against 50{,}000 sampled Azure
 conversational-service requests, Chronos delivers 0.00 percent TTFT
@@ -812,26 +837,26 @@ percent at 10$\times$ load. A throughput-matched token-bucket baseline
 still misses 15.4 percent at the same admission volume. Simulator code
 is public at \url{https://github.com/am-research/rtss-ttft-tbt}.
 
-SOLA \cite{hong2025sola} formalizes fine-grained scheduling as an LP
+SOLA \citep{hong2025sola} formalizes fine-grained scheduling as an LP
 over per-request and systemic state. Empirical scheduling raises SLO
 attainment from 45.5 percent to 99.4 percent and serves 1.04-1.27
 $\times$ more requests. The constraint-relaxation mechanism at the
 $\alpha$-percentile is an implicit admission decision hidden inside a
 scheduler.
 
-FastServe \cite{wu2026fastserve} argues for token-granularity
+FastServe \citep{wu2026fastserve} argues for token-granularity
 preemption rather than reject-on-arrival admission. The 31.4$\times$
 average-latency throughput improvement is measured on OPT-175B across
 16 A100 GPUs against vLLM v0.1.7 on ShareGPT. Code is public but runs
 on the SwiftTransformer engine.
 
-SLOs-Serve \cite{chen2025slosserve} is the only paper in our corpus
+SLOs-Serve \citep{chen2025slosserve} is the only paper in our corpus
 that handles per-stage-of-agent SLOs. Multi-SLO DP admits requests
 whose joint SLOs are attainable and declines the rest through soft
 admission. Reports 2.2$\times$ geometric-mean per-GPU serving capacity
 across six workload scenarios and five models.
 
-ProServe \cite{huang2025proserve} frames scheduling as unified
+ProServe \citep{huang2025proserve} frames scheduling as unified
 multi-priority request scheduling. Admission emerges from the
 SlideBatching loop's budget-and-memory gates combined with a
 token-level deadline-aware gain function
@@ -843,7 +868,7 @@ we classify it as such in Table~\ref{tab:master}. Baselines include
 vLLM-FCFS, Sarathi-FCFS, Sarathi-Priority, Weighted VTC, and
 FairBatching. No code released.
 
-Scorpio \cite{he2026scorpio} is the most recent admission-primary entry
+Scorpio \citep{he2026scorpio} is the most recent admission-primary entry
 and splits the decision across three stages: admission, queue
 management, and batch selection. Its TTFT Guard reorders by least
 deadline first and rejects requests whose first-token deadline is
@@ -873,7 +898,7 @@ correct one.
 
 \subsection{Agent-session-level admission}
 
-CONCUR \cite{chen2026concur} identifies middle-phase thrashing in
+CONCUR \citep{chen2026concur} identifies middle-phase thrashing in
 agentic batch inference. The controller applies the dual-gate
 condition of Equation~\ref{eq:concur-dualgate}. Headline gains are
 4.09$\times$ throughput against SGLang on Qwen3-32B at 256 sessions,
@@ -883,19 +908,19 @@ as a baseline, CONCUR shows 1.69$\times$ on Qwen3-32B (added in
 rebuttal). The meta-review states the paper targets offline
 throughput-oriented inference and that online serving is out of scope.
 
-Continuum \cite{li2026continuum} manages KV retention rather than
+Continuum \citep{li2026continuum} manages KV retention rather than
 gating admission. Per-session time-to-live is set by maximizing
 expected benefit minus cost. Reports 1.12-3.66$\times$ JCT improvement
 across Llama-3.1, Gemma-3, and GLM-4.5 on SWE-Bench, BFCL, and
 OpenHands, with an internal-deployment peak of 8.18$\times$. Public
 vLLM fork at \url{https://github.com/Hanchenli/vllm-continuum}.
 
-ThunderAgent \cite{kang2026thunderagent} treats disk, ports, and
+ThunderAgent \citep{kang2026thunderagent} treats disk, ports, and
 sandboxes as first-class scheduled resources alongside GPU. A central
 scheduler pauses and restores programs with explicit state migration.
 Integrated into NVIDIA Dynamo 2.0.
 
-SAGA \cite{guo2026saga} schedules at the level of the entire agent
+SAGA \citep{guo2026saga} schedules at the level of the entire agent
 workflow rather than per inference call, introducing Agent Execution
 Graphs that capture workflow structure across tool-call boundaries
 and predict KV cache reuse. The paper defines Agent Fair Share, a
@@ -911,7 +936,7 @@ problem.
 
 \subsection{Fairness-aware admission and scheduling}
 
-VTC \cite{sheng2024vtc} formalizes LLM-serving fairness through a
+VTC \citep{sheng2024vtc} formalizes LLM-serving fairness through a
 cost function over tokens processed rather than requests, with default
 weights $w_p = 1$ for input and $w_q = 2$ for output. The theoretical
 guarantee bounds service difference between any two
@@ -929,19 +954,19 @@ versus 777 tok/s on 27 Chatbot Arena clients), whereas RPM(5) rate
 limiting collapses throughput to 340 tok/s. Artifact-evaluated code at
 \url{https://github.com/Ying1123/VTC-artifact}.
 
-FairBatching \cite{lyu2025fairbatching} attacks fairness between
+FairBatching \citep{lyu2025fairbatching} attacks fairness between
 prefill and decode tasks within a batch. Achieves 2.29$\times$ tail
 latency reduction, 20 percent single-node capacity improvement, and
 54.3 percent cluster-level capacity improvement. Implementation is
 only 90 lines of invasive vLLM changes.
 
-Equinox \cite{lu2025equinox} argues that equal tokens do not imply
+Equinox \citep{lu2025equinox} argues that equal tokens do not imply
 equal user experience. Requires a Model of Prediction Ensemble to
 predict output length, latency, throughput, and GPU utilization per
 prompt. Thirteen percent fairness improvement measured against
 Equinox's own metric.
 
-FairServe \cite{khan2024fairserve}, from Microsoft on real Copilot
+FairServe \citep{khan2024fairserve}, from Microsoft on real Copilot
 production traces, combines Online Interaction Throttling (OIT) at
 ingress with Weighted Service Counting (WSC) for scheduling. OIT
 throttles at the LLM-interaction level when the KV cache is
@@ -957,19 +982,19 @@ submission.
 
 \subsection{Queueing-theoretic and algorithmic}
 
-Service-Induced Congestion \cite{ao2026sic} provides the theoretical
+Service-Induced Congestion \citep{ao2026sic} provides the theoretical
 justification (Section~\ref{sec:whyhard},
 Equation~\ref{eq:throughput-bound}).
 
-Flow-Controlled Scheduling \cite{dong2026flowcontrolled} proves
+Flow-Controlled Scheduling \citep{dong2026flowcontrolled} proves
 necessary and sufficient stability conditions using a static
 token-bucket. LIFO eviction inverts fairness for interactive
 workloads.
 
-Fluid-WAIT \cite{ao2025fluidwait} derives a threshold admission rule
+Fluid-WAIT \citep{ao2025fluidwait} derives a threshold admission rule
 from a fluid-model equilibrium.
 
-Shen et al.\ \cite{shen2026twolayer} prove $\tilde{O}(\sqrt{K T})$
+Shen et al.\ \citep{shen2026twolayer} prove $\tilde{O}(\sqrt{K T})$
 regret for joint online configuration selection and admission control
 under an i.i.d.\ reward-resource assumption per configuration:
 %
@@ -981,24 +1006,24 @@ under an i.i.d.\ reward-resource assumption per configuration:
 The paper motivates via LLM serving but validates empirically on
 Alibaba cluster traces.
 
-Jaillet et al.\ \cite{jaillet2026online} target online scheduling
+Jaillet et al.\ \citep{jaillet2026online} target online scheduling
 under KV-cache constraints with monotonically growing per-request
 memory. Their memory-cognizant policies achieve competitive-ratio
 bounds under structured arrivals plus $\alpha$-accurate predictions.
 
-Mitzenmacher and Shahout \cite{mitzenmacher2025queueing} enumerate 25
+Mitzenmacher and Shahout \citep{mitzenmacher2025queueing} enumerate 25
 open problems at the intersection of queueing theory and LLM serving.
 
-Clairvoyant \cite{sundaresan2026clairvoyant} is the sole entry in the
+Clairvoyant \citep{sundaresan2026clairvoyant} is the sole entry in the
 serial-edge concurrency-context sub-branch. Predictive
 shortest-job-first using an XGBoost classifier over 19 lexical
 features delivers 70 to 76 percent short-request $p_{50}$ latency
 reduction on an RTX 4090.
 
-Ascendra \cite{elnikety2025ascendra} uses an SLO-risk predictor to
+Ascendra \citep{elnikety2025ascendra} uses an SLO-risk predictor to
 promote requests between low-priority and high-priority queues.
 
-Niyama \cite{goel2025niyama} sits adjacent to admission rather than
+Niyama \citep{goel2025niyama} sits adjacent to admission rather than
 inside it. It co-schedules mixed workloads on shared infrastructure with
 fine-grained QoS classes and a hybrid fairness-efficiency priority
 policy, and under overload it applies selective request relegation,
@@ -1009,19 +1034,19 @@ directly comparable to that of a deferring admission policy.
 
 \subsection{KV-cache management adjacent}
 
-KVFlow \cite{pan2025kvflow} is pure cache management with
+KVFlow \citep{pan2025kvflow} is pure cache management with
 steps-to-execution ranking over SGLang's radix tree. No admission
 logic. Complementary to CONCUR, not a substitute.
 
-Cake \cite{jin2025cake} optimizes single-request TTFT via hybrid
+Cake \citep{jin2025cake} optimizes single-request TTFT via hybrid
 compute-versus-load KV decisions.
 
-InferCept \cite{abhyankar2024infercept} chooses between preserving,
+InferCept \citep{abhyankar2024infercept} chooses between preserving,
 swapping, and discarding KV during tool-call intercepts. Cost model
 prices GPU-memory-bytes-times-time locally; does not account for
 queue length, which Continuum identifies as its key limitation.
 
-Pie \cite{gim2025pie} provides a programmable serving substrate with
+Pie \citep{gim2025pie} provides a programmable serving substrate with
 generation-loop handlers and KV page management. No cross-inferlet
 scheduler API and no admit-reject hook.
 
@@ -1069,7 +1094,7 @@ admission as an under-explored primary contribution within the
 top-tier systems venues surveyed here.
 
 \paragraph{Token Pools (CAIS 2026): partial counter-example.}
-Cunningham \cite{cunningham2026tokenpools} introduces token pools, a
+Cunningham \citep{cunningham2026tokenpools} introduces token pools, a
 control-plane abstraction expressing capacity as inference-native
 entitlements (token throughput, KV cache, concurrency). Admission is
 enforced at the API boundary: ``The auth service intercepts every
@@ -1197,15 +1222,15 @@ DistServe, Past-Future, Aegaeon, Jenga, AdaServe, PASCAL) are
 omitted from Table~\ref{tab:master} because none includes an
 ingress-level admission decision at all; they are summarized
 separately in Table~\ref{tab:9for9}. TokenScale
-\cite{lai2025tokenscale} is also omitted despite its LLM-serving
+\citep{lai2025tokenscale} is also omitted despite its LLM-serving
 scope: careful reading confirms it is a pure autoscaling framework
 (Token Velocity signal drives prefiller/decoder scaling only) with
-no admission-control component. Chiron \cite{patke2025chiron} is a
+no admission-control component. Chiron \citep{patke2025chiron} is a
 hierarchical autoscaler with no admission component and appears
 only under Open Problem~5.
 
 \paragraph{Dagger note on FairServe.} FairServe
-\cite{khan2024fairserve} operates at the user- and
+\citep{khan2024fairserve} operates at the user- and
 application-interaction level rather than at any of our three
 canonical unit codes (\textsc{req}, \textsc{agt}, \textsc{ten}). We
 mark it \textsc{ten}$^\dagger$ because a Microsoft-CoPilot
@@ -1388,9 +1413,9 @@ reading. It requires running the same policy under controlled variation
 of each item in turn, and we state it as Open Problem~7.
 
 Per-paper coding sheets, taxonomy placements, and inclusion and
-exclusion decisions for this survey are released at
-\texttt{harshuljain13/}\allowbreak\texttt{AdmissionControlPolicies-Survey}
-to support third-party audit and to reproduce the master table.
+exclusion decisions for this survey are released publicly, to support
+third-party audit and to reproduce the master table
+(\artifacturl).
 
 \section{Production evidence}
 \label{sec:prod}
@@ -1425,7 +1450,7 @@ OpenAI Dec 11 2024 & Telemetry API storm; stale DNS for 20\,min then failed at T
 OpenAI Apr 2025 & Control-plane OOM; failover overloaded second cluster; misleading errors & Cluster availability & Correct 429/503 propagation on failover & OpenAI status archive & V \\
 Anthropic Jan 21 2026 & Insufficient compute for demand; latency then errors for $\sim$90\,min & Metrics dashboard refresh cycle & Sub-minute capacity-constraint detection & Anthropic status archive & I \\
 Anthropic Aug 29 2025 & LB moved short-context traffic to servers configured for 1M-token contexts & Pool-level utilization & Per-configuration utilization decomposition & Anthropic eng.\ postmortem blog & V \\
-Anthropic HTTP 529 semantics & Provider-overloaded distinct from client-rate-limited & Single 429/503 signal & Dedicated 529 semantics & \cite{anthropic_api_errors} & V \\
+Anthropic HTTP 529 semantics & Provider-overloaded distinct from client-rate-limited & Single 429/503 signal & Dedicated 529 semantics & \citep{anthropic_api_errors} & V \\
 \bottomrule
 \end{tabular}%
 }
@@ -1454,7 +1479,7 @@ a weak-accept score with the final justification ``the underlying
 problem can be addressed through more effective request-level
 scheduling.'' CONCUR added a Continuum comparison in rebuttal but did
 not add a request-level baseline. SAGA
-\cite{guo2026saga} partially closes the gap by scheduling at agent
+\citep{guo2026saga} partially closes the gap by scheduling at agent
 workflow granularity with a bounded-deviation Agent Fair Share
 metric, but the paper does not evaluate per-tenant fairness across
 concurrent users, does not decompose SLOs into TTFT and TBT, and
@@ -1486,7 +1511,7 @@ reasoning-versus-chat classification is unclaimed.
 \paragraph{OP5: Cross-validation of coupled admission and autoscaling.}
 Chiron autoscales replicas; QLM (same research group) does
 per-replica SLO-aware queueing. Token Pools
-\cite{cunningham2026tokenpools} directly couples entitlement-based
+\citep{cunningham2026tokenpools} directly couples entitlement-based
 admission with autoscaling, but the evaluation is single-node
 (DGX Spark, Qwen3-8B) with no released code, so the interaction
 regime is unmeasured at cluster scale. The residual open problem
@@ -1518,8 +1543,7 @@ accordingly.
 
 Item~3 (signal liveness) is the clearest case to test, since no paper
 reports it: the question is not whether papers disagree but whether the
-omission changes what a reader should conclude. Companion work in
-preparation (\emph{AdmitPerf}) takes this as its subject.
+omission changes what a reader should conclude. \companionwork
 
 \section{Conclusion}
 \label{sec:conc}
@@ -1564,7 +1588,7 @@ with reject/defer accounting), OP5 (cross-validation of coupled
 admission and autoscaling on top of Token Pools), and OP7 (which
 reporting items are load-bearing).
 
-\bibliographystyle{plain}
+\bibliographystyle{tmlr}
 \bibliography{references}
 
 \end{document}
