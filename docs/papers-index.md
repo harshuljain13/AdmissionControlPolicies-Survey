@@ -22,7 +22,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 14 | ProServe | arXiv:2512.12928 | Multi-priority |
 | 15 | Clairvoyant | arXiv:2606.07248 | Predictive SJF |
 
-## Tier 2 — Fairness + Queueing theory (~10 papers, incl. SAGA #53 and FairServe #54)
+## Tier 2 — Fairness + Queueing theory (~11 papers, incl. SAGA #53, FairServe #54, Niyama #55)
 
 | # | Paper | Venue | Cluster |
 |---|---|---|---|
@@ -95,18 +95,19 @@ counted in the corpus total. Added 2026-09-19.
 | 52 | Token Pools | CAIS 2026 | Tier 4 — scheduling with admission components. Outside the seven-venue slice; discussed as the partial counter-example to the nine-of-nine finding. | ⛔ missing |
 | 53 | SAGA (Guo et al.) | arXiv:2605.00528 | Tier 2 — admission-adjacent. Agent-workflow scheduling; classified agent-level, mid-flight, scalar-signal. Whether its session-affinity batching reduces to ingress admission is not established. | ⛔ missing |
 | 54 | FairServe (Khan et al.) | preprint, 2024 (Microsoft) | Tier 2 — fairness. Ingress, dual-gate, on real Copilot traffic. Classified tenant-level with a dagger: it is the only corpus work operating at user/application-interaction granularity rather than request, agent-session or organizational tenant. | ⛔ missing |
+| 55 | Niyama (Goel et al.) | 2025 | Tier 2 — admission-adjacent. QoS-class co-scheduling; under overload it applies *selective request relegation*, degrading lower classes rather than refusing at the door. §5 states explicitly "We include it because relegation and admission answer the same question with different verbs." Cited and discussed, but carries no row in `tab:master`. | ⛔ missing |
 
-**Total: 54 papers.** Tier membership after the Tier 7 additions:
+**Total: 55 papers.** Tier membership after the Tier 7 additions:
 
 | Tier | Count | Classified in `tab:master` |
 |---|---|---|
 | 1 — admission-primary | 16 | 15 (AQUA absent) |
-| 2 — fairness / queueing | 10 | 6 (Throughput-Optimal, Beyond Prediction, Chiron absent) |
+| 2 — fairness / queueing | 11 | 6 (Throughput-Optimal, Beyond Prediction, Chiron, Niyama absent) |
 | 3 — KV-cache adjacent | 6 | 5 (Mooncake absent) |
 | 4 — scheduling w/ admission components | 10 | 1 (Token Pools) |
 | 5 — foundational | 7 | 0 (not classifiable: textbooks, engines) |
 | 6 — prior surveys | 5 | 0 (not classifiable) |
-| **total** | **54** | **28** |
+| **total** | **55** | **28** |
 
 `tab:master` classifies 28 of 54. Tiers 5 and 6 are correctly absent: an
 admission taxonomy does not apply to Kleinrock's textbook or to a prior survey.
@@ -127,7 +128,7 @@ release is not a meaningful question:
 | Tier | Released code | Of |
 |---|---|---|
 | Tier 1 — admission-primary | 7 | 16 |
-| Tier 2 — fairness / queueing | 1 | 10 |
+| Tier 2 — fairness / queueing | 1 | 11 |
 | Tier 3 — KV-cache adjacent | 5 | 6 |
 
 Scorpio's artifact status was not established during the audit and it is therefore
@@ -146,3 +147,11 @@ known gap.
 **Day 7**: Tier 5 + Tier 6 (foundational + differentiation surveys). Build taxonomy table.
 
 Per-paper notes go in `papers/{short-name}.md`. Format: 1-page max, sections: contribution / signal used / unit / setting / SLO-awareness / baselines / measurement setup / claimed numbers / code availability / relevance to our taxonomy.
+
+## Screened out, cited for the exclusion
+
+**TokenScale** (Lai et al., 2025) is cited in §6 and deliberately *not* counted in
+the corpus: careful reading confirmed it is a pure autoscaling framework whose
+Token Velocity signal drives prefiller/decoder scaling only, with no
+admission-control component. It is recorded here so the exclusion is traceable
+rather than looking like an oversight.

@@ -96,7 +96,7 @@
 \noindent
 Serving large language models at scale is a distributed systems problem
 whose overload behavior is governed at the ingress. We conduct an
-adapted-PRISMA systematic review of fifty-four admission and
+adapted-PRISMA systematic review of fifty-five admission and
 admission-adjacent works published between 2022 and 2026 across OSDI,
 SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA and
 arXiv, and report three findings. First, of nine LLM serving papers
@@ -191,7 +191,7 @@ differentiates this survey from those prior works.
 
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
-\item \textbf{Systematic coverage} of fifty-four admission and
+\item \textbf{Systematic coverage} of fifty-five admission and
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
@@ -1168,7 +1168,7 @@ require.
 \section{Master classification}
 \label{sec:master}
 
-Table~\ref{tab:master} classifies twenty-eight of the fifty-four works
+Table~\ref{tab:master} classifies twenty-eight of the fifty-five works
 in the corpus along the three orthogonal
 taxonomy levels (Unit, Moment, Signal grounding), plus a
 GRADE-adapted evidence rating for the strength of empirical support
@@ -1179,17 +1179,19 @@ mid-flight (during decode). Signal codes: \textsc{sca} scalar,
 \textsc{dg} dual-gate, \textsc{lp} linear-program, \textsc{wcrt}
 formal worst-case-response-time bound.
 
-\paragraph{What the table does not classify.} Twenty-six corpus works
+\paragraph{What the table does not classify.} Twenty-seven corpus works
 carry no row. Twelve are foundational systems, textbooks, or prior
 surveys, for which an admission taxonomy is not defined. Nine are
 scheduling papers from the seven-venue slice that contain no admission
 mechanism to classify, which is the nine-of-nine finding of
 Section~\ref{sec:clusters} rather than an omission here. The remaining
-five are AQUA \citep{kumar2025aqua}, Chiron, Mooncake, Throughput-Optimal Scheduling and
-Beyond Prediction, each of which touches admission indirectly:
+six are AQUA \citep{kumar2025aqua}, Chiron, Mooncake, Niyama
+\citep{goel2025niyama}, Throughput-Optimal Scheduling and Beyond
+Prediction, each of which touches admission indirectly:
 AQUA and Mooncake through reclamation and early rejection, Chiron
-through autoscaling, and the last two through queueing-theoretic
-results that do not specify a decision rule. Mooncake is the one we
+through autoscaling, Niyama through relegating lower QoS classes rather
+than refusing them, and the last two through queueing-theoretic results
+that do not specify a decision rule. Mooncake is the one we
 would most expect a reader to look for, since it functions as an
 early-rejection mechanism and appears as a baseline in
 Table~\ref{tab:baselines}; we leave it unclassified because its
@@ -1632,7 +1634,7 @@ that governs whether downstream batching, KV management, and
 preemption have the capacity headroom to succeed. Between 2022 and
 2026 the field produced thirteen admission-primary works at
 peer-reviewed top venues plus one accepted workshop paper and more
-than a dozen preprints. We surveyed fifty-four works across
+than a dozen preprints. We surveyed fifty-five works across
 admission-primary, admission-adjacent, and scheduling clusters.
 
 Our four-axis taxonomy with four sub-branches organizes the corpus

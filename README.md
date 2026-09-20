@@ -13,7 +13,7 @@
 
 - Four-axis taxonomy for admission-control policies: unit (request / agent / tenant), setting (online / offline / hybrid), SLO awareness (deadline / throughput / fairness / cost), signal (scalar / dual-gate / LP-composite / formal WCRT).
 - Four sub-branches added during reading: signal structure, SLO granularity (job / request / per-stage), fairness type (task / tenant / priority), concurrency context (concurrent-batch server / serial edge).
-- Per-cluster synthesis of fifty-four admission and admission-adjacent works.
+- Per-cluster synthesis of fifty-five admission and admission-adjacent works.
 - Reproducibility audit: 7 of the 16 admission-primary papers have released code, as have 5 of the 6 KV-cache-adjacent works.
 - Seven reporting items whose inconsistency blocks cross-paper comparison.
 - Mapping of eight public production incidents (OpenAI × 4, Anthropic × 3, Azure × 1) to admission failure modes.
