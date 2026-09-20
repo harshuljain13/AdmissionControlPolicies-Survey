@@ -1361,7 +1361,7 @@ can see the heterogeneity of contexts across which we are reasoning.
 Fluid-WAIT (\textsc{sig-sca}) & Llama-2-7B / vLLM & 1$\times$A100 40 & TTFT 500\,ms / synthetic Poisson & tens of \textmu s & 10--20\% goodput \\
 Clairvoyant (\textsc{sig-sca}) & Llama-3.1-8B / Ollama & RTX 4090 & p50 latency / ShareGPT & tens of \textmu s & 70--76\% short-request p50 latency reduction \\
 CONCUR (\textsc{sig-dg}) & Qwen3-32B / SGLang & 8$\times$H100 & JCT / BrowserComp, 256 sessions & $<$100\,\textmu s + AIMD update & 4.09$\times$ throughput vs SGLang \\
-QLM (\textsc{sig-lp}) & Mistral-7B + Vicuna-13B + LLaMA-70B / vLLM & 30$\times$A10 + 50$\times$A100 & TTFT tail / ShareGPT & $\approx$5\,s Gurobi solve at 400\,K queued & 40--90\% SLO-attainment, 20--400\% throughput vs vLLM+EDF \\
+QLM (\textsc{sig-lp}) & Mistral-7B + Vicuna-13B + LLaMA-70B / vLLM & 30$\times$A10 + 50$\times$A100 & TTFT tail / ShareGPT & $\approx$5\,s Gurobi solve at 400\,K queued & 40--90\% SLO-attainment vs vLLM; 20\% throughput single-model, 50--400\% multi-model, vs vLLM+EDF \\
 Chronos (\textsc{sig-wcrt}) & 7B ref.\ model / discrete-event sim & simulator & TTFT deadline / 50\,K Azure requests & \textmu s (closed-form) & TTFT miss 99.44\%$\rightarrow$0.00\% at 5$\times$ load (sim) \\
 \bottomrule
 \end{tabular}%
