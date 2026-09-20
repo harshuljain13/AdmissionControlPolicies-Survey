@@ -2,7 +2,7 @@
 
 Target: 30-50 papers deep-read + cited. ~80-120 total citations (including foundational + adjacent).
 
-## Tier 1 — Admission-control-primary (MUST deep-read, ~15 papers)
+## Tier 1 — Admission-control-primary (~16 papers, incl. Scorpio at #51)
 
 | # | Paper | Venue | Cluster |
 |---|---|---|---|
@@ -22,7 +22,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 14 | ProServe | arXiv:2512.12928 | Multi-priority |
 | 15 | Clairvoyant | arXiv:2606.07248 | Predictive SJF |
 
-## Tier 2 — Fairness + Queueing theory (~8 papers)
+## Tier 2 — Fairness + Queueing theory (~9 papers, incl. FairServe at #54)
 
 | # | Paper | Venue | Cluster |
 |---|---|---|---|
@@ -84,7 +84,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 
 ## Tier 7 — Late additions (found during verification, after the original index)
 
-These three are cited, classified in `tab:master`, and discussed in dedicated
+These four are cited, classified in `tab:master`, and discussed in dedicated
 paragraphs in the paper — the same treatment every other corpus member receives —
 but they postdate the original index and were never back-filled into it. They are
 counted in the corpus total. Added 2026-09-19.
@@ -94,8 +94,14 @@ counted in the corpus total. Added 2026-09-19.
 | 51 | Scorpio (He et al.) | **WISE 2026** | **Tier 1 — admission-primary.** The paper calls it "the most recent admission-primary entry"; dual-gate signal (TTFT Guard + TPOT Guard) over a fine-tuned OPT-125M length predictor. Its comparison against Mooncake is the corpus's clearest policy-versus-policy baseline. | ⛔ missing |
 | 52 | Token Pools | CAIS 2026 | Tier 4 — scheduling with admission components. Outside the seven-venue slice; discussed as the partial counter-example to the nine-of-nine finding. | ⛔ missing |
 | 53 | SAGA (Guo et al.) | arXiv:2605.00528 | Tier 2 — admission-adjacent. Agent-workflow scheduling; classified agent-level, mid-flight, scalar-signal. Whether its session-affinity batching reduces to ingress admission is not established. | ⛔ missing |
+| 54 | FairServe (Khan et al.) | preprint, 2024 (Microsoft) | Tier 2 — fairness. Ingress, dual-gate, on real Copilot traffic. Classified tenant-level with a dagger: it is the only corpus work operating at user/application-interaction granularity rather than request, agent-session or organizational tenant. | ⛔ missing |
 
-**Total: 53 papers.** Tier 1 (admission-primary) is **16** including Scorpio.
+**Total: 54 papers.** Tier 1 (admission-primary) is **16** including Scorpio.
+
+Found by diffing every classified row of `tab:master` against this index, after
+Scorpio/Token Pools/SAGA were added on 2026-09-19 and FairServe was still missed.
+Two further apparent mismatches were false positives from abbreviated table
+labels: "Flow-Ctrl scheduling" is #12, and "Mitzenmacher \& Shahout" is #18.
 
 Artifact availability is audited per tier rather than corpus-wide, because the
 denominator would otherwise span foundational works and textbooks for which code
@@ -104,7 +110,7 @@ release is not a meaningful question:
 | Tier | Released code | Of |
 |---|---|---|
 | Tier 1 — admission-primary | 7 | 16 |
-| Tier 2 — fairness / queueing | 1 | 8 |
+| Tier 2 — fairness / queueing | 1 | 9 |
 | Tier 3 — KV-cache adjacent | 5 | 6 |
 
 Scorpio's artifact status was not established during the audit and it is therefore
