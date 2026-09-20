@@ -492,6 +492,65 @@ sharply across the corpus; the descriptive Setting axis
 majority of surveyed systems operate at \textsc{ing} or \textsc{qb}
 regardless of setting.
 
+Figure~\ref{fig:moments} places the three moments on the serving
+pipeline. The coding is not only descriptive: the moment at which a
+policy acts determines what state it can read, and in the systems
+surveyed here it also determines whether the policy sits in front of
+the engine or within it.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+  node distance=1.0cm and 1.1cm,
+  stage/.style={rectangle, rounded corners, minimum width=2.3cm, minimum height=1.1cm, text centered, draw=black, thick, font=\bfseries, fill=admitgreylight},
+  moment/.style={circle, draw=black, thick, minimum size=0.85cm, font=\bfseries\footnotesize, fill=admitteallight},
+  arr/.style={-Stealth, thick, black},
+  note/.style={font=\footnotesize, black, text width=2.9cm, align=center},
+  sees/.style={font=\scriptsize\itshape, black, text width=3.0cm, align=center}
+]
+
+\node[stage] (arrive) {Arrival};
+\node[moment, right=0.85cm of arrive] (ing) {\textsc{ing}};
+\node[stage, right=0.85cm of ing] (wait) {Wait queue};
+\node[moment, right=0.85cm of wait] (qb) {\textsc{qb}};
+\node[stage, right=0.85cm of qb] (batch) {Running batch};
+\node[moment, right=0.85cm of batch] (mf) {\textsc{mf}};
+\node[stage, right=0.85cm of mf] (done) {Completion};
+
+\draw[arr] (arrive) -- (ing);
+\draw[arr] (ing) -- (wait);
+\draw[arr] (wait) -- (qb);
+\draw[arr] (qb) -- (batch);
+\draw[arr] (batch) -- (mf);
+\draw[arr] (mf) -- (done);
+
+\node[note, below=0.3cm of ing] (ingn) {\textbf{ingress}\\refuse before the request occupies memory};
+\node[note, below=0.3cm of qb] (qbn) {\textbf{queue boundary}\\admit into the next batch, or hold};
+\node[note, below=0.3cm of mf] (mfn) {\textbf{mid-flight}\\preempt or reclaim committed KV};
+
+\node[sees, below=0.2cm of ingn] {reads request features and observable engine state};
+\node[sees, below=0.2cm of qbn] {additionally reads current batch state};
+\node[sees, below=0.2cm of mfn] {additionally reads decode progress};
+
+\node[above=0.55cm of ing, font=\footnotesize\bfseries] (rej) {reject};
+\draw[arr, dashed] (ing.north) -- (rej.south);
+
+\node[above=0.55cm of mf, font=\footnotesize\bfseries] (evict) {evict};
+\draw[arr, dashed] (mf.north) -- (evict.south);
+
+\begin{scope}[on background layer]
+\node[fit=(ing)(ingn), draw=admitteal, thick, rounded corners, inner sep=5pt] {};
+\node[fit=(wait)(qb)(batch)(mf)(mfn), draw=admitgrey, thick, dashed, rounded corners, inner sep=7pt] (inside) {};
+\end{scope}
+\node[font=\footnotesize\itshape, below=0.1cm of inside.south] {inside the serving engine};
+
+\end{tikzpicture}%
+}
+\caption{Where an admission decision is taken. \textsc{ing} (ingress) acts before the request consumes engine memory, and reads only the request and whatever state the engine already exposes. \textsc{qb} (queue boundary) acts as the request is drawn into a batch and additionally reads batch state; \textsc{mf} (mid-flight) acts during decode and additionally reads the request's own progress. The later moments read more state, and in the systems surveyed here they are implemented inside the engine rather than in front of it.}
+\label{fig:moments}
+\end{figure}
+
 Figure~\ref{fig:taxonomy} shows the two most-cited descriptive axes
 (unit $\times$ SLO awareness) plotted against each other with
 representative policies placed on the grid.
