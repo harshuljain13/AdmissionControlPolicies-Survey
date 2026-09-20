@@ -893,10 +893,19 @@ Vicuna-13B, and LLaMA-70B on ShareGPT. Code is public at
 Chronos \citep{marref2026chronos} derives a formal schedulability
 condition (Equation~\ref{eq:chronos-wcrt}) for LLM inference. On a 7B
 model in a discrete-event simulator against 50{,}000 sampled Azure
-conversational-service requests, Chronos delivers 0.00 percent TTFT
-miss rate at 5$\times$ nominal load while FCFS and EDF miss 99.44
-percent at 10$\times$ load. A throughput-matched token-bucket baseline
-still misses 15.4 percent at the same admission volume. Simulator code
+conversational-service requests, the reported separation is
+load-dependent. At 5$\times$ nominal load Chronos and the uncontrolled
+schedulers all reach 0.00 percent TTFT miss, and the difference is in
+tail latency and admission volume: Chronos admits 88.9 percent at a P99
+TTFT of 161 ms, against 100 percent admitted at 400 ms for FCFS and
+EDF. At 10$\times$ load the uncontrolled schedulers collapse to 99.44
+percent TTFT miss while Chronos holds 0.00 percent by admitting 53.9
+percent. Rate limiting alone does not reproduce this: a
+throughput-matched token bucket (AC-FCFS) misses 15.40 percent at that
+same 53.9 percent admission, and 6.80 percent at the 5$\times$
+operating point despite matching Chronos's admission volume there. The
+comparison is therefore a case for the formal test over rate matching
+rather than over scheduling as such. Simulator code
 is public at \url{https://github.com/am-research/rtss-ttft-tbt}.
 
 SOLA \citep{hong2025sola} formalizes fine-grained scheduling as an LP
