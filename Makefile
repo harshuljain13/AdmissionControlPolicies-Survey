@@ -14,7 +14,7 @@
 TECTONIC ?= tectonic
 PAPER    := paper
 
-.PHONY: all pdf preprint camera check style anon clean
+.PHONY: all pdf preprint camera check style anon dist clean
 
 all: pdf
 
@@ -71,7 +71,28 @@ anon:
 		exit 1; \
 	else echo "OK: anonymous (no identifying strings)"; fi
 
+## dist — build both submission bundles into dist/
+##   dist/tmlr-submission/  anonymous PDF, for OpenReview
+##   dist/arxiv-preprint/   LaTeX source + .bbl, for arXiv
+dist: check preprint
+	@rm -rf dist && mkdir -p dist/tmlr-submission dist/arxiv-preprint
+	@# --- TMLR: OpenReview takes a PDF only ---
+	@cp $(PAPER).pdf dist/tmlr-submission/
+	@# --- arXiv: wants LaTeX source; it does NOT run bibtex, so ship the .bbl ---
+	@sed 's|^\\usepackage{tmlr}$$|\\usepackage[preprint]{tmlr}|' $(PAPER).tex > dist/arxiv-preprint/main.tex
+	@$(TECTONIC) -X compile $(PAPER).tex --keep-intermediates --keep-logs >/dev/null 2>&1 || true
+	@cp $(PAPER).bbl dist/arxiv-preprint/main.bbl
+	@cp references.bib tmlr.sty tmlr.bst fancyhdr.sty math_commands.tex dist/arxiv-preprint/
+	@cp $(PAPER)-preprint.pdf dist/arxiv-preprint/reference-render.pdf
+	@cp dist-readme-tmlr.md   dist/tmlr-submission/SUBMIT.md
+	@cp dist-readme-arxiv.md  dist/arxiv-preprint/SUBMIT.md
+	@echo
+	@echo "dist/tmlr-submission/  -> upload paper.pdf to OpenReview"
+	@echo "dist/arxiv-preprint/   -> tar up the source files and upload to arXiv"
+	@ls -1 dist/tmlr-submission dist/arxiv-preprint
+
 ## clean — remove build artefacts, keep the pdfs
 clean:
 	rm -f $(PAPER).log $(PAPER).blg $(PAPER).aux $(PAPER).bbl $(PAPER).out \
 	      $(PAPER)-preprint.tex $(PAPER)-camera.tex
+	rm -rf dist
