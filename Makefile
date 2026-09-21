@@ -84,8 +84,8 @@ dist: check preprint
 	@cp $(PAPER).bbl dist/arxiv-preprint/main.bbl
 	@cp references.bib tmlr.sty tmlr.bst fancyhdr.sty math_commands.tex dist/arxiv-preprint/
 	@cp $(PAPER)-preprint.pdf dist/arxiv-preprint/reference-render.pdf
-	@cp dist-readme-tmlr.md   dist/tmlr-submission/SUBMIT.md
-	@cp dist-readme-arxiv.md  dist/arxiv-preprint/SUBMIT.md
+	@cp submission/tmlr.md    dist/tmlr-submission/SUBMIT.md
+	@cp submission/arxiv.md   dist/arxiv-preprint/SUBMIT.md
 	@echo
 	@echo "dist/tmlr-submission/  -> upload paper.pdf to OpenReview"
 	@echo "dist/arxiv-preprint/   -> tar up the source files and upload to arXiv"
