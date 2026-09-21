@@ -100,9 +100,9 @@ adapted-PRISMA systematic review of fifty-five admission and
 admission-adjacent works published between 2022 and 2026 across OSDI,
 SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA and
 arXiv, and report three findings. First, of nine LLM serving papers
-audited across a seven-venue slice, none includes an explicit
-ingress-level admission policy; all nine absorb overload through
-batching, migration, placement, autoscaling or memory management.
+audited across a seven-venue slice, all absorb overload inside the
+engine, through batching, migration, placement, autoscaling or memory
+management, and none takes a decision at the ingress.
 Second, of sixteen admission-primary papers, no two share a baseline
 set: policies are measured against the absence of admission control
 and almost never against one another, so the literature alone cannot
@@ -221,12 +221,13 @@ differentiates this survey from those prior works.
 
 \paragraph{Headline observations.} First, of nine scheduling papers
 we audited across OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, and HPCA
-between 2022 and 2026, none includes an ingress-level admission
-policy; overload is absorbed by batching, migration, placement,
-autoscaling, or memory management. Token Pools (CAIS 2026) sits
-outside this seven-venue slice and does implement gateway-level
-admission tied to autoscaling, which we treat as a partial
-counter-example. Second, of sixteen admission-primary papers we
+between 2022 and 2026, all absorb overload inside the engine, through
+batching, migration, placement, autoscaling or memory management, and
+none takes a decision at the ingress. This reflects the scope each
+paper sets for itself rather than an omission. Token Pools (CAIS 2026)
+sits outside this seven-venue slice and does gate at the API gateway,
+which suggests ingress admission has been treated as an infrastructure
+concern rather than an engine-level research question. Second, of sixteen admission-primary papers we
 audited, no two share a baseline set, and the only
 baselines shared by more than one paper are unconfigured serving engines
 and classical scheduling disciplines. Exactly one published admission
@@ -1108,17 +1109,20 @@ scheduler API and no admit-reject hook.
 
 We audited nine scheduling papers drawn from OSDI, SOSP, NSDI,
 ASPLOS, EuroSys, MLSys, and HPCA between 2022 and 2026.
-Table~\ref{tab:9for9} summarizes what each does under overload. The
-column that matters most for this paper's motivation is
-``ingress admission?'': no cell answers yes. Token Pools (CAIS
-2026) sits outside this seven-venue set and is the first venue
-paper we identified that does implement ingress admission at the
-API gateway; we treat it as a partial counter-example and discuss
-it separately below.
+Table~\ref{tab:9for9} summarizes what each does under overload. All
+nine locate the overload response inside the engine, redistributing
+work through batching, migration, placement, autoscaling or memory
+management. None takes a decision at the ingress, and none sets out to:
+these are scheduling and memory-management contributions, and refusing
+work at the door lies outside the design space each paper defines for
+itself. The observation is about where the research attention has gone,
+not about a shortcoming in these systems. Token Pools (CAIS 2026) sits
+outside this seven-venue set and does implement ingress admission at
+the API gateway; we discuss it separately below.
 
 \begin{table}[htbp]
 \centering
-\caption{Overload response mechanisms in nine LLM serving papers from the seven-venue set (OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, HPCA), 2022--2026. Not one includes ingress-level admission control. Token Pools (CAIS 2026), outside this venue set, is discussed as a partial counter-example.}
+\caption{Overload response mechanisms in nine LLM serving papers from the seven-venue set (OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, HPCA), 2022--2026. Each locates its overload response inside the engine; the ingress-admission column is empty across all nine, which reflects the scope each paper sets rather than an omission. Token Pools (CAIS 2026), outside this venue set, does gate at the API gateway and is discussed separately.}
 \label{tab:9for9}
 \small
 \rowcolors{2}{white}{admitgreylight!40}
@@ -1142,10 +1146,13 @@ PASCAL \citep{pascal2026} & HPCA 2026 & Runtime phase detection & No \\
 
 Past-Future's memory-projection gate is the closest of the nine to
 admission, and it operates on already-queued requests rather than at
-ingress. This nine-of-nine result, taken together with Token Pools
-sitting outside the seven-venue set, is the motivation for treating
-admission as an under-explored primary contribution within the
-top-tier systems venues surveyed here.
+ingress. Taken with Token Pools, which sits outside the seven-venue set
+and does gate at the gateway, the pattern suggests that ingress
+admission has been treated as an infrastructure concern rather than an
+engine-level research question. That is the gap this survey addresses:
+not that these systems are missing something they should have, but that
+the decision they leave to the deployment has received little
+systematic study.
 
 \paragraph{Token Pools (CAIS 2026): partial counter-example.}
 Cunningham \citep{cunningham2026tokenpools} introduces token pools, a
@@ -1644,10 +1651,10 @@ remains unoccupied; SAGA is a partial occupant on the agent-level
 and fairness axes only (Figure~\ref{fig:taxonomy}).
 
 Nine scheduling papers from the seven-venue slice (OSDI, SOSP,
-NSDI, ASPLOS, EuroSys, MLSys, HPCA) do not include ingress-level
-admission
-control (Table~\ref{tab:9for9}); Token Pools (CAIS 2026) sits
-outside this slice and provides a partial counter-example.
+NSDI, ASPLOS, EuroSys, MLSys, HPCA) place their overload response
+inside the engine rather than at the ingress
+(Table~\ref{tab:9for9}); Token Pools (CAIS 2026) sits outside this
+slice and does gate at the gateway.
 Production postmortems
 (Table~\ref{tab:incidents}) show that overload originating from a
 mis-specified admission signal propagates faster than downstream
