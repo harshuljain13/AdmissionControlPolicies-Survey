@@ -2,7 +2,7 @@
 
 Target: 30-50 papers deep-read + cited. ~80-120 total citations (including foundational + adjacent).
 
-## Tier 1 — Admission-control-primary (MUST deep-read, ~15 papers)
+## Tier 1 — Admission-control-primary (~16 papers, incl. Scorpio at #51)
 
 | # | Paper | Venue | Cluster |
 |---|---|---|---|
@@ -22,7 +22,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 14 | ProServe | arXiv:2512.12928 | Multi-priority |
 | 15 | Clairvoyant | arXiv:2606.07248 | Predictive SJF |
 
-## Tier 2 — Fairness + Queueing theory (~8 papers)
+## Tier 2 — Fairness + Queueing theory (~11 papers, incl. SAGA #53, FairServe #54, Niyama #55)
 
 | # | Paper | Venue | Cluster |
 |---|---|---|---|
@@ -46,7 +46,7 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 28 | ThunderAgent (Kang et al.) | **ICML 2026 Spotlight** — arXiv:2602.13692 — integrated into NVIDIA Dynamo 2.0; code at github.com/ThunderAgent-org/ThunderAgent |
 | 29 | Mooncake | **FAST '25** |
 
-## Tier 4 — Scheduling papers with admission components (~8 papers)
+## Tier 4 — Scheduling papers with admission components (~10 papers, incl. Token Pools #52)
 
 | # | Paper | Venue |
 |---|---|---|
@@ -82,7 +82,62 @@ Target: 30-50 papers deep-read + cited. ~80-120 total citations (including found
 | 49 | Li et al. KV Cache Management Survey | arXiv:2412.19442 |
 | 50 | Existing broader surveys — from Tensor Buffer to Distributed Memory | arXiv:2607.02574 |
 
-Total: 50 papers. Roughly 40 will get first-class treatment; 10 will appear in citations only.
+## Tier 7 — Late additions (found during verification, after the original index)
+
+These four are cited, classified in `tab:master`, and discussed in dedicated
+paragraphs in the paper — the same treatment every other corpus member receives —
+but they postdate the original index and were never back-filled into it. They are
+counted in the corpus total. Added 2026-09-19.
+
+| # | Paper | Venue | Tier it belongs to | Note file |
+|---|---|---|---|---|
+| 51 | Scorpio (He et al.) | **WISE 2026** | **Tier 1 — admission-primary.** The paper calls it "the most recent admission-primary entry"; dual-gate signal (TTFT Guard + TPOT Guard) over a fine-tuned OPT-125M length predictor. Its comparison against Mooncake is the corpus's clearest policy-versus-policy baseline. | ⛔ missing |
+| 52 | Token Pools | CAIS 2026 | Tier 4 — scheduling with admission components. Outside the seven-venue slice; discussed as the partial counter-example to the nine-of-nine finding. | ⛔ missing |
+| 53 | SAGA (Guo et al.) | arXiv:2605.00528 | Tier 2 — admission-adjacent. Agent-workflow scheduling; classified agent-level, mid-flight, scalar-signal. Whether its session-affinity batching reduces to ingress admission is not established. | ⛔ missing |
+| 54 | FairServe (Khan et al.) | preprint, 2024 (Microsoft) | Tier 2 — fairness. Ingress, dual-gate, on real Copilot traffic. Classified tenant-level with a dagger: it is the only corpus work operating at user/application-interaction granularity rather than request, agent-session or organizational tenant. | ⛔ missing |
+| 55 | Niyama (Goel et al.) | 2025 | Tier 2 — admission-adjacent. QoS-class co-scheduling; under overload it applies *selective request relegation*, degrading lower classes rather than refusing at the door. §5 states explicitly "We include it because relegation and admission answer the same question with different verbs." Cited and discussed, but carries no row in `tab:master`. | ⛔ missing |
+
+**Total: 55 papers.** Tier membership after the Tier 7 additions:
+
+| Tier | Count | Classified in `tab:master` |
+|---|---|---|
+| 1 — admission-primary | 16 | 15 (AQUA absent) |
+| 2 — fairness / queueing | 11 | 6 (Throughput-Optimal, Beyond Prediction, Chiron, Niyama absent) |
+| 3 — KV-cache adjacent | 6 | 5 (Mooncake absent) |
+| 4 — scheduling w/ admission components | 10 | 1 (Token Pools) |
+| 5 — foundational | 7 | 0 (not classifiable: textbooks, engines) |
+| 6 — prior surveys | 5 | 0 (not classifiable) |
+| **total** | **55** | **28** |
+
+`tab:master` classifies 28 of 54. Tiers 5 and 6 are correctly absent: an
+admission taxonomy does not apply to Kleinrock's textbook or to a prior survey.
+The five absences worth revisiting are AQUA, Mooncake, Chiron, Throughput-Optimal
+and Beyond Prediction. **Mooncake is the notable one**: the paper's own Table 2
+caption calls it "itself an early-rejection mechanism", so it is an admission
+mechanism that the master table does not place.
+
+Found by diffing every classified row of `tab:master` against this index, after
+Scorpio/Token Pools/SAGA were added on 2026-09-19 and FairServe was still missed.
+Two further apparent mismatches were false positives from abbreviated table
+labels: "Flow-Ctrl scheduling" is #12, and "Mitzenmacher \& Shahout" is #18.
+
+Artifact availability is audited per tier rather than corpus-wide, because the
+denominator would otherwise span foundational works and textbooks for which code
+release is not a meaningful question:
+
+| Tier | Released code | Of |
+|---|---|---|
+| Tier 1 — admission-primary | 7 | 16 |
+| Tier 2 — fairness / queueing | 1 | 11 |
+| Tier 3 — KV-cache adjacent | 5 | 6 |
+
+Scorpio's artifact status was not established during the audit and it is therefore
+not counted in the Tier 1 numerator. If it has released code the figure is 8 of 16.
+
+⛔ **Outstanding**: none of the three has a `notes/` deep-read file, so the paper's
+discussion of them is not backed by the same note trail as the rest of the corpus.
+Writing those notes is not in the two-week Paper A scope but should be recorded as a
+known gap.
 
 ## Reading order (Week 1)
 
@@ -92,3 +147,11 @@ Total: 50 papers. Roughly 40 will get first-class treatment; 10 will appear in c
 **Day 7**: Tier 5 + Tier 6 (foundational + differentiation surveys). Build taxonomy table.
 
 Per-paper notes go in `papers/{short-name}.md`. Format: 1-page max, sections: contribution / signal used / unit / setting / SLO-awareness / baselines / measurement setup / claimed numbers / code availability / relevance to our taxonomy.
+
+## Screened out, cited for the exclusion
+
+**TokenScale** (Lai et al., 2025) is cited in §6 and deliberately *not* counted in
+the corpus: careful reading confirmed it is a pure autoscaling framework whose
+Token Velocity signal drives prefiller/decoder scaling only, with no
+admission-control component. It is recorded here so the exclusion is traceable
+rather than looking like an oversight.

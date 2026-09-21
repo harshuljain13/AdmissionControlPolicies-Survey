@@ -1,0 +1,65 @@
+% TMLR wrapper. Venue-specific only: document class, style package, author
+% block, and the anonymity conditionals. All content lives in
+% ../../body.tex, which is shared with every other venue.
+%
+%   \usepackage{tmlr}             anonymous, for submission (default)
+%   \usepackage[preprint]{tmlr}   de-anonymised, for arXiv
+%   \usepackage[accepted]{tmlr}   camera-ready
+%
+% Non-anonymous submissions are rejected by TMLR without review.
+
+\documentclass[10pt]{article}
+
+\PassOptionsToPackage{table}{xcolor}
+\usepackage[preprint]{tmlr}
+
+\input{../preamble}
+
+\title{Admission Control for LLM Inference Serving:\\ A Systematic Review}
+
+% Visible here: [preprint] implies [accepted].
+\author{\name Harshul Jain \email harshuljain1393@gmail.com \\
+      \addr Independent Researcher
+      \AND
+      \name Tanmay Sah \email tradertanmay@mail.com \\
+      \addr Independent Researcher
+      \AND
+      \name Tanya Sah \email tanyasah20@gmail.com \\
+      \addr Independent Researcher
+      \AND
+      \name Parv Khatri \email khatriparv@gmail.com \\
+      \addr Independent Researcher}
+
+\def\month{09}
+\def\year{2026}
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
+
+% Two things in the body de-anonymise the submission, so both are conditional.
+% \if@accepted is set by the [accepted] and [preprint] options of tmlr.sty.
+% A venue without an anonymity mechanism must still define these two macros.
+\makeatletter
+\if@accepted
+  \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
+  \newcommand{\companionwork}{Companion work in preparation
+    (\emph{AdmitPerf}) takes this as its subject.}
+\else
+  \newcommand{\artifacturl}{repository withheld for double-blind review;
+    the coding sheets are included as supplementary material}
+  \newcommand{\companionwork}{Companion work by the present authors,
+    in preparation, takes this as its subject; it is not cited here so
+    as to preserve anonymity.}
+\fi
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\input{../abstract}
+
+\input{../body}
+
+\bibliographystyle{tmlr}
+\bibliography{../references}
+
+\end{document}
