@@ -1161,8 +1161,9 @@ entitlements (token throughput, KV cache, concurrency). Admission is
 enforced at the API boundary: ``The auth service intercepts every
 request before it reaches the backend. On each request, it validates
 the API key against an entitlement... and makes an admission decision
-based on multiple criteria.'' Rejected requests receive HTTP 429 with
-a \texttt{Retry-After} hint. The same entitlements drive autoscaling
+based on multiple factors.'' Requests whose priority falls below the
+admission threshold ``are rejected with HTTP 429 and a
+\texttt{Retry-After} header, allowing clients to back off gracefully.'' The same entitlements drive autoscaling
 decisions through a unified capacity model, directly addressing our
 Open Problem~5 (coupling admission and autoscaling). The evaluation
 is single-node (DGX Spark, Qwen3-8B) with no released code, so we
@@ -1198,14 +1199,16 @@ Prediction, each of which touches admission indirectly:
 AQUA and Mooncake through reclamation and early rejection, Chiron
 through autoscaling, Niyama through relegating lower QoS classes rather
 than refusing them, and the last two through queueing-theoretic results
-that do not specify a decision rule. Mooncake is the one we
-would most expect a reader to look for, since it functions as an
-early-rejection mechanism and appears as a baseline in
-Table~\ref{tab:baselines}; we leave it unclassified because its
-rejection behaviour is a consequence of its cache-transfer design
-rather than a stated admission policy, and placing it on the Signal
-axis would require attributing a decision rule the paper does not
-claim.
+that do not specify a decision rule. Mooncake warrants a specific
+note, since it states a ``prediction-based early rejection policy'' and
+appears as a baseline in Table~\ref{tab:baselines}. We leave it
+unclassified on the narrower ground that admission is a component of a
+disaggregation architecture rather than the paper's contribution: the
+rejection policy is described but not evaluated as a policy, with no
+ablation isolating its effect and no comparison against an alternative
+admission rule. It is therefore an admission mechanism we can name but
+not place on the Signal axis with the same evidence we have for the
+entries in Table~\ref{tab:master}.
 
 \paragraph{GRADE rubric (operationalized).}
 We assign each work one of four evidence levels using four criteria:
