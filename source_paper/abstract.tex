@@ -1,0 +1,27 @@
+\begin{abstract}
+\noindent
+Serving large language models at scale is a distributed systems problem
+whose overload behavior is governed at the ingress. We conduct an
+adapted-PRISMA systematic review of fifty-five admission and
+admission-adjacent works published between 2022 and 2026 across OSDI,
+SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA and
+arXiv, and report three findings. First, of nine LLM serving papers
+audited across a seven-venue slice, all absorb overload inside the
+engine, through batching, migration, placement, autoscaling or memory
+management, and none takes a decision at the ingress.
+Second, of sixteen admission-primary papers, no two share a baseline
+set: policies are measured against the absence of admission control
+and almost never against one another, so the literature alone cannot
+say which policy suits a given deployment. Third, artifact
+availability is higher than the usual ``reproducibility crisis''
+framing suggests, at seven of sixteen admission-primary papers, while
+the obstacle to comparison lies in what papers report rather than in
+what they release. We contribute a taxonomy of unit, setting,
+SLO awareness and signal, with a master classification carrying
+GRADE-style evidence ratings; formal definitions of the
+admission-decision, goodput-under-admission and fairness-index
+primitives; seven reporting items whose inconsistency blocks
+cross-paper comparison; a mapping of eight public production incidents
+to admission failure modes; and seven open problems, each grounded in
+published peer review or in a primary source's own limitations.
+\end{abstract}
