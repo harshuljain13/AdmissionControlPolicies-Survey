@@ -27,55 +27,44 @@
 
 ## Layout
 
-**Content lives in one place and is venue-neutral.** `source_paper/body.tex` has no
-document class, no author block and no bibliography command. Each venue gets a thin
-wrapper that supplies those and inputs the shared content, so retargeting a venue
-never touches the paper itself.
+One source, two venues. `source_paper/body.tex` is the content and is
+venue-neutral: no document class, no author block, no bibliography command.
+Each venue folder holds a thin wrapper plus everything that venue needs.
 
 ```
-survey/
-|- source_paper/
-|  |- body.tex          <- THE CONTENT. Edit this.
-|  |- abstract.tex      <- also venue-neutral
-|  |- preamble.tex      <- packages the body needs (tikz, booktabs, colours)
-|  |- references.bib
-|  `- venues/
-|     `- tmlr/
-|        |- paper.tex   <- wrapper: documentclass, authors, anonymity macros
-|        |- tmlr.sty    <- vendored from the TMLR template, do not edit
-|        |- tmlr.bst
-|        `- fancyhdr.sty
+source_paper/
+|- body.tex        <- THE CONTENT. Edit this.
+|- abstract.tex
+|- preamble.tex    <- packages the body needs
+|- references.bib
+|- tmlr.sty tmlr.bst fancyhdr.sty   <- vendored; one real copy, symlinked in
 |
-|- docs/submission/     what to upload where, per venue
-|- docs/                taxonomy, paper index, open problems
-|- notes/               per-paper deep-read notes
-`- figures/
+|- tmlr/           ANONYMOUS, for TMLR via OpenReview
+|  |- paper.tex    wrapper: documentclass, authors, anonymity macros
+|  |- SUBMIT.md    what to upload, and the pre-submission checklist
+|  `- paper.pdf    <- UPLOAD THIS
+|
+`- arxiv/          DE-ANONYMISED, for arXiv
+   |- paper.tex    same wrapper with [preprint]
+   |- SUBMIT.md
+   |- paper.pdf        <- read or share this
+   `- upload.tar.gz    <- UPLOAD THIS
 ```
 
-Adding a venue means adding `source_paper/venues/<name>/paper.tex` and building with
-`make VENUE=<name>`. A wrapper must define the two macros the body uses for
-de-anonymising content: `\artifacturl` and `\companionwork`.
+The style files exist once, at `source_paper/`, and are symlinked into each venue
+folder because tectonic resolves packages relative to the main file. `tar czh`
+dereferences them, so the arXiv tarball carries real copies, which it must:
+arXiv compiles submissions itself and cannot fetch packages outside TeX Live.
 
-Generated and gitignored, so none of it is a second source of truth:
-
-```
-source_paper/venues/tmlr/paper.pdf            anonymous build
-source_paper/venues/tmlr/paper-preprint.pdf   de-anonymised, for arXiv
-source_paper/venues/tmlr/paper-camera.pdf     camera-ready
-submission/tmlr/                              bundle for OpenReview
-submission/arxiv/                             bundle for arXiv
-```
-
-`submission/arxiv/` contains copies of the style files and a flattened copy of the
-body. That is not duplication: arXiv compiles submissions itself, cannot fetch
-packages absent from TeX Live, and needs a flat directory, so those files must
-travel with the source. `make dist` regenerates them and they are never edited.
+Adding a venue is one folder with one `paper.tex`. A wrapper owes the body two
+macros that hold de-anonymising content: `artifacturl` and `companionwork`.
 
 ## Building
 
 ```bash
-make check      # build + gate on refs, em-dashes, and anonymity
-make dist       # one bundle per venue under submission/
+make check    # TMLR build, gated on refs, em-dashes, anonymity
+make arxiv    # de-anonymised PDF + upload.tar.gz
+make camera   # camera-ready, post-acceptance
 ```
 
 
