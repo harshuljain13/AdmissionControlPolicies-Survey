@@ -1333,10 +1333,23 @@ Reading the literature top to bottom, a practitioner cannot answer
 
 Reading the corpus for what would be needed to place a result against a
 deployment, seven properties recur as the points of divergence. Six are
-reported inconsistently, and we did not find the seventh reported at
-all. All
-seven concern disclosure of what was done rather than prescription of
-what to run, so none of them asks a paper to change its evaluation.
+reported inconsistently. The seventh, the observed range of the signal
+the policy reads, we did not find reported by any of the sixteen
+admission-primary papers.
+
+That asymmetry is worth stating plainly, because it is not what we
+expected to find. Placing all sixteen papers on the axes of
+Section~\ref{sec:taxonomy} succeeds on every axis but one: unit,
+setting, SLO-awareness, the quantity the policy watches, the metadata a
+request must carry, and whether the policy is deployable in front of an
+unmodified engine are all recoverable from the published text. Ten of
+the sixteen are deployable without modifying the engine; eight require
+nothing of a request beyond the request itself. Selection fails on a
+single missing fact, and it is the fact that determines whether a
+reported improvement is interpretable at all.
+
+All seven concern disclosure of what was done rather than prescription
+of what to run, so none of them asks a paper to change its evaluation.
 
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
 \item \textbf{Capacity-relative load}. Offered load expressed as a
@@ -1349,13 +1362,14 @@ what to run, so none of them asks a paper to change its evaluation.
       of meeting a fixed millisecond target varies with the deployment,
       so absolute targets are not comparable across papers.
 \item \textbf{Signal liveness}. The observed range of the quantity the
-      policy reads, over the evaluation. We did not find it reported
-      in any paper we examined.\footnote{This is an absence in our
-      extraction rather than a verified exhaustive check. We recorded
-      each paper's evaluation setup, including the signal its policy
-      reads, but no paper we read stated the range that signal took
-      during the evaluation. A paper reporting it outside the sections
-      we extracted would not have been captured.} Without it, a policy whose signal never approached its
+      policy reads, over the evaluation. Not one of the sixteen
+      admission-primary papers reports it.\footnote{This is an absence
+      across the evaluation sections we extracted, not a guarantee that
+      no paper mentions a range anywhere. We recorded each paper's
+      evaluation setup, including the quantity its policy reads; none
+      stated the range that quantity took. A figure axis showing, say,
+      cache occupancy over time would arguably satisfy the item and
+      would not have been captured by this procedure.} Without it, a policy whose signal never approached its
       threshold cannot be distinguished from one that evaluated a
       varying signal and declined to reject
       (Section~\ref{sec:signal-predicts}).
