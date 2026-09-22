@@ -11,8 +11,8 @@
 
 ## Contribution
 
-- Four-axis taxonomy for admission-control policies: unit (request / agent / tenant), setting (online / offline / hybrid), SLO awareness (deadline / throughput / fairness / cost), signal (scalar / dual-gate / LP-composite / formal WCRT).
-- Four sub-branches added during reading: signal structure, SLO granularity (job / request / per-stage), fairness type (task / tenant / priority), concurrency context (concurrent-batch server / serial edge).
+- Five-axis taxonomy for admission-control policies: unit (request / agent / tenant), setting (online / offline / hybrid), SLO awareness (deadline / throughput / fairness / cost), signal (scalar / dual-gate / LP-composite / formal WCRT).
+- Five sub-branches: signal structure, SLO granularity, fairness type, concurrency context, decision moment: signal structure, SLO granularity (job / request / per-stage), fairness type (task / tenant / priority), concurrency context (concurrent-batch server / serial edge).
 - Per-cluster synthesis of fifty-five admission and admission-adjacent works.
 - Reproducibility audit: 7 of the 16 admission-primary papers have released code, as have 5 of the 6 KV-cache-adjacent works.
 - Seven reporting items whose inconsistency blocks cross-paper comparison.

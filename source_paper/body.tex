@@ -75,7 +75,7 @@ differentiates this survey from those prior works.
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
-\item \textbf{Unified taxonomy} with four axes and four sub-branches,
+\item \textbf{Unified taxonomy} with five axes and five sub-branches,
       plus short codes (\textsc{unit-req/agt/ten},
       \textsc{sig-sca/dg/lp/wcrt}) used across the master table
       (Section~\ref{sec:taxonomy}).
@@ -122,7 +122,7 @@ backing out an original axis.
 \paragraph{Roadmap.} Section~\ref{sec:bg} covers the inference request
 lifecycle, the Admit-Queue-Route model, and the foundational
 definitions (\S\ref{sec:defs}). Section~\ref{sec:taxonomy} introduces
-the four-axis taxonomy with short unit and signal codes.
+the five-axis taxonomy with short unit and signal codes.
 Section~\ref{sec:method} describes the systematic-review method with a
 PRISMA flow diagram. Section~\ref{sec:clusters} synthesizes each
 policy cluster. Section~\ref{sec:master} presents the master
@@ -339,7 +339,7 @@ master classification table (Section~\ref{sec:master}). The
 descriptive axes carry the substantive taxonomy claims; the
 classificatory dimension is a fold that captures where in the
 serving pipeline the admission decision is taken. We call this a
-four-axis taxonomy throughout and reserve the term ``three-level
+five-axis taxonomy throughout and reserve the term ``three-level
 classification'' for the master table's compact form.
 
 \paragraph{Decision moment (folded).} Every admission decision can
@@ -530,11 +530,50 @@ decode tasks within one batch (FairBatching
 or SLO attainment across users (VTC \citep{sheng2024vtc}, Equinox
 \citep{lu2025equinox}). These share no mechanism.
 
-\subsection{Axis 4: Signal used}
+\subsection{Axis 4: Signal quantity}
+\label{sec:axis-signal}
 
-Admission policies read a runtime signal to decide. We identify four
-structural forms, each with a short code we use throughout the master
-classification (Table~\ref{tab:master}).
+Every admission policy compares some measured quantity against a
+threshold. Which quantity is the axis a practitioner can answer about
+their own deployment without having read any of the policies, because it
+asks what moves when their system is overloaded rather than how a given
+paper is built. Across the sixteen admission-primary works the
+quantities are:
+
+\begin{description}[leftmargin=2em, itemsep=1pt]
+\item[KV pressure] occupancy of the key-value cache, as a fraction of
+      what the deployment has allocated (Fluid-WAIT, CONCUR, Continuum,
+      AQUA).
+\item[Queue depth] the number of requests waiting to enter a batch
+      (QLM, FastServe, Fluid-WAIT, Continuum).
+\item[Deadline slack] time remaining against a per-request target,
+      compared with an estimate of time required (Chronos, SOLA,
+      SLOs-Serve, Scorpio, ProServe).
+\item[Predicted length] an estimate of how many tokens the request will
+      generate, from a model over the prompt (FastServe, Scorpio,
+      Clairvoyant).
+\item[Wait estimate] a prediction of how long the request will queue,
+      distinct from how many are queued (QLM).
+\item[Batch state] the composition of the batch now forming, rather
+      than a property of the arriving request (SOLA, FairBatching).
+\item[Arrival rate] the offered load itself, with no engine-side
+      quantity read (Flow-controlled scheduling).
+\item[Analytic] no runtime signal: admission follows from a stability
+      or reward argument (Service-Induced Congestion, Shen et al.).
+\end{description}
+
+The distribution matters for what the axis can do. Deadline slack and
+KV pressure dominate, but they are not interchangeable: a deadline-slack
+policy needs requests to arrive carrying deadlines, and a KV-pressure
+policy needs the cache to actually fill. Section~\ref{sec:signal-predicts}
+develops the second condition.
+
+\paragraph{Sub-branch: Signal structure.} Orthogonal to which quantity
+is read is how the policy combines readings into a decision. We identify
+four structural forms, each with a short code we use throughout the
+master classification (Table~\ref{tab:master}). The structure describes
+policy design rather than deployment fit, so it is a sub-branch rather
+than a primary axis: a reader cannot place their own system on it.
 
 \textit{Scalar heuristics} (\textsc{sig-sca}) compare a single quantity
 to a threshold (KV utilization for Fluid-WAIT; queue depth for QLM;
@@ -586,6 +625,37 @@ is fixed overhead. Algorithm~1 of \citep{marref2026chronos} rejects on
 arrival if $\rho_P \ge 1$, if the bound exceeds the TTFT deadline, or
 if a TBT capacity check fails.
 
+\subsection{Axis 5: Portability}
+\label{sec:axis-portability}
+
+The four axes above describe what a policy decides. This one describes
+what it costs to run, and it is the axis a practitioner is likely to
+apply first, because it can eliminate candidates before any question of
+fit arises.
+
+\textbf{Class A} policies decide from the arriving request and state the
+engine already exposes: cache occupancy, queue length, counts of running
+and waiting requests. Such a policy can sit in front of an unmodified
+engine, as a proxy or gateway, and is deployable by anyone who can route
+traffic.
+
+\textbf{Class B} policies need to influence which requests enter a
+batch, or to act on requests already decoding. That cannot be done from
+outside: it requires changes inside the engine's scheduler, and in
+practice a maintained fork.
+
+The split follows from the decision moment
+(\S\ref{sec:taxonomy}, folded): \textsc{ing} is Class A, while
+\textsc{qb} and \textsc{mf} are Class B. Of the sixteen
+admission-primary works, ten are Class A and six are Class B. A reader
+who cannot maintain an engine fork is choosing among ten, not sixteen,
+and that is knowable before reading any of them.
+
+No paper in the corpus states its own class. It is derivable from the
+mechanism each describes, which is why we treat it as an axis rather
+than as reported metadata: the information is present in the text but
+never surfaced as a deployment property.
+
 \subsection{What the Signal axis predicts}
 \label{sec:signal-predicts}
 
@@ -612,6 +682,40 @@ model, and the workload, and is an empirical question rather than a
 bibliographic one. We do not answer it here, and we are not aware of
 published measurements that do; it is stated as Open Problem~7.
 
+\subsection{Placing the corpus, and where it fails}
+\label{sec:placement}
+
+We applied the five axes to all sixteen admission-primary works,
+recording for each what it admits, when, against which quantity, what it
+assumes a request carries, and whether it is deployable without an
+engine fork. The exercise is a test of the axes as much as of the
+corpus: an axis that cannot be filled from the published text is not one
+a reader could use.
+
+Five of the five fill. Every paper states its unit and setting; every
+paper's objective is recoverable; the quantity each policy reads is
+always identifiable, even where the paper does not name it as a signal;
+and the portability class follows from the mechanism in all sixteen
+cases. Eight of the sixteen require nothing of an arriving request
+beyond the request itself, five require a deadline or SLO class, two
+require a session identifier, and one requires a priority class.
+
+One property does not fill. For no paper in the corpus could we
+determine the range the policy's own signal took during its evaluation.
+This is not a property we invented as a hurdle: it is the difference
+between a policy that was tested and a policy that was merely present.
+A threshold never approached and a threshold approached but not crossed
+produce the same admission counts and the same downstream latencies,
+and no reported number distinguishes them.
+
+The consequence for a reader is narrow and specific. The taxonomy will
+tell you which policies could apply to your deployment. It will not tell
+you whether the published evidence for any of them describes a policy
+that was actually exercised, because that evidence is not reported.
+Section~\ref{sec:items} states the property as the third of seven
+reporting items, and Section~\ref{sec:open} states the measurement it
+would take to establish which of those items are load-bearing.
+
 \subsection{The unclaimed intersection}
 
 Plotting the corpus (Figure~\ref{fig:taxonomy}) shows that
@@ -629,6 +733,24 @@ and does not commit to an online-serving mode. We treat SAGA as a
 partial occupant and preserve OP1 as an open problem for the
 subset (agent + online + TTFT+TBT + per-tenant) that no published
 work satisfies simultaneously.
+
+Re-deriving this after adding the portability axis leaves the cell
+empty, and surfaces a second gap beneath it. Among the sixteen
+admission-primary works, two are agent-level: CONCUR, which is Class A
+but offline and throughput-oriented, and Continuum, which is online but
+Class B and optimises job completion time rather than a deadline. So
+within the admission-primary set there is no agent-level policy that
+both serves online traffic and deploys without an engine fork. A reader
+running multi-turn agent workloads who cannot maintain a fork has no
+candidate at all, which is a sharper statement than the empty
+intersection and follows from a property no paper reports about itself.
+
+We state this for the admission-primary set only. ThunderAgent
+\citep{kang2026thunderagent} is agent-level and coded at ingress, which
+would occupy the cell, but its mechanism is program-level residency with
+eviction from high-bandwidth memory, and whether that is deployable
+outside the engine is not something we have established. It is the
+near-miss a reader should check first.
 
 \section{Method}
 \label{sec:method}
@@ -718,7 +840,7 @@ cite-only references.
 
 \paragraph{Per-paper protocol.} For each work we recorded venue,
 authors, arXiv or DOI identifier, code availability, taxonomy
-placement across all four axes, primary contribution, baseline set,
+placement across all five axes, primary contribution, baseline set,
 evaluation setup (model, engine, workload, hardware), claimed headline
 numbers with configuration qualifiers, fidelity notes, and open
 questions surfaced. Notes were written in a common markdown template
@@ -1541,7 +1663,7 @@ peer-reviewed top venues plus one accepted workshop paper and more
 than a dozen preprints. We surveyed fifty-five works across
 admission-primary, admission-adjacent, and scheduling clusters.
 
-Our four-axis taxonomy with four sub-branches organizes the corpus
+Our five-axis taxonomy with five sub-branches organizes the corpus
 without redundancy. The intersection agent-level $\times$ online
 $\times$ (TTFT+TBT-deadline-decomposed) $\times$ per-tenant-fair
 remains unoccupied; SAGA is a partial occupant on the agent-level
