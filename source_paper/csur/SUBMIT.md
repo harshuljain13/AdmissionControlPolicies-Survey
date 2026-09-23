@@ -72,8 +72,6 @@ note.
 - [ ] **CCS concepts are placeholders.** Regenerate from <https://dl.acm.org/ccs>
       and replace the `CCSXML` block. Reviewers notice defaults.
 - [ ] **Keywords** reviewed.
-- [ ] **`\country{}`** is set to India for all four authors; acmart warns if it is
-      absent. Correct if wrong.
 - [ ] **Note the arXiv preprint on the title page** if it is already posted.
 - [ ] Drop `anonymous` from the class options for the camera-ready.
 
