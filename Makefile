@@ -27,7 +27,7 @@ TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv csur camera check style anon clean
+.PHONY: all tmlr arxiv csur csur-named camera check style anon clean
 
 all: check
 
@@ -44,6 +44,15 @@ csur:
 	   grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
 	 if [ "$$hits" != "0" ]; then echo "FAIL: $$hits identifying string(s)"; exit 1; \
 	 else echo "OK: $(CSUR)/paper.pdf anonymous"; fi
+
+## csur-named — same, with author names visible.
+## Use only if ScholarOne confirms CSUR is single-blind; see csur/SUBMIT.md.
+csur-named:
+	@sed 's|\[acmsmall,review,anonymous\]|[acmsmall,review]|' \
+	    $(CSUR)/paper.tex > $(CSUR)/named.tex
+	$(TECTONIC) -X compile $(CSUR)/named.tex
+	@rm -f $(CSUR)/named.tex
+	@echo "OK: $(CSUR)/named.pdf (author names visible)"
 
 ## arxiv — de-anonymised PDF, plus the flat tarball arXiv wants.
 ## arXiv compiles source itself and does NOT run bibtex, so the .bbl ships.
@@ -105,5 +114,5 @@ clean:
 	      $(TMLR)/*.blg $(TMLR)/*.log $(TMLR)/*.out
 	rm -f $(ARXIV)/paper.pdf $(ARXIV)/upload.tar.gz $(ARXIV)/*.aux \
 	      $(ARXIV)/*.bbl $(ARXIV)/*.blg $(ARXIV)/*.log $(ARXIV)/*.out
-	rm -f $(CSUR)/paper.pdf $(CSUR)/*.aux $(CSUR)/*.bbl $(CSUR)/*.blg \
+	rm -f $(CSUR)/paper.pdf $(CSUR)/named.pdf $(CSUR)/named.tex $(CSUR)/*.aux $(CSUR)/*.bbl $(CSUR)/*.blg \
 	      $(CSUR)/*.log $(CSUR)/*.out

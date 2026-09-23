@@ -45,3 +45,4 @@ source_paper/**/*.log
 source_paper/**/*.out
 source_paper/arxiv/upload.tar.gz
 source_paper/tmlr/camera.tex
+named.pdf
