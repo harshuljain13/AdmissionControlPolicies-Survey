@@ -1,5 +1,8 @@
 % Shared preamble: everything the BODY needs, independent of venue.
 % Venue wrappers input this after loading their own documentclass and style.
+% acmart predefines \Bbbk, which amssymb redefines. Harmless to let
+% amssymb win; without this the CSUR build dies at load time.
+\let\Bbbk\relax
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{graphicx}
 \usepackage{tikz}

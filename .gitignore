@@ -35,6 +35,7 @@ preview-*.png
 # readers can see the current version without a TeX toolchain.
 # everything else generated stays ignored.
 source_paper/**/*.pdf
+!source_paper/csur/paper.pdf
 !source_paper/tmlr/paper.pdf
 !source_paper/arxiv/paper.pdf
 source_paper/**/*.aux

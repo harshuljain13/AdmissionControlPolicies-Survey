@@ -7,6 +7,7 @@
 # Everything a venue needs lives in that venue's folder. There is no
 # separate staging tree.
 #
+#   make csur     -> source_paper/csur/paper.pdf       upload to ACM CSUR
 #   make tmlr     -> source_paper/tmlr/paper.pdf       upload to OpenReview
 #   make arxiv    -> source_paper/arxiv/upload.tar.gz  upload to arXiv
 #   make check    tmlr build + gate on refs, em-dashes, anonymity
@@ -24,14 +25,25 @@ TECTONIC ?= tectonic
 SRC      := source_paper
 TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
+CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv camera check style anon clean
+.PHONY: all tmlr arxiv csur camera check style anon clean
 
 all: check
 
 ## tmlr — anonymous build. This PDF is the TMLR submission.
 tmlr:
 	$(TECTONIC) -X compile $(TMLR)/paper.tex --keep-logs
+
+## csur — ACM Computing Surveys, anonymous for review.
+## acmart ships with TeX Live, so nothing is vendored into csur/.
+csur:
+	$(TECTONIC) -X compile $(CSUR)/paper.tex --keep-logs
+	@if ! command -v pdftotext >/dev/null 2>&1; then exit 0; fi; \
+	 hits=$$(pdftotext $(CSUR)/paper.pdf - 2>/dev/null | \
+	   grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
+	 if [ "$$hits" != "0" ]; then echo "FAIL: $$hits identifying string(s)"; exit 1; \
+	 else echo "OK: $(CSUR)/paper.pdf anonymous"; fi
 
 ## arxiv — de-anonymised PDF, plus the flat tarball arXiv wants.
 ## arXiv compiles source itself and does NOT run bibtex, so the .bbl ships.
@@ -93,3 +105,5 @@ clean:
 	      $(TMLR)/*.blg $(TMLR)/*.log $(TMLR)/*.out
 	rm -f $(ARXIV)/paper.pdf $(ARXIV)/upload.tar.gz $(ARXIV)/*.aux \
 	      $(ARXIV)/*.bbl $(ARXIV)/*.blg $(ARXIV)/*.log $(ARXIV)/*.out
+	rm -f $(CSUR)/paper.pdf $(CSUR)/*.aux $(CSUR)/*.bbl $(CSUR)/*.blg \
+	      $(CSUR)/*.log $(CSUR)/*.out
