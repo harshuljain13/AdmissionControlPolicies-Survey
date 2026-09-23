@@ -14,6 +14,12 @@
 #
 # Build with tectonic; `brew install tectonic` if missing.
 
+# Pin the build timestamp so the PDFs are bit-reproducible. Without this,
+# tectonic embeds the current time and every rebuild produces a diff even
+# when nothing changed, which is noise in history and a merge conflict
+# waiting to happen between four authors.
+export SOURCE_DATE_EPOCH := 1700000000
+
 TECTONIC ?= tectonic
 SRC      := source_paper
 TMLR     := $(SRC)/tmlr
