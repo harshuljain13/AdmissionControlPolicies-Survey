@@ -702,11 +702,10 @@ require a session identifier, and one requires a priority class.
 
 One property does not fill. For no paper in the corpus could we
 determine the range the policy's own signal took during its evaluation.
-This is not a property we invented as a hurdle: it is the difference
-between a policy that was tested and a policy that was merely present.
-A threshold never approached and a threshold approached but not crossed
-produce the same admission counts and the same downstream latencies,
-and no reported number distinguishes them.
+A threshold that was never approached and a threshold that was
+approached but not crossed produce the same admission counts and the
+same downstream latencies, so no reported number distinguishes a policy
+that was exercised from one that was merely present.
 
 The consequence for a reader is narrow and specific. The taxonomy will
 tell you which policies could apply to your deployment. It will not tell
@@ -1666,8 +1665,8 @@ constructed would not be load-bearing, and the set should shrink
 accordingly.
 
 Item~3 (signal liveness) is the clearest case to test, since we found
-no paper reporting it: the question is not whether papers disagree but
-whether the omission changes what a reader should conclude. Establishing
+no paper reporting it at all. The question there is whether the omission
+changes what a reader should conclude. Establishing
 that requires running a policy whose signal is known to be inert
 alongside one whose signal is known to move, on the same deployment and
 against the same trace, and asking whether any reported number separates

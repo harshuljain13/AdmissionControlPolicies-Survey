@@ -18,11 +18,10 @@ or refuse it. We followed an adapted PRISMA protocol, and the per-paper coding
 sheets are released with the paper so the classification can be checked.
 
 CSUR describes a survey article as one that emphasises classification of existing
-literature, developing a perspective, and evaluating trends. That is what we have
-tried to do. The taxonomy classifies the corpus on five axes, and the perspective
-we arrived at is less comfortable than the one we expected to find.
+literature, developing a perspective, and evaluating trends. That is what we set
+out to do. The taxonomy classifies the corpus on five axes.
 
-Three things came out of it.
+Three findings came out of it.
 
 Admission control turns out to sit at a layer the serving literature does not
 study. Of nine LLM serving papers we audited from OSDI, SOSP, NSDI, ASPLOS,
@@ -38,8 +37,8 @@ measured against the absence of admission control and almost never against one
 another, so a practitioner cannot use the literature to decide which policy suits
 their deployment.
 
-The third finding is the one we did not anticipate. We placed all sixteen papers
-on the five axes to test whether the taxonomy was usable, and five axes filled
+The third finding came out of testing whether the taxonomy was usable. We placed
+all sixteen papers on the five axes, and five axes filled
 from the published text: unit, setting, objective, the quantity each policy
 watches, and whether it can run in front of an unmodified engine. One property did
 not fill for any paper. None reports the range its own signal took during the
@@ -66,9 +65,8 @@ concludes we will note the prior appearance on the title page, and we understand
 this does not count as prior publication under CSUR's policy. We have not
 submitted this work anywhere else.
 
-The manuscript runs to 28 pages in the acmsmall template. We are treating it as a
-full survey rather than a short one, and are happy to cut if the editors would
-prefer it shorter.
+The manuscript runs to 28 pages in the acmsmall template, which we understand
+falls under the full survey category rather than the short one.
 
 Thank you for considering it.
 
