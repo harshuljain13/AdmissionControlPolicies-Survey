@@ -65,6 +65,42 @@ So if the arXiv preprint goes up first, say so on the title page of the CSUR
 submission. Confirm the current wording in ScholarOne rather than relying on this
 note.
 
+## Verifying the format
+
+```bash
+make verify     # mechanical checks: trim size, fonts, CCS, keywords,
+                # reference block, anonymity, unresolved citations
+make bibwarn    # what ACM-Reference-Format wants that the .bib omits
+```
+
+`make verify` covers what a machine can check. Note that acmsmall's trim size is
+6.75 x 10 inches (486 x 720 pt), **not** US Letter; a checker expecting Letter will
+report a false failure.
+
+What it cannot check, and a human must:
+
+- whether the CCS concepts are the *right* ones, only that they exist
+- whether prose, tables and figures read correctly at acmsmall's narrower measure
+- ACM's authorship, conflict and originality policies
+
+### Bibliography completeness
+
+`ACM-Reference-Format` is far stricter than the TMLR style was, and currently
+emits 117 warnings across 48 of 63 entries:
+
+| count | missing |
+|---|---|
+| 43 | page numbers (`pages` or `numpages`) |
+| 29 | `address` |
+| 27 | `publisher` |
+| 18 | `volume`/`number` on an article |
+
+None is fatal and the bibliography renders, but ACM production will ask for them
+and reviewers reading the reference list will notice. Most are conference papers
+missing publisher and address, which are mechanical to fill for a known venue.
+arXiv preprints legitimately have no publisher, page range or volume, so a
+residual count is expected rather than zero.
+
 ## Before submitting
 
 - [ ] **Verify the review model** in ScholarOne (see above). This is the one that
