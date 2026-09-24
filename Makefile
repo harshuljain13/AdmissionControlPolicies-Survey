@@ -179,6 +179,15 @@ anon:
 		  grep -inE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf"; \
 		exit 1; \
 	else echo "OK: anonymous (no identifying strings)"; fi
+	@# The running header is the classic leak: a \shortauthors that the class
+	@# forgets to suppress puts the author line on every page. Checked
+	@# separately because a bare surname collides with cited works (we cite
+	@# Jain's fairness index, by a different Jain).
+	@if command -v pdftotext >/dev/null 2>&1; then \
+		hd=$$(for pg in 3 5 7; do pdftotext -f $$pg -l $$pg $(TMLR)/paper.pdf - 2>/dev/null | head -2; done | \
+		      grep -icE "jain|sah|khatri" || true); \
+		if [ "$$hd" != "0" ]; then echo "FAIL: author name in a running header"; exit 1; \
+		else echo "OK: running headers carry no author name"; fi; fi
 
 ## clean — remove build output, keep sources
 clean:
