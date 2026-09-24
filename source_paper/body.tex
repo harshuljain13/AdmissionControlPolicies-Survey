@@ -1579,6 +1579,23 @@ per-configuration utilization, or only pool-level averages?
 Seven high-signal open problems. Each cites concrete evidence from
 either published peer review or the primary source's own limitations.
 
+\paragraph{Relation to the existing agenda.} Mitzenmacher and Shahout
+\citep{mitzenmacher2025queueing} enumerate roughly twenty-five open
+problems across queueing with predictions, dynamic batching, adaptive
+scheduling, GPU orchestration, compound AI systems and reasoning
+workloads. Ours are not disjoint from theirs and we do not claim they
+are: OP4 and their reasoning-workload section address the same
+workload, and OP6 sits inside the queueing-theoretic territory their
+paper defines. The difference is in what is being asked. Their list is
+a theoretical agenda, stating problems whose resolution would be a
+result: how prediction error should be modelled, when Gittins policies
+are implementable, what SOAP analysis extends to. Ours are questions
+about evidence, stating gaps whose resolution would be a measurement or
+a system: which admission policy suits which deployment, whether an
+omitted reporting item lets a result move undetected. A reader wanting
+the theory agenda should take theirs; this list is what the published
+systems literature leaves unestablished.
+
 \paragraph{OP1: Agent-level admission with per-tenant fairness under online arrivals.}
 The CONCUR reviewer discussion at ICML 2026 (OpenReview
 \texttt{mmdqUrEY24}) contains this exchange: Reviewer Afcg maintained
@@ -1656,6 +1673,67 @@ alongside one whose signal is known to move, on the same deployment and
 against the same trace, and asking whether any reported number separates
 them.
 
+\section{Threats to validity}
+\label{sec:threats}
+
+\paragraph{The central finding is bibliographic, not empirical.} We
+report that no paper in the corpus states the observed range of the
+quantity its policy reads, and that this is what prevents a reader from
+telling a policy that could not act from one that chose not to. The
+first half is an absence in what we extracted; the second is an
+argument. Neither is a measurement. We did not run the policies, and we
+do not claim to have observed a policy failing this way in a
+deployment. Establishing that would require running a policy whose
+signal is known to be inert alongside one whose signal is known to
+move, on the same deployment and against the same trace, and it is
+stated as Open Problem~7 for that reason.
+
+The absence itself has a specific shape. We recorded each paper's
+evaluation setup, including the quantity its policy compares against a
+threshold, and no paper stated the range that quantity took during the
+evaluation. A paper reporting it somewhere we did not extract, a figure
+axis showing cache occupancy over time for instance, would not have
+been captured. The claim is therefore that we did not find it, over a
+defined extraction procedure, rather than that it does not exist.
+
+\paragraph{Screening and coding were done by one reader.} Systematic
+review methodology ordinarily calls for at least two independent coders
+and a reported agreement statistic. This review had one. Inclusion
+decisions, tier assignments and axis placements therefore carry no
+inter-rater reliability measure, and a second coder might place
+borderline works differently. Three specific placements are known to be
+contestable and are marked as such in the text: FairServe, whose
+user-and-application granularity does not fit any of our three unit
+codes; SAGA, which we treat as a partial occupant of the unclaimed
+intersection; and Mooncake, which states an early-rejection policy but
+does not evaluate it as one. To make disagreement checkable rather than
+invisible, the per-paper coding sheets are released with the survey
+(\artifacturl).
+
+\paragraph{The corpus boundary involves judgment.} Admission-adjacent
+is not a sharp category. Works that relegate rather than refuse, that
+reclaim memory rather than decline requests, or that autoscale rather
+than gate, all answer the overload question with a different verb. We
+included Niyama on those grounds and excluded TokenScale on the
+opposite ones, and Appendix~\ref{sec:excluded} lists every work
+considered and set aside with the reason. A reviewer who disagrees with
+a particular call can see which one it was.
+
+\paragraph{The reporting items are identified, not validated.} Section
+\ref{sec:items} names seven properties that recur as points of
+divergence. We do not claim the set is minimal, that its members are
+independent, or that they matter equally. Whether omitting any one of
+them lets a reported result move undetected is a question about
+measurement, and it is the open problem this survey hands on rather
+than one it settles.
+
+\paragraph{Coverage has a date and a venue boundary.} The search ran
+through September 2026. Admission-primary work is appearing quickly,
+and a survey of a moving subfield is a snapshot. The nine-paper slice
+in Section~\ref{sec:clusters} is drawn from seven venues; work at other
+venues, and industrial deployment reports in particular, is covered
+where we found it but was not systematically swept.
+
 \section{Conclusion}
 \label{sec:conc}
 
@@ -1698,3 +1776,64 @@ as partial occupant), OP2 (online admission for agentic workloads
 with reject/defer accounting), OP5 (cross-validation of coupled
 admission and autoscaling on top of Token Pools), and OP7 (which
 reporting items are load-bearing).
+
+\appendix
+\section{Works considered and set aside}
+\label{sec:excluded}
+
+Two categories, kept separate because the evidence behind them differs.
+
+\paragraph{Examined and excluded.} Read in full, then excluded with a
+stated reason.
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+\item \textbf{TokenScale} \citep{lai2025tokenscale}. A pure autoscaling
+      framework: its Token Velocity signal drives prefiller and decoder
+      scaling only. The full text contains no instance of admission,
+      admit, reject, refuse or shed; the single mention of dropping
+      requests is in related work, describing other systems and
+      explicitly contrasting them with TokenScale.
+\item \textbf{Mooncake} \citep{qin2025mooncake} is included in the
+      corpus but deliberately not placed in
+      Table~\ref{tab:master}. It states a ``prediction-based early
+      rejection policy'', so it is an admission mechanism we can name,
+      but the policy is described rather than evaluated: there is no
+      ablation isolating its effect and no comparison against an
+      alternative admission rule. Placing it on the Signal axis would
+      assert an evidential basis the paper does not provide.
+\end{itemize}
+
+\paragraph{Identified but not examined.} Surfaced during verification
+searches in September 2026 and not read in full, so not classified. We
+list them because a reader working in this area will encounter them,
+and because an unexamined candidate is a more useful thing to disclose
+than to omit.
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+\item \textbf{OmniServe} \citep{omniserve2026} reached our candidate
+      list through a search snippet describing it as regulating
+      admissions. Checking the abstract does not support that reading:
+      it describes CPU-GPU attention piggybacking for co-located
+      latency-sensitive and best-effort loads, together with ``a
+      dynamic batching control policy to adapt to fluctuating request
+      arrivals''. Batching control governs how queued requests are
+      grouped, which is a different decision from whether a request is
+      admitted. We record it here because the snippet was persuasive
+      and the correction is the kind a reader may otherwise repeat,
+      and because we have not read the full paper and cannot rule out
+      an admission mechanism in its body.
+\item Agent-side candidates: Adaptive Memory Admission Control for LLM
+      Agents, Agent Control Protocol, and ConsistencyGate, each
+      described in its abstract as performing admission at agent
+      granularity. These bear on the unclaimed intersection of
+      Section~\ref{sec:taxonomy}, which is an agent-level claim, and
+      any of them could occupy or narrow it.
+\item Multi-tenant and attribution work: Token Latency Fairness,
+      LLMVisor, and AgentServeSim.
+\end{itemize}
+
+The second list is a statement about this survey's coverage rather than
+about those works. It is given so that the boundary of what was read is
+visible, and so that the agent-level claims in particular are read with
+the knowledge that three unexamined candidates bear on them.
+
