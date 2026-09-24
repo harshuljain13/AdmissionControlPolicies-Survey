@@ -27,7 +27,7 @@ TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera camera check style anon verify clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera camera check style anon verify links clean
 
 all: check
 
@@ -114,6 +114,28 @@ verify: csur
 	 if [ "$$b" = "0" ]; then echo "OK"; else echo "$$b warnings (see 'make bibwarn')"; fi; \
 	 echo; \
 	 if [ $$fail -eq 0 ]; then echo "format checks passed"; else echo "FORMAT CHECKS FAILED"; exit 1; fi
+
+## links — resolve every url, doi and arXiv id in the bibliography.
+## ACM DL, USENIX and SSRN return 403 to scripted requests; those are
+## reported separately since a 403 means bot-blocked, not broken.
+links:
+	@echo "resolving every link in references.bib ..."
+	@grep -oE '(url|doi|eprint)[[:space:]]*=[[:space:]]*\{[^}]+\}' $(SRC)/references.bib \
+	  | sed -e 's/^url[[:space:]]*=[[:space:]]*{//' \
+	        -e 's/^doi[[:space:]]*=[[:space:]]*{/https:\/\/doi.org\//' \
+	        -e 's/^eprint[[:space:]]*=[[:space:]]*{/https:\/\/arxiv.org\/abs\//' \
+	        -e 's/}$$//' | sort -u > /tmp/.bl; \
+	 ok=0; blocked=0; bad=0; \
+	 while read u; do \
+	   c=$$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 15 -A "Mozilla/5.0" "$$u" 2>/dev/null); \
+	   case "$$c" in \
+	     2*|3*) ok=$$((ok+1));; \
+	     403)   blocked=$$((blocked+1));; \
+	     *)     bad=$$((bad+1)); echo "  DEAD $$c  $$u";; \
+	   esac; \
+	 done < /tmp/.bl; \
+	 echo "  $$ok resolved, $$blocked bot-blocked (403, not broken), $$bad dead"; \
+	 [ $$bad -eq 0 ] || exit 1
 
 ## bibwarn — what ACM-Reference-Format wants and the .bib does not supply
 bibwarn: csur
