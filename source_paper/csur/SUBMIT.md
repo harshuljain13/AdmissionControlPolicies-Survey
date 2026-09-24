@@ -69,9 +69,12 @@ note.
 
 - [ ] **Verify the review model** in ScholarOne (see above). This is the one that
       can cost a desk rejection.
-- [ ] **CCS concepts are placeholders.** Regenerate from <https://dl.acm.org/ccs>
-      and replace the `CCSXML` block. Reviewers notice defaults.
-- [ ] **Keywords** reviewed.
+- [x] **CCS concepts** set. "Surveys and overviews" is the anchor at 500,
+      alongside NLP and neural networks; distributed architectures and
+      distributed-systems principles at 300.
+- [x] **Keywords** set. CCS predates LLM serving and cannot name it, so the
+      keyword block carries the terms a reader or search engine would actually
+      use, including "LLM inference serving" and "GPU serving".
 - [ ] **Note the arXiv preprint on the title page** if it is already posted.
 - [ ] Drop `anonymous` from the class options for the camera-ready.
 
