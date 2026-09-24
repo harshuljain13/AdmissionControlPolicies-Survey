@@ -34,20 +34,15 @@
 \def\year{2026}
 \def\openreview{\url{https://openreview.net/forum?id=XXXX}}
 
-% Two things in the body de-anonymise the submission, so both are conditional.
+% One thing in the body de-anonymises the submission, so it is conditional.
 % \if@accepted is set by the [accepted] and [preprint] options of tmlr.sty.
 % A venue without an anonymity mechanism must still define these two macros.
 \makeatletter
 \if@accepted
   \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
-  \newcommand{\companionwork}{Companion work in preparation
-    (\emph{AdmitPerf}) takes this as its subject.}
 \else
   \newcommand{\artifacturl}{repository withheld for double-blind review;
     the coding sheets are included as supplementary material}
-  \newcommand{\companionwork}{Companion work by the present authors,
-    in preparation, takes this as its subject; it is not cited here so
-    as to preserve anonymity.}
 \fi
 \makeatother
 

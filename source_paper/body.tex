@@ -1649,8 +1649,12 @@ constructed would not be load-bearing, and the set should shrink
 accordingly.
 
 Item~3 (signal liveness) is the clearest case to test, since we found
-no paper reporting it: the question is not whether papers disagree but whether the
-omission changes what a reader should conclude. \companionwork
+no paper reporting it: the question is not whether papers disagree but
+whether the omission changes what a reader should conclude. Establishing
+that requires running a policy whose signal is known to be inert
+alongside one whose signal is known to move, on the same deployment and
+against the same trace, and asking whether any reported number separates
+them.
 
 \section{Conclusion}
 \label{sec:conc}

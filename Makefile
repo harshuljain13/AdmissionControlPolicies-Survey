@@ -27,7 +27,7 @@ TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv csur csur-named camera check style anon verify clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera camera check style anon verify clean
 
 all: check
 
@@ -53,6 +53,22 @@ csur-named:
 	$(TECTONIC) -X compile $(CSUR)/named.tex
 	@rm -f $(CSUR)/named.tex
 	@echo "OK: $(CSUR)/named.pdf (author names visible)"
+
+## csur-camera — camera-ready. Drops both [review] and [anonymous], which
+## reveals the author block, the artifact URL and the companion tool's name.
+## Nothing in body.tex changes; the three are conditional on acmart's
+## \if@ACM@anonymous.
+csur-camera:
+	@sed 's|\[acmsmall,review,anonymous\]|[acmsmall]|' \
+	    $(CSUR)/paper.tex > $(CSUR)/camera.tex
+	$(TECTONIC) -X compile $(CSUR)/camera.tex
+	@rm -f $(CSUR)/camera.tex
+	@echo
+	@echo "OK: $(CSUR)/camera.pdf"
+	@echo "Before sending to ACM, fill in the fields they assign:"
+	@echo "  acmVolume, acmNumber, acmArticle, acmDOI, received"
+	@echo "and add Acknowledgments / Author Contributions if wanted; both"
+	@echo "would have de-anonymised the submission, so neither exists yet."
 
 ## arxiv — de-anonymised PDF, plus the flat tarball arXiv wants.
 ## arXiv compiles source itself and does NOT run bibtex, so the .bbl ships.
@@ -150,5 +166,6 @@ clean:
 	      $(TMLR)/*.blg $(TMLR)/*.log $(TMLR)/*.out
 	rm -f $(ARXIV)/paper.pdf $(ARXIV)/upload.tar.gz $(ARXIV)/*.aux \
 	      $(ARXIV)/*.bbl $(ARXIV)/*.blg $(ARXIV)/*.log $(ARXIV)/*.out
-	rm -f $(CSUR)/paper.pdf $(CSUR)/named.pdf $(CSUR)/named.tex $(CSUR)/*.aux $(CSUR)/*.bbl $(CSUR)/*.blg \
+	rm -f $(CSUR)/paper.pdf $(CSUR)/named.pdf $(CSUR)/named.tex \
+	      $(CSUR)/camera.pdf $(CSUR)/camera.tex $(CSUR)/*.aux $(CSUR)/*.bbl $(CSUR)/*.blg \
 	      $(CSUR)/*.log $(CSUR)/*.out

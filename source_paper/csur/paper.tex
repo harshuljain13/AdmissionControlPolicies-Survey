@@ -55,20 +55,15 @@
 
 \renewcommand{\shortauthors}{Jain et al.}
 
-% The body uses these two macros for content that would de-anonymise a
+% The body uses this macro for content that would de-anonymise a
 % submission. acmart does not expose an \if@accepted equivalent, so we
 % key off its own \if@ACM@anonymous.
 \makeatletter
 \if@ACM@anonymous
   \newcommand{\artifacturl}{repository withheld for anonymous review;
     the coding sheets are included as supplementary material}
-  \newcommand{\companionwork}{Companion work by the present authors,
-    in preparation, takes this as its subject; it is not cited here so
-    as to preserve anonymity.}
 \else
   \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
-  \newcommand{\companionwork}{Companion work in preparation
-    (\emph{AdmitPerf}) takes this as its subject.}
 \fi
 \makeatother
 
