@@ -1,29 +1,69 @@
 # Admission Control for LLM Inference Serving: A Systematic Review
 
-*Version: v0.2 draft, 2026-09-11. Ready for arXiv preprint.*
-*Target: arXiv preprint (submit next), then ACM CSUR Emerging Topics.*
+*Target: ACM Computing Surveys. arXiv preprint alongside. Last built 2026-09-24.*
 
 ## Paper
 
-- **Main draft**: `paper.tex` — the single source. Build with `make pdf`; `make check` fails on unresolved refs.
-- **BibTeX references**: `references.bib` (~45 entries)
-- **Zero em-dashes** (per author preference, verified via `make check`, which greps both `—` and LaTeX `---`)
+- **Source**: `source_paper/body.tex`, venue-neutral. Wrappers in
+  `source_paper/csur/`, `source_paper/tmlr/`, `source_paper/arxiv/`.
+- **Build**: `make csur` for the submission, `make check` for the gates,
+  `make verify` for ACM format checks, `make links` to resolve every reference.
+- **References**: `source_paper/references.bib`, 65 entries, every url, doi and
+  arXiv id resolved and every author list verified against its source.
+- **Zero em-dashes** (author preference, enforced by `make check`).
 
 ## Contribution
 
-- Four-axis taxonomy for admission-control policies: unit (request / agent / tenant), setting (online / offline / hybrid), SLO awareness (deadline / throughput / fairness / cost), signal (scalar / dual-gate / LP-composite / formal WCRT).
-- Four sub-branches added during reading: signal structure, SLO granularity (job / request / per-stage), fairness type (task / tenant / priority), concurrency context (concurrent-batch server / serial edge).
+- Five-axis taxonomy: unit (request / agent-session / tenant), setting (online /
+  offline / hybrid), SLO awareness (deadline / throughput / fairness / cost),
+  **signal quantity** (which measured thing the policy watches), and
+  **portability** (whether it runs in front of an unmodified engine, or needs a
+  fork). Signal *structure*, the earlier scalar / dual-gate / LP / WCRT cut, is
+  retained as a sub-branch beneath signal quantity.
+- Four further sub-branches: SLO granularity, fairness type, concurrency
+  context, decision moment.
 - Per-cluster synthesis of fifty-five admission and admission-adjacent works.
-- Reproducibility audit: 7 of the 16 admission-primary papers have released code, as have 5 of the 6 KV-cache-adjacent works.
-- Seven reporting items whose inconsistency blocks cross-paper comparison.
-- Mapping of eight public production incidents (OpenAI × 4, Anthropic × 3, Azure × 1) to admission failure modes.
-- Seven open problems, each grounded in either public peer review or the primary source's own limitations.
+- Master classification of twenty-eight of them, with GRADE-style evidence
+  ratings.
+- Seven reporting items that block cross-paper comparison.
+- Eight public production incidents mapped to admission failure modes.
+- Seven open problems, each grounded in published peer review or in a primary
+  source's own limitations.
 
-## Three headline findings
+## Three findings
 
-1. **9-for-9 no ingress admission**: nine top-venue LLM serving papers (Orca OSDI '22, Sarathi-Serve OSDI '24, Llumnix OSDI '24, DistServe OSDI '24, Past-Future ASPLOS '25, Aegaeon SOSP '25, Jenga SOSP '25, AdaServe EuroSys '26, PASCAL HPCA 2026) include no ingress-level admission control. All respond to overload via batching, migration, placement, autoscaling, or memory management.
-2. **Zero baseline overlap**: 16 admission-primary papers, no two share a baseline *set*. The only baselines that recur are unconfigured engines and classical disciplines; exactly one published admission system (SHEPHERD) is used as a baseline by two papers. Cross-paper comparison is impossible from the literature alone.
-3. **Empty intersection**: `agent-level × online × deadline-aware × fair` has no published entry. Direct seed for future work.
+1. **Admission sits at a different layer from the one the serving literature
+   studies.** Of nine LLM serving papers audited across OSDI, SOSP, NSDI,
+   ASPLOS, EuroSys, MLSys and HPCA, all place the overload response inside the
+   engine and none takes a decision at the ingress. Those are scheduling and
+   memory-management papers, so this describes where research attention has gone
+   rather than a shortcoming in them.
+2. **No two of the sixteen admission-primary papers share a baseline set.**
+   Policies are measured against the absence of admission control and almost
+   never against one another.
+3. **Placing all sixteen on the axes succeeds on five and fails on one.** Unit,
+   setting, objective, signal quantity and portability are all recoverable from
+   the published text. The observed range of the quantity each policy reads is
+   reported by none of them, which is what prevents a reader from telling a
+   policy that could not act from one that chose not to.
+
+Finding 3 is an absence across the evaluation sections we extracted, not a proof
+that no such reporting exists anywhere. The paper carries a threats-to-validity
+section that says so, along with the fact that screening and coding were done by
+one reader.
+
+## Read the paper
+
+Both renders are committed, so you can read the current version without a TeX
+toolchain:
+
+- **[`source_paper/arxiv/paper.pdf`](source_paper/arxiv/paper.pdf)** — with author
+  names. This is the one to read or share.
+- **[`source_paper/tmlr/paper.pdf`](source_paper/tmlr/paper.pdf)** — anonymised,
+  as submitted to TMLR.
+
+They are regenerated by `make check` and `make arxiv`, so if you edit `body.tex`,
+rebuild before committing or the PDFs will lag the source.
 
 ## Layout
 

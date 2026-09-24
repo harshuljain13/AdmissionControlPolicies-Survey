@@ -75,7 +75,7 @@ differentiates this survey from those prior works.
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
-\item \textbf{Unified taxonomy} with four axes and four sub-branches,
+\item \textbf{Unified taxonomy} with five axes and five sub-branches,
       plus short codes (\textsc{unit-req/agt/ten},
       \textsc{sig-sca/dg/lp/wcrt}) used across the master table
       (Section~\ref{sec:taxonomy}).
@@ -115,14 +115,14 @@ system, SHEPHERD \citep{shepherd2023}, is used as a baseline by two papers (QLM 
 Ascendra). Third, the taxonomy accommodates every corpus work that proposes or
 embeds an admission mechanism, twenty-eight in total
 (Table~\ref{tab:master}), including the five added during verification
-(Token Pools, ProServe \citep{huang2026proserve}, SAGA, Scorpio and FairServe), with four
+(Token Pools, ProServe \citep{huang2025proserve}, SAGA, Scorpio and FairServe), with four
 sub-branches added during our reading, none of which required
 backing out an original axis.
 
 \paragraph{Roadmap.} Section~\ref{sec:bg} covers the inference request
 lifecycle, the Admit-Queue-Route model, and the foundational
 definitions (\S\ref{sec:defs}). Section~\ref{sec:taxonomy} introduces
-the four-axis taxonomy with short unit and signal codes.
+the five-axis taxonomy with short unit and signal codes.
 Section~\ref{sec:method} describes the systematic-review method with a
 PRISMA flow diagram. Section~\ref{sec:clusters} synthesizes each
 policy cluster. Section~\ref{sec:master} presents the master
@@ -136,8 +136,29 @@ Section~\ref{sec:conc} concludes.
 
 \subsection{Related surveys and differentiation}
 
-Four broad surveys of LLM inference serving predate this work.
+Five broad surveys of LLM inference serving predate this work.
 Table~\ref{tab:diff} summarizes each and states what this paper adds.
+
+A second body of work is closer to what this survey does than the
+surveys are, and does not appear in that table because it is not
+survey work. Benchmarks and evaluation frameworks for LLM serving
+measure what these systems achieve rather than cataloguing what they
+propose. MLPerf Inference \citep{reddi2020mlperf} standardises
+throughput and latency measurement across hardware and model
+configurations. Etalon \citep{agrawal2024etalon} argues that the
+conventional metrics, time to first token, time between tokens,
+normalised latency and time per output token, miss aspects of
+user-facing behaviour, and introduces a fluidity index in their place.
+Tooling in the same space, LLMPerf, GenAI-Perf and GuideLLM among it,
+measures serving throughput and latency against a deployment.
+
+None of these treats the admission decision as an experimental axis.
+They measure a system under a given load; they do not vary what the
+system refuses, or report whether a policy's inputs moved during the
+run. That is the gap this survey documents rather than closes:
+Section~\ref{sec:items} identifies what would have to be reported for
+such a comparison to be possible, and Section~\ref{sec:open} states
+that establishing which of those items matter is itself unresolved.
 
 \begin{table}[htbp]
 \centering
@@ -292,7 +313,7 @@ and $J = 1/n$ denotes maximal concentration on a single tenant. Chosen
 as the primitive because it composes cleanly across the three
 fairness types in the taxonomy (task, tenant, priority-weighted).
 
-The Jain index is a coarse instrument. Equinox \citep{lu2025equinox}
+The Jain index is a coarse instrument. Equinox \citep{wei2025equinox}
 and related utility-centric work argue that equal tokens do not imply
 equal user experience, and that a fairness measure grounded in
 predicted response quality or user-perceived latency is more
@@ -339,7 +360,7 @@ master classification table (Section~\ref{sec:master}). The
 descriptive axes carry the substantive taxonomy claims; the
 classificatory dimension is a fold that captures where in the
 serving pipeline the admission decision is taken. We call this a
-four-axis taxonomy throughout and reserve the term ``three-level
+five-axis taxonomy throughout and reserve the term ``three-level
 classification'' for the master table's compact form.
 
 \paragraph{Decision moment (folded).} Every admission decision can
@@ -528,13 +549,52 @@ Task-fairness allocates GPU cycles equitably between prefill and
 decode tasks within one batch (FairBatching
 \citep{lyu2025fairbatching}). Tenant-fairness equalizes served tokens
 or SLO attainment across users (VTC \citep{sheng2024vtc}, Equinox
-\citep{lu2025equinox}). These share no mechanism.
+\citep{wei2025equinox}). These share no mechanism.
 
-\subsection{Axis 4: Signal used}
+\subsection{Axis 4: Signal quantity}
+\label{sec:axis-signal}
 
-Admission policies read a runtime signal to decide. We identify four
-structural forms, each with a short code we use throughout the master
-classification (Table~\ref{tab:master}).
+Every admission policy compares some measured quantity against a
+threshold. Which quantity is the axis a practitioner can answer about
+their own deployment without having read any of the policies, because it
+asks what moves when their system is overloaded rather than how a given
+paper is built. Across the sixteen admission-primary works the
+quantities are:
+
+\begin{description}[leftmargin=2em, itemsep=1pt]
+\item[KV pressure] occupancy of the key-value cache, as a fraction of
+      what the deployment has allocated (Fluid-WAIT, CONCUR, Continuum,
+      AQUA).
+\item[Queue depth] the number of requests waiting to enter a batch
+      (QLM, FastServe, Fluid-WAIT, Continuum).
+\item[Deadline slack] time remaining against a per-request target,
+      compared with an estimate of time required (Chronos, SOLA,
+      SLOs-Serve, Scorpio, ProServe).
+\item[Predicted length] an estimate of how many tokens the request will
+      generate, from a model over the prompt (FastServe, Scorpio,
+      Clairvoyant).
+\item[Wait estimate] a prediction of how long the request will queue,
+      distinct from how many are queued (QLM).
+\item[Batch state] the composition of the batch now forming, rather
+      than a property of the arriving request (SOLA, FairBatching).
+\item[Arrival rate] the offered load itself, with no engine-side
+      quantity read (Flow-controlled scheduling).
+\item[Analytic] no runtime signal: admission follows from a stability
+      or reward argument (Service-Induced Congestion, Shen et al.).
+\end{description}
+
+The distribution matters for what the axis can do. Deadline slack and
+KV pressure dominate, but they are not interchangeable: a deadline-slack
+policy needs requests to arrive carrying deadlines, and a KV-pressure
+policy needs the cache to actually fill. Section~\ref{sec:signal-predicts}
+develops the second condition.
+
+\paragraph{Sub-branch: Signal structure.} Orthogonal to which quantity
+is read is how the policy combines readings into a decision. We identify
+four structural forms, each with a short code we use throughout the
+master classification (Table~\ref{tab:master}). The structure describes
+policy design rather than deployment fit, so it is a sub-branch rather
+than a primary axis: a reader cannot place their own system on it.
 
 \textit{Scalar heuristics} (\textsc{sig-sca}) compare a single quantity
 to a threshold (KV utilization for Fluid-WAIT; queue depth for QLM;
@@ -586,6 +646,37 @@ is fixed overhead. Algorithm~1 of \citep{marref2026chronos} rejects on
 arrival if $\rho_P \ge 1$, if the bound exceeds the TTFT deadline, or
 if a TBT capacity check fails.
 
+\subsection{Axis 5: Portability}
+\label{sec:axis-portability}
+
+The four axes above describe what a policy decides. This one describes
+what it costs to run, and it is the axis a practitioner is likely to
+apply first, because it can eliminate candidates before any question of
+fit arises.
+
+\textbf{Class A} policies decide from the arriving request and state the
+engine already exposes: cache occupancy, queue length, counts of running
+and waiting requests. Such a policy can sit in front of an unmodified
+engine, as a proxy or gateway, and is deployable by anyone who can route
+traffic.
+
+\textbf{Class B} policies need to influence which requests enter a
+batch, or to act on requests already decoding. That cannot be done from
+outside: it requires changes inside the engine's scheduler, and in
+practice a maintained fork.
+
+The split follows from the decision moment
+(\S\ref{sec:taxonomy}, folded): \textsc{ing} is Class A, while
+\textsc{qb} and \textsc{mf} are Class B. Of the sixteen
+admission-primary works, ten are Class A and six are Class B. A reader
+who cannot maintain an engine fork is choosing among ten, not sixteen,
+and that is knowable before reading any of them.
+
+No paper in the corpus states its own class. It is derivable from the
+mechanism each describes, which is why we treat it as an axis rather
+than as reported metadata: the information is present in the text but
+never surfaced as a deployment property.
+
 \subsection{What the Signal axis predicts}
 \label{sec:signal-predicts}
 
@@ -612,6 +703,39 @@ model, and the workload, and is an empirical question rather than a
 bibliographic one. We do not answer it here, and we are not aware of
 published measurements that do; it is stated as Open Problem~7.
 
+\subsection{Placing the corpus, and where it fails}
+\label{sec:placement}
+
+We applied the five axes to all sixteen admission-primary works,
+recording for each what it admits, when, against which quantity, what it
+assumes a request carries, and whether it is deployable without an
+engine fork. The exercise is a test of the axes as much as of the
+corpus: an axis that cannot be filled from the published text is not one
+a reader could use.
+
+Five of the five fill. Every paper states its unit and setting; every
+paper's objective is recoverable; the quantity each policy reads is
+always identifiable, even where the paper does not name it as a signal;
+and the portability class follows from the mechanism in all sixteen
+cases. Eight of the sixteen require nothing of an arriving request
+beyond the request itself, five require a deadline or SLO class, two
+require a session identifier, and one requires a priority class.
+
+One property does not fill. For no paper in the corpus could we
+determine the range the policy's own signal took during its evaluation.
+A threshold that was never approached and a threshold that was
+approached but not crossed produce the same admission counts and the
+same downstream latencies, so no reported number distinguishes a policy
+that was exercised from one that was merely present.
+
+The consequence for a reader is narrow and specific. The taxonomy will
+tell you which policies could apply to your deployment. It will not tell
+you whether the published evidence for any of them describes a policy
+that was actually exercised, because that evidence is not reported.
+Section~\ref{sec:items} states the property as the third of seven
+reporting items, and Section~\ref{sec:open} states the measurement it
+would take to establish which of those items are load-bearing.
+
 \subsection{The unclaimed intersection}
 
 Plotting the corpus (Figure~\ref{fig:taxonomy}) shows that
@@ -629,6 +753,24 @@ and does not commit to an online-serving mode. We treat SAGA as a
 partial occupant and preserve OP1 as an open problem for the
 subset (agent + online + TTFT+TBT + per-tenant) that no published
 work satisfies simultaneously.
+
+Re-deriving this after adding the portability axis leaves the cell
+empty, and surfaces a second gap beneath it. Among the sixteen
+admission-primary works, two are agent-level: CONCUR, which is Class A
+but offline and throughput-oriented, and Continuum, which is online but
+Class B and optimises job completion time rather than a deadline. So
+within the admission-primary set there is no agent-level policy that
+both serves online traffic and deploys without an engine fork. A reader
+running multi-turn agent workloads who cannot maintain a fork has no
+candidate at all, which is a sharper statement than the empty
+intersection and follows from a property no paper reports about itself.
+
+We state this for the admission-primary set only. ThunderAgent
+\citep{kang2026thunderagent} is agent-level and coded at ingress, which
+would occupy the cell, but its mechanism is program-level residency with
+eviction from high-bandwidth memory, and whether that is deployable
+outside the engine is not something we have established. It is the
+near-miss a reader should check first.
 
 \section{Method}
 \label{sec:method}
@@ -705,20 +847,20 @@ without LLM applicability; (iii)~marketing materials or blog posts
 without a peer-reviewed or arXiv-preprint anchor.
 
 \paragraph{Tier structure.} We organized the corpus into six tiers
-based on admission-primacy. Tier~1 (17 papers): admission-primary,
-one policy per paper. Tier~2 (10 papers): queueing theory or
+based on admission-primacy. Tier~1 (16 papers): admission-primary,
+one policy per paper. Tier~2 (11 papers): queueing theory or
 fairness-primary with admission-adjacency. Tier~3 (6 papers):
 KV-cache-management papers whose mechanism has admission
-implications. Tier~4 (9 papers): top-venue scheduling papers with
-admission as a secondary or missing component. Tier~5 (6 papers):
+implications. Tier~4 (10 papers): top-venue scheduling papers with
+admission as a secondary or missing component. Tier~5 (7 papers):
 foundational works cited for background. Tier~6 (5 papers): prior
-broad surveys used for differentiation. Total after inclusion and
-de-duplication: 44 papers deep-read; approximately 50 additional
-cite-only references.
+broad surveys used for differentiation. The six tiers sum to the
+fifty-five works of the corpus, of which forty carry a per-paper
+reading note.
 
 \paragraph{Per-paper protocol.} For each work we recorded venue,
 authors, arXiv or DOI identifier, code availability, taxonomy
-placement across all four axes, primary contribution, baseline set,
+placement across all five axes, primary contribution, baseline set,
 evaluation setup (model, engine, workload, hardware), claimed headline
 numbers with configuration qualifiers, fidelity notes, and open
 questions surfaced. Notes were written in a common markdown template
@@ -895,7 +1037,7 @@ latency reduction, 20 percent single-node capacity improvement, and
 54.3 percent cluster-level capacity improvement. Implementation is
 only 90 lines of invasive vLLM changes.
 
-Equinox \citep{lu2025equinox} argues that equal tokens do not imply
+Equinox \citep{wei2025equinox} argues that equal tokens do not imply
 equal user experience. Requires a Model of Prediction Ensemble to
 predict output length, latency, throughput, and GPU utilization per
 prompt. Thirteen percent fairness improvement measured against
@@ -955,7 +1097,7 @@ shortest-job-first using an XGBoost classifier over 19 lexical
 features delivers 70 to 76 percent short-request $p_{50}$ latency
 reduction on an RTX 4090.
 
-Ascendra \citep{elnikety2025ascendra} uses an SLO-risk predictor to
+Ascendra \citep{ikram2025ascendra} uses an SLO-risk predictor to
 promote requests between low-priority and high-priority queues.
 
 Niyama \citep{goel2025niyama} sits adjacent to admission rather than
@@ -1148,7 +1290,7 @@ Flow-Ctrl scheduling    & preprint   & 2026 & req & ing & wcrt & L \\
 Service-Induced Cong.   & preprint   & 2026 & req & ing & wcrt & M \\
 Jaillet et al.\         & preprint   & 2026 & req & ing & lp   & M \\
 Shen et al.\            & ICML       & 2026 & req & ing & lp   & M \\
-ProServe \citep{huang2026proserve} & preprint & 2025 & req & qb & lp & L \\
+ProServe \citep{huang2025proserve} & preprint & 2025 & req & qb & lp & L \\
 \midrule
 \multicolumn{7}{l}{\textit{Agent-session-level admission}} \\
 CONCUR                  & ICML       & 2026 & agt & ing & dg   & M \\
@@ -1333,10 +1475,23 @@ Reading the literature top to bottom, a practitioner cannot answer
 
 Reading the corpus for what would be needed to place a result against a
 deployment, seven properties recur as the points of divergence. Six are
-reported inconsistently, and we did not find the seventh reported at
-all. All
-seven concern disclosure of what was done rather than prescription of
-what to run, so none of them asks a paper to change its evaluation.
+reported inconsistently. The seventh, the observed range of the signal
+the policy reads, we did not find reported by any of the sixteen
+admission-primary papers.
+
+That asymmetry is worth stating plainly, because it is not what we
+expected to find. Placing all sixteen papers on the axes of
+Section~\ref{sec:taxonomy} succeeds on every axis but one: unit,
+setting, SLO-awareness, the quantity the policy watches, the metadata a
+request must carry, and whether the policy is deployable in front of an
+unmodified engine are all recoverable from the published text. Ten of
+the sixteen are deployable without modifying the engine; eight require
+nothing of a request beyond the request itself. Selection fails on a
+single missing fact, and it is the fact that determines whether a
+reported improvement is interpretable at all.
+
+All seven concern disclosure of what was done rather than prescription
+of what to run, so none of them asks a paper to change its evaluation.
 
 \begin{enumerate}[leftmargin=1.5em, itemsep=2pt]
 \item \textbf{Capacity-relative load}. Offered load expressed as a
@@ -1349,13 +1504,14 @@ what to run, so none of them asks a paper to change its evaluation.
       of meeting a fixed millisecond target varies with the deployment,
       so absolute targets are not comparable across papers.
 \item \textbf{Signal liveness}. The observed range of the quantity the
-      policy reads, over the evaluation. We did not find it reported
-      in any paper we examined.\footnote{This is an absence in our
-      extraction rather than a verified exhaustive check. We recorded
-      each paper's evaluation setup, including the signal its policy
-      reads, but no paper we read stated the range that signal took
-      during the evaluation. A paper reporting it outside the sections
-      we extracted would not have been captured.} Without it, a policy whose signal never approached its
+      policy reads, over the evaluation. Not one of the sixteen
+      admission-primary papers reports it.\footnote{This is an absence
+      across the evaluation sections we extracted, not a guarantee that
+      no paper mentions a range anywhere. We recorded each paper's
+      evaluation setup, including the quantity its policy reads; none
+      stated the range that quantity took. A figure axis showing, say,
+      cache occupancy over time would arguably satisfy the item and
+      would not have been captured by this procedure.} Without it, a policy whose signal never approached its
       threshold cannot be distinguished from one that evaluated a
       varying signal and declined to reject
       (Section~\ref{sec:signal-predicts}).
@@ -1443,6 +1599,23 @@ per-configuration utilization, or only pool-level averages?
 Seven high-signal open problems. Each cites concrete evidence from
 either published peer review or the primary source's own limitations.
 
+\paragraph{Relation to the existing agenda.} Mitzenmacher and Shahout
+\citep{mitzenmacher2025queueing} enumerate roughly twenty-five open
+problems across queueing with predictions, dynamic batching, adaptive
+scheduling, GPU orchestration, compound AI systems and reasoning
+workloads. Ours are not disjoint from theirs and we do not claim they
+are: OP4 and their reasoning-workload section address the same
+workload, and OP6 sits inside the queueing-theoretic territory their
+paper defines. The difference is in what is being asked. Their list is
+a theoretical agenda, stating problems whose resolution would be a
+result: how prediction error should be modelled, when Gittins policies
+are implementable, what SOAP analysis extends to. Ours are questions
+about evidence, stating gaps whose resolution would be a measurement or
+a system: which admission policy suits which deployment, whether an
+omitted reporting item lets a result move undetected. A reader wanting
+the theory agenda should take theirs; this list is what the published
+systems literature leaves unestablished.
+
 \paragraph{OP1: Agent-level admission with per-tenant fairness under online arrivals.}
 The CONCUR reviewer discussion at ICML 2026 (OpenReview
 \texttt{mmdqUrEY24}) contains this exchange: Reviewer Afcg maintained
@@ -1513,8 +1686,73 @@ constructed would not be load-bearing, and the set should shrink
 accordingly.
 
 Item~3 (signal liveness) is the clearest case to test, since we found
-no paper reporting it: the question is not whether papers disagree but whether the
-omission changes what a reader should conclude. \companionwork
+no paper reporting it at all. The question there is whether the omission
+changes what a reader should conclude. Establishing
+that requires running a policy whose signal is known to be inert
+alongside one whose signal is known to move, on the same deployment and
+against the same trace, and asking whether any reported number separates
+them.
+
+\section{Threats to validity}
+\label{sec:threats}
+
+\paragraph{The central finding is bibliographic, not empirical.} We
+report that no paper in the corpus states the observed range of the
+quantity its policy reads, and that this is what prevents a reader from
+telling a policy that could not act from one that chose not to. The
+first half is an absence in what we extracted; the second is an
+argument. Neither is a measurement. We did not run the policies, and we
+do not claim to have observed a policy failing this way in a
+deployment. Establishing that would require running a policy whose
+signal is known to be inert alongside one whose signal is known to
+move, on the same deployment and against the same trace, and it is
+stated as Open Problem~7 for that reason.
+
+The absence itself has a specific shape. We recorded each paper's
+evaluation setup, including the quantity its policy compares against a
+threshold, and no paper stated the range that quantity took during the
+evaluation. A paper reporting it somewhere we did not extract, a figure
+axis showing cache occupancy over time for instance, would not have
+been captured. The claim is therefore that we did not find it, over a
+defined extraction procedure, rather than that it does not exist.
+
+\paragraph{Screening and coding were done by one reader.} Systematic
+review methodology ordinarily calls for at least two independent coders
+and a reported agreement statistic. This review had one. Inclusion
+decisions, tier assignments and axis placements therefore carry no
+inter-rater reliability measure, and a second coder might place
+borderline works differently. Three specific placements are known to be
+contestable and are marked as such in the text: FairServe, whose
+user-and-application granularity does not fit any of our three unit
+codes; SAGA, which we treat as a partial occupant of the unclaimed
+intersection; and Mooncake, which states an early-rejection policy but
+does not evaluate it as one. To make disagreement checkable rather than
+invisible, the per-paper coding sheets are released with the survey
+(\artifacturl).
+
+\paragraph{The corpus boundary involves judgment.} Admission-adjacent
+is not a sharp category. Works that relegate rather than refuse, that
+reclaim memory rather than decline requests, or that autoscale rather
+than gate, all answer the overload question with a different verb. We
+included Niyama on those grounds and excluded TokenScale on the
+opposite ones, and Appendix~\ref{sec:excluded} lists every work
+considered and set aside with the reason. A reviewer who disagrees with
+a particular call can see which one it was.
+
+\paragraph{The reporting items are identified, not validated.} Section
+\ref{sec:items} names seven properties that recur as points of
+divergence. We do not claim the set is minimal, that its members are
+independent, or that they matter equally. Whether omitting any one of
+them lets a reported result move undetected is a question about
+measurement, and it is the open problem this survey hands on rather
+than one it settles.
+
+\paragraph{Coverage has a date and a venue boundary.} The search ran
+through September 2026. Admission-primary work is appearing quickly,
+and a survey of a moving subfield is a snapshot. The nine-paper slice
+in Section~\ref{sec:clusters} is drawn from seven venues; work at other
+venues, and industrial deployment reports in particular, is covered
+where we found it but was not systematically swept.
 
 \section{Conclusion}
 \label{sec:conc}
@@ -1527,7 +1765,7 @@ peer-reviewed top venues plus one accepted workshop paper and more
 than a dozen preprints. We surveyed fifty-five works across
 admission-primary, admission-adjacent, and scheduling clusters.
 
-Our four-axis taxonomy with four sub-branches organizes the corpus
+Our five-axis taxonomy with five sub-branches organizes the corpus
 without redundancy. The intersection agent-level $\times$ online
 $\times$ (TTFT+TBT-deadline-decomposed) $\times$ per-tenant-fair
 remains unoccupied; SAGA is a partial occupant on the agent-level
@@ -1558,3 +1796,64 @@ as partial occupant), OP2 (online admission for agentic workloads
 with reject/defer accounting), OP5 (cross-validation of coupled
 admission and autoscaling on top of Token Pools), and OP7 (which
 reporting items are load-bearing).
+
+\appendix
+\section{Works considered and set aside}
+\label{sec:excluded}
+
+Two categories, kept separate because the evidence behind them differs.
+
+\paragraph{Examined and excluded.} Read in full, then excluded with a
+stated reason.
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+\item \textbf{TokenScale} \citep{lai2025tokenscale}. A pure autoscaling
+      framework: its Token Velocity signal drives prefiller and decoder
+      scaling only. The full text contains no instance of admission,
+      admit, reject, refuse or shed; the single mention of dropping
+      requests is in related work, describing other systems and
+      explicitly contrasting them with TokenScale.
+\item \textbf{Mooncake} \citep{qin2025mooncake} is included in the
+      corpus but deliberately not placed in
+      Table~\ref{tab:master}. It states a ``prediction-based early
+      rejection policy'', so it is an admission mechanism we can name,
+      but the policy is described rather than evaluated: there is no
+      ablation isolating its effect and no comparison against an
+      alternative admission rule. Placing it on the Signal axis would
+      assert an evidential basis the paper does not provide.
+\end{itemize}
+
+\paragraph{Identified but not examined.} Surfaced during verification
+searches in September 2026 and not read in full, so not classified. We
+list them because a reader working in this area will encounter them,
+and because an unexamined candidate is a more useful thing to disclose
+than to omit.
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+\item \textbf{OmniServe} \citep{omniserve2026} reached our candidate
+      list through a search snippet describing it as regulating
+      admissions. Checking the abstract does not support that reading:
+      it describes CPU-GPU attention piggybacking for co-located
+      latency-sensitive and best-effort loads, together with ``a
+      dynamic batching control policy to adapt to fluctuating request
+      arrivals''. Batching control governs how queued requests are
+      grouped, which is a different decision from whether a request is
+      admitted. We record it here because the snippet was persuasive
+      and the correction is the kind a reader may otherwise repeat,
+      and because we have not read the full paper and cannot rule out
+      an admission mechanism in its body.
+\item Agent-side candidates: Adaptive Memory Admission Control for LLM
+      Agents, Agent Control Protocol, and ConsistencyGate, each
+      described in its abstract as performing admission at agent
+      granularity. These bear on the unclaimed intersection of
+      Section~\ref{sec:taxonomy}, which is an agent-level claim, and
+      any of them could occupy or narrow it.
+\item Multi-tenant and attribution work: Token Latency Fairness,
+      LLMVisor, and AgentServeSim.
+\end{itemize}
+
+The second list is a statement about this survey's coverage rather than
+about those works. It is given so that the boundary of what was read is
+visible, and so that the agent-level claims in particular are read with
+the knowledge that three unexamined candidates bear on them.
+

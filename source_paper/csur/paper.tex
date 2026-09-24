@@ -1,0 +1,121 @@
+% ACM Computing Surveys (CSUR) wrapper. Venue-specific only: document
+% class, author block, CCS concepts, and the anonymity macros. All
+% content lives in ../body.tex, shared with every other venue.
+%
+%   [review,anonymous]  double-blind submission (default here)
+%   [review]            single-blind, names visible
+%   (neither)           camera-ready
+%
+% acmart ships with TeX Live, so nothing is vendored into this folder.
+
+% Must precede \documentclass: acmart loads xcolor itself, and the table
+% option has to be in place before it does, or \rowcolors is undefined.
+\PassOptionsToPackage{table}{xcolor}
+
+\documentclass[acmsmall,review,anonymous]{acmart}
+
+\acmJournal{CSUR}
+\acmYear{2026}
+\acmVolume{0}
+\acmNumber{0}
+\acmArticle{0}
+\acmMonth{9}
+
+\input{../preamble}
+
+\begin{document}
+
+\title{Admission Control for LLM Inference Serving: A Systematic Review}
+
+% acmart hides these under [anonymous].
+\author{Harshul Jain}
+\email{harshuljain1393@gmail.com}
+\affiliation{%
+  \institution{Independent Researcher}
+  \country{USA}
+}
+\author{Tanmay Sah}
+\email{tradertanmay@mail.com}
+\affiliation{%
+  \institution{Independent Researcher}
+  \country{USA}
+}
+\author{Tanya Sah}
+\email{tanyasah20@gmail.com}
+\affiliation{%
+  \institution{Independent Researcher}
+  \country{USA}
+}
+\author{Parv Khatri}
+\email{khatriparv@gmail.com}
+\affiliation{%
+  \institution{Independent Researcher}
+  \country{USA}
+}
+
+\renewcommand{\shortauthors}{Jain et al.}
+
+% The body uses this macro for content that would de-anonymise a
+% submission. acmart does not expose an \if@accepted equivalent, so we
+% key off its own \if@ACM@anonymous.
+\makeatletter
+\if@ACM@anonymous
+  \newcommand{\artifacturl}{repository withheld for anonymous review;
+    the coding sheets are included as supplementary material}
+\else
+  \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
+\fi
+\makeatother
+
+\input{../abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+   <concept_id>10002944.10011122.10003457</concept_id>
+   <concept_desc>General and reference~Surveys and overviews</concept_desc>
+   <concept_significance>500</concept_significance>
+</concept>
+<concept>
+   <concept_id>10010147.10010178.10010179</concept_id>
+   <concept_desc>Computing methodologies~Natural language processing</concept_desc>
+   <concept_significance>500</concept_significance>
+</concept>
+<concept>
+   <concept_id>10010147.10010257.10010258.10010261</concept_id>
+   <concept_desc>Computing methodologies~Neural networks</concept_desc>
+   <concept_significance>500</concept_significance>
+</concept>
+<concept>
+   <concept_id>10010520.10010521.10010542</concept_id>
+   <concept_desc>Computer systems organization~Distributed architectures</concept_desc>
+   <concept_significance>300</concept_significance>
+</concept>
+<concept>
+   <concept_id>10011007.10011074.10011099</concept_id>
+   <concept_desc>Software and its engineering~Distributed systems organizing principles</concept_desc>
+   <concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{General and reference~Surveys and overviews}
+\ccsdesc[500]{Computing methodologies~Natural language processing}
+\ccsdesc[500]{Computing methodologies~Neural networks}
+\ccsdesc[300]{Computer systems organization~Distributed architectures}
+\ccsdesc[300]{Software and its engineering~Distributed systems organizing principles}
+
+% CCS predates LLM serving, so the concepts can only approximate the topic.
+% The keyword block carries the terms a reader or search engine would use.
+\keywords{large language models, LLM inference serving, admission control,
+systematic review, distributed systems, scheduling, queueing,
+overload management, service-level objectives, GPU serving}
+
+\maketitle
+
+\input{../body}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{../references}
+
+\end{document}

@@ -31,7 +31,13 @@ preview*.png
 preview-*.png
 
 # build output lives beside each venue wrapper
+# the two rendered PDFs are tracked on purpose, so collaborators and
+# readers can see the current version without a TeX toolchain.
+# everything else generated stays ignored.
 source_paper/**/*.pdf
+!source_paper/csur/paper.pdf
+!source_paper/tmlr/paper.pdf
+!source_paper/arxiv/paper.pdf
 source_paper/**/*.aux
 source_paper/**/*.bbl
 source_paper/**/*.blg
@@ -39,3 +45,4 @@ source_paper/**/*.log
 source_paper/**/*.out
 source_paper/arxiv/upload.tar.gz
 source_paper/tmlr/camera.tex
+named.pdf

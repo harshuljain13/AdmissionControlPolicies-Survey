@@ -5,19 +5,24 @@ whose overload behavior is governed at the ingress. We conduct an
 adapted-PRISMA systematic review of fifty-five admission and
 admission-adjacent works published between 2022 and 2026 across OSDI,
 SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA and
-arXiv, and report three findings. First, of nine LLM serving papers
-audited across a seven-venue slice, all absorb overload inside the
-engine, through batching, migration, placement, autoscaling or memory
-management, and none takes a decision at the ingress.
+arXiv, and report three findings. First, admission sits at a different
+layer from the one the serving literature studies: of nine LLM serving
+papers audited across a seven-venue slice, all place the overload
+response inside the engine, through batching, migration, placement,
+autoscaling or memory management, and none takes a decision at the
+ingress.
 Second, of sixteen admission-primary papers, no two share a baseline
-set: policies are measured against the absence of admission control
-and almost never against one another, so the literature alone cannot
-say which policy suits a given deployment. Third, artifact
-availability is higher than the usual ``reproducibility crisis''
-framing suggests, at seven of sixteen admission-primary papers, while
-the obstacle to comparison lies in what papers report rather than in
-what they release. We contribute a taxonomy of unit, setting,
-SLO awareness and signal, with a master classification carrying
+set: policies are measured against the absence of admission control and
+almost never against one another. Third, placing all sixteen on our
+axes succeeds on six of seven properties and fails on one. Unit,
+setting, objective, the quantity a policy watches, the metadata it
+assumes, and whether it is deployable in front of an unmodified engine
+are all recoverable from the published text; the observed range of the
+quantity the policy reads is reported by none of them. Selection
+therefore fails on a single missing fact, and it is the fact that
+determines whether a reported improvement is interpretable at all.
+We contribute a taxonomy of unit, setting,
+SLO awareness, signal quantity and portability, with a master classification carrying
 GRADE-style evidence ratings; formal definitions of the
 admission-decision, goodput-under-admission and fairness-index
 primitives; seven reporting items whose inconsistency blocks
