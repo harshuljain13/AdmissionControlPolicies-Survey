@@ -106,6 +106,17 @@ What it cannot check, and a human must:
 The bibliography renders correctly in all cases; these are completeness notes,
 not errors.
 
+## Cover letter
+
+`COVER-LETTER.md` in this folder. Paste it into the ScholarOne cover-letter
+field, or attach as PDF if the form prefers that. It is not anonymised and not
+part of the manuscript: the editor reads it, reviewers do not.
+
+It names the gap, differentiates against all five prior surveys by name, states
+the signal-liveness finding with its limitation attached, and makes two
+disclosures the editors will otherwise ask about: single-coder screening, and the
+intended arXiv preprint.
+
 ## Before submitting
 
 - [ ] **Verify the review model** in ScholarOne (see above). This is the one that
@@ -116,7 +127,8 @@ not errors.
 - [x] **Keywords** set. CCS predates LLM serving and cannot name it, so the
       keyword block carries the terms a reader or search engine would actually
       use, including "LLM inference serving" and "GPU serving".
-- [ ] **Note the arXiv preprint on the title page** if it is already posted.
+- [ ] **Note the arXiv preprint on the title page** if it is already posted. The cover letter already tells the editors this is intended.
+- [ ] **Address the cover letter** to a named editor if ScholarOne asks for one.
 - [ ] Drop `anonymous` from the class options for the camera-ready.
 
 ## Note on the shared preamble
