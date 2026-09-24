@@ -85,21 +85,26 @@ What it cannot check, and a human must:
 
 ### Bibliography completeness
 
-`ACM-Reference-Format` is far stricter than the TMLR style was, and currently
-emits 117 warnings across 48 of 63 entries:
+`ACM-Reference-Format` is far stricter than the TMLR style. The count went from
+117 warnings to 33:
 
-| count | missing |
+| fixed | how |
 |---|---|
-| 43 | page numbers (`pages` or `numpages`) |
-| 29 | `address` |
-| 27 | `publisher` |
-| 18 | `volume`/`number` on an article |
+| 27 publishers, 24 addresses | filled from the venue, which fixes them: USENIX Association / Berkeley CA; ACM / New York NY; Curran / Red Hook NY; IEEE / Piscataway NJ; ACL / Stroudsburg PA |
+| 16 arXiv entries | `@article` with a fake `journal={arXiv preprint ...}` became `@misc` with `eprint`/`archivePrefix`. A preprint has no volume, number or page range, so the warnings were the style file correctly objecting to the entry type |
+| 1 technical report | Jain's 1984 fairness index was an `@article` with the report number in the journal field; now `@techreport` with `number` and `institution` |
 
-None is fatal and the bibliography renders, but ACM production will ask for them
-and reviewers reading the reference list will notice. Most are conference papers
-missing publisher and address, which are mechanical to fill for a known venue.
-arXiv preprints legitimately have no publisher, page range or volume, so a
-residual count is expected rather than zero.
+**The remaining 33 are deliberate:**
+
+- **26 missing page ranges.** These are real and would need looking up per paper in
+  the ACM DL, USENIX or PMLR listing. Nothing was invented. If ACM production asks,
+  this is the list to work through.
+- **6 missing addresses**, all PMLR or MLSys, neither of which has a fixed
+  publisher address to state.
+- **1 missing volume**, the SIGMETRICS tutorial, which has none.
+
+The bibliography renders correctly in all cases; these are completeness notes,
+not errors.
 
 ## Before submitting
 
