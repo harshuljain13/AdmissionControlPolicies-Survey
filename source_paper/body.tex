@@ -139,6 +139,27 @@ Section~\ref{sec:conc} concludes.
 Five broad surveys of LLM inference serving predate this work.
 Table~\ref{tab:diff} summarizes each and states what this paper adds.
 
+A second body of work is closer to what this survey does than the
+surveys are, and does not appear in that table because it is not
+survey work. Benchmarks and evaluation frameworks for LLM serving
+measure what these systems achieve rather than cataloguing what they
+propose. MLPerf Inference \citep{reddi2020mlperf} standardises
+throughput and latency measurement across hardware and model
+configurations. Etalon \citep{agrawal2024etalon} argues that the
+conventional metrics, time to first token, time between tokens,
+normalised latency and time per output token, miss aspects of
+user-facing behaviour, and introduces a fluidity index in their place.
+Tooling in the same space, LLMPerf, GenAI-Perf and GuideLLM among it,
+measures serving throughput and latency against a deployment.
+
+None of these treats the admission decision as an experimental axis.
+They measure a system under a given load; they do not vary what the
+system refuses, or report whether a policy's inputs moved during the
+run. That is the gap this survey documents rather than closes:
+Section~\ref{sec:items} identifies what would have to be reported for
+such a comparison to be possible, and Section~\ref{sec:open} states
+that establishing which of those items matter is itself unresolved.
+
 \begin{table}[htbp]
 \centering
 \caption{Differentiation from prior surveys.}
