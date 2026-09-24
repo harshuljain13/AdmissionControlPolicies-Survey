@@ -292,7 +292,7 @@ and $J = 1/n$ denotes maximal concentration on a single tenant. Chosen
 as the primitive because it composes cleanly across the three
 fairness types in the taxonomy (task, tenant, priority-weighted).
 
-The Jain index is a coarse instrument. Equinox \citep{lu2025equinox}
+The Jain index is a coarse instrument. Equinox \citep{wei2025equinox}
 and related utility-centric work argue that equal tokens do not imply
 equal user experience, and that a fairness measure grounded in
 predicted response quality or user-perceived latency is more
@@ -528,7 +528,7 @@ Task-fairness allocates GPU cycles equitably between prefill and
 decode tasks within one batch (FairBatching
 \citep{lyu2025fairbatching}). Tenant-fairness equalizes served tokens
 or SLO attainment across users (VTC \citep{sheng2024vtc}, Equinox
-\citep{lu2025equinox}). These share no mechanism.
+\citep{wei2025equinox}). These share no mechanism.
 
 \subsection{Axis 4: Signal quantity}
 \label{sec:axis-signal}
@@ -1017,7 +1017,7 @@ latency reduction, 20 percent single-node capacity improvement, and
 54.3 percent cluster-level capacity improvement. Implementation is
 only 90 lines of invasive vLLM changes.
 
-Equinox \citep{lu2025equinox} argues that equal tokens do not imply
+Equinox \citep{wei2025equinox} argues that equal tokens do not imply
 equal user experience. Requires a Model of Prediction Ensemble to
 predict output length, latency, throughput, and GPU utilization per
 prompt. Thirteen percent fairness improvement measured against
@@ -1077,7 +1077,7 @@ shortest-job-first using an XGBoost classifier over 19 lexical
 features delivers 70 to 76 percent short-request $p_{50}$ latency
 reduction on an RTX 4090.
 
-Ascendra \citep{elnikety2025ascendra} uses an SLO-risk predictor to
+Ascendra \citep{ikram2025ascendra} uses an SLO-risk predictor to
 promote requests between low-priority and high-priority queues.
 
 Niyama \citep{goel2025niyama} sits adjacent to admission rather than
