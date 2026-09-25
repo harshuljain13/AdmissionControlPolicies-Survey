@@ -24,11 +24,16 @@ out to do. The taxonomy classifies the corpus on five axes.
 Three findings came out of it.
 
 Admission control turns out to sit at a layer the serving literature does not
-study. Of nine LLM serving papers we audited from OSDI, SOSP, NSDI, ASPLOS,
-EuroSys, MLSys and HPCA, all handle overload inside the engine through batching,
-migration, placement, autoscaling or memory management, and none takes a decision
-at the ingress. We want to be careful about how that reads: those are scheduling
-and memory-management papers, and refusing work at the door is outside the problem
+study. We took the nine serving systems that the admission-primary papers most
+often build on or compare against, and all nine handle overload inside the engine
+through batching, migration, placement, autoscaling or memory management. None
+takes a decision at the ingress. The corpus work that does gate at ingress is a
+control-plane contribution rather than an engine one, which is the distinction
+that matters here; it is not about venue, and we say in the paper that we would
+draw the same conclusion had that work appeared alongside the nine.
+
+We are careful about how this reads. Those nine are scheduling and
+memory-management papers, and refusing work at the door is outside the problem
 each of them set for itself. It is an observation about where attention has gone,
 not a criticism of those systems.
 
@@ -38,10 +43,11 @@ another, so a practitioner cannot use the literature to decide which policy suit
 their deployment.
 
 The third finding came out of testing whether the taxonomy was usable. We placed
-all sixteen papers on the five axes, and five axes filled
-from the published text: unit, setting, objective, the quantity each policy
-watches, and whether it can run in front of an unmodified engine. One property did
-not fill for any paper. None reports the range its own signal took during the
+all sixteen papers on it, recording seven properties each: the five axes, plus
+what a policy assumes an arriving request carries, plus the range its signal took
+during the paper's own evaluation. Six of the seven filled from the published
+text, and all five axes were among them. One property did not fill for any
+paper. None reports the range its own signal took during the
 evaluation, which means a policy whose threshold was never approached and a policy
 that evaluated a varying signal and declined to reject produce the same reported
 numbers. We state this as an absence in our extraction rather than as a proof that
@@ -65,7 +71,7 @@ concludes we will note the prior appearance on the title page, and we understand
 this does not count as prior publication under CSUR's policy. We have not
 submitted this work anywhere else.
 
-The manuscript runs to 28 pages in the acmsmall template, which we understand
+The manuscript runs to 30 pages in the acmsmall template, which we understand
 falls under the full survey category rather than the short one.
 
 Thank you for considering it.
