@@ -36,6 +36,7 @@ preview-*.png
 # everything else generated stays ignored.
 source_paper/**/*.pdf
 !source_paper/csur/paper.pdf
+!source_paper/csur/cover-letter.pdf
 !source_paper/tmlr/paper.pdf
 !source_paper/arxiv/paper.pdf
 source_paper/**/*.aux

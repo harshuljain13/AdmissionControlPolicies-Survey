@@ -27,7 +27,7 @@ TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera camera check style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera check style anon verify links clean
 
 all: check
 
@@ -44,6 +44,20 @@ csur:
 	   grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
 	 if [ "$$hits" != "0" ]; then echo "FAIL: $$hits identifying string(s)"; exit 1; \
 	 else echo "OK: $(CSUR)/paper.pdf anonymous"; fi
+
+## cover — the CSUR cover letter, one page, not anonymised.
+## Goes in the ScholarOne cover-letter field or attached as PDF.
+cover:
+	$(TECTONIC) -X compile $(CSUR)/cover-letter.tex
+	@n=$$(pdfinfo $(CSUR)/cover-letter.pdf 2>/dev/null | awk '/^Pages/{print $$2}'); \
+	 if [ "$$n" = "1" ]; then echo "OK: $(CSUR)/cover-letter.pdf (1 page)"; \
+	 else echo "WARN: cover letter is $$n pages; one is conventional"; fi
+	@# the letter quotes the manuscript's page count; fail if they disagree
+	@l=$$(grep -oE '[0-9]+ pages in the acmsmall' $(CSUR)/cover-letter.tex | grep -oE '^[0-9]+'); \
+	 p=$$(pdfinfo $(CSUR)/paper.pdf 2>/dev/null | awk '/^Pages/{print $$2}'); \
+	 if [ -n "$$p" ] && [ "$$l" != "$$p" ]; then \
+	   echo "FAIL: letter says $$l pages, paper is $$p"; exit 1; \
+	 else echo "OK: letter's page count matches the manuscript"; fi
 
 ## csur-named — same, with author names visible.
 ## Use only if ScholarOne confirms CSUR is single-blind; see csur/SUBMIT.md.
@@ -197,6 +211,6 @@ clean:
 	      $(TMLR)/*.blg $(TMLR)/*.log $(TMLR)/*.out
 	rm -f $(ARXIV)/paper.pdf $(ARXIV)/upload.tar.gz $(ARXIV)/*.aux \
 	      $(ARXIV)/*.bbl $(ARXIV)/*.blg $(ARXIV)/*.log $(ARXIV)/*.out
-	rm -f $(CSUR)/paper.pdf $(CSUR)/named.pdf $(CSUR)/named.tex \
+	rm -f $(CSUR)/paper.pdf $(CSUR)/named.pdf $(CSUR)/named.tex $(CSUR)/cover-letter.pdf \
 	      $(CSUR)/camera.pdf $(CSUR)/camera.tex $(CSUR)/*.aux $(CSUR)/*.bbl $(CSUR)/*.blg \
 	      $(CSUR)/*.log $(CSUR)/*.out
