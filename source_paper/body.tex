@@ -75,13 +75,16 @@ differentiates this survey from those prior works.
       admission-adjacent works over 2022--2026 following an
       adapted-PRISMA protocol (Section~\ref{sec:method},
       Figure~\ref{fig:prisma}).
-\item \textbf{Unified taxonomy} with five axes and five sub-branches,
+\item \textbf{Unified taxonomy} with five axes and four sub-branches,
       plus short codes (\textsc{unit-req/agt/ten},
       \textsc{sig-sca/dg/lp/wcrt}), together with a master
       classification of the twenty-eight corpus works that propose or
       embed an admission mechanism, each carrying a GRADE-adapted
       evidence rating (Sections~\ref{sec:taxonomy}
-      and~\ref{sec:master}).
+      and~\ref{sec:master}). The taxonomy narrows the set of policies
+      applicable to a deployment; it does not rank the survivors, and
+      Section~\ref{sec:placement} reports the one property that
+      prevents it from going further.
 \item \textbf{Foundational definitions} of the admission decision,
       goodput-under-admission, and fairness-index primitives
       (Section~\ref{sec:defs}).
@@ -90,8 +93,10 @@ differentiates this survey from those prior works.
       formal-WCRT signals (Section~\ref{sec:overhead}).
 \item \textbf{Reproducibility audit} finding seven of the sixteen
       admission-primary papers have released code, together with seven
-      reporting items whose inconsistency blocks cross-paper comparison
-      (Section~\ref{sec:repro}).
+      properties on which the corpus diverges and which a cross-paper
+      comparison would have to reconcile (Section~\ref{sec:repro}).
+      We identify them; establishing which of them are load-bearing
+      needs measurement and is Open Problem~7.
 \item \textbf{Production evidence mapping} that ties eight public
       postmortems to admission failure modes (Section~\ref{sec:prod}).
 \item \textbf{Structured research agenda} of seven open problems, each
@@ -110,11 +115,13 @@ does gate at ingress, Token Pools
 rather than an engine one, which suggests admission has been treated as
 an infrastructure concern rather than an engine-level research
 question. Second, of sixteen admission-primary papers we
-audited, no two share a baseline set, and the only
-baselines shared by more than one paper are unconfigured serving engines
-and classical scheduling disciplines. Exactly one published admission
-system, SHEPHERD \citep{shepherd2023}, is used as a baseline by two papers (QLM and
-Ascendra). Third, the taxonomy accommodates every corpus work that proposes or
+audited, no two share a baseline set. Six baselines recur across more
+than one paper, and four of them measure a policy against the absence
+of admission control rather than against an alternative to it: two
+serving engines and two classical scheduling disciplines. Of the
+remaining two, one is an ablation construct and one is a published
+admission system, SHEPHERD \citep{shepherd2023}, used by QLM and
+Ascendra. Third, the taxonomy accommodates every corpus work that proposes or
 embeds an admission mechanism, twenty-eight in total
 (Table~\ref{tab:master}), including the five added during verification
 (Token Pools, ProServe \citep{huang2025proserve}, SAGA, Scorpio and FairServe), with four
@@ -157,10 +164,12 @@ measures serving throughput and latency against a deployment.
 None of these treats the admission decision as an experimental axis.
 They measure a system under a given load; they do not vary what the
 system refuses, or report whether a policy's inputs moved during the
-run. That is the gap this survey documents rather than closes:
-Section~\ref{sec:items} identifies what would have to be reported for
-such a comparison to be possible, and Section~\ref{sec:open} states
-that establishing which of those items matter is itself unresolved.
+run. That is the gap this survey documents rather than closes.
+Section~\ref{sec:items} reports the seven properties on which the
+corpus diverges, which is what a comparison would have to reconcile.
+Whether reconciling all seven is necessary, or whether some subset
+carries the weight, is a question about measurement rather than
+reading, and Section~\ref{sec:open} states it as open.
 
 \begin{table}[htbp]
 \centering
@@ -168,7 +177,7 @@ that establishing which of those items matter is itself unresolved.
 \label{tab:diff}
 \small
 \rowcolors{2}{white}{admitgreylight!40}
-\begin{tabular}{p{3.4cm} p{3.2cm} p{2.2cm} p{2.4cm} p{2cm}}
+\begin{tabular}{p{3.15cm} p{3.0cm} p{1.95cm} p{2.15cm} p{1.75cm}}
 \toprule
 \rowcolor{admitteallight}
 \textbf{Prior survey} & \textbf{Scope} & \textbf{Admission depth} & \textbf{Taxonomy axes} & \textbf{Grounded open problems} \\
@@ -179,7 +188,7 @@ Li et al.\ \citep{li2024surveyllm} IEEE HPEC 2024 & Recent serving advances & In
 Mitzenmacher \& Shahout \citep{mitzenmacher2025queueing} SIGMETRICS 2025 & Queueing theory position paper & Tutorial & Queueing-theoretic & Enumerates 25 \\
 Ma et al.\ \citep{ma2026loadbalancing} SSRN 2026 & Load balancing as a coupled control problem & Routing, not ingress & Control-theoretic & No \\
 \rowcolor{admitgreylight}
-\textbf{This paper} & \textbf{Admission as primary axis} & \textbf{Full} & \textbf{4 axes + 4 sub-branches} & \textbf{7 grounded} \\
+\textbf{This paper} & \textbf{Admission as primary axis} & \textbf{Full} & \textbf{5 axes + 4 sub-branches} & \textbf{7 grounded} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -355,15 +364,61 @@ production system currently exposes as a signal.
 \section{A taxonomy of admission-control policies}
 \label{sec:taxonomy}
 
-We organize admission-control policies along four \emph{descriptive}
-axes (unit of admission, setting, SLO awareness, signal used) and one
-\emph{classificatory} dimension (decision moment) used only in the
-master classification table (Section~\ref{sec:master}). The
-descriptive axes carry the substantive taxonomy claims; the
-classificatory dimension is a fold that captures where in the
-serving pipeline the admission decision is taken. We call this a
-five-axis taxonomy throughout and reserve the term ``three-level
-classification'' for the master table's compact form.
+\begin{figure}[t]
+\centering
+\resizebox{0.94\textwidth}{!}{%
+\begin{tikzpicture}[
+  ax/.style={rectangle, rounded corners, minimum width=2.45cm, minimum height=0.95cm,
+             text centered, draw=black, thick, font=\bfseries\small, fill=admitteallight},
+  vals/.style={font=\scriptsize, text width=2.45cm, align=center, anchor=north},
+  flow/.style={-Stealth, very thick, admitteal},
+  lbl/.style={font=\bfseries\footnotesize, fill=white, inner sep=3pt}
+]
+
+% the five axes
+\node[ax] (a1) at (0,0)      {Unit};
+\node[ax] (a2) at (2.9,0)    {Setting};
+\node[ax] (a3) at (5.8,0)    {SLO awareness};
+\node[ax] (a4) at (8.7,0)    {Signal quantity};
+\node[ax] (a5) at (11.6,0)   {Portability};
+
+% values under each axis
+\node[vals] at ($(a1.south)+(0,-0.22)$) {request, agent-session,\\tenant};
+\node[vals] at ($(a2.south)+(0,-0.22)$) {online, offline,\\hybrid};
+\node[vals] at ($(a3.south)+(0,-0.22)$) {deadline, throughput,\\fairness, cost};
+\node[vals] at ($(a4.south)+(0,-0.22)$) {KV pressure, queue depth,\\deadline slack, predicted length};
+\node[vals] at ($(a5.south)+(0,-0.22)$) {Class A (ingress),\\Class B (needs a fork)};
+
+% forward reading, above, spanning all five
+\draw[flow] ($(a1.north west)+(-0.15,0.75)$) -- ($(a5.north east)+(0.15,0.75)$)
+  node[lbl, midway, above] {forward: a paper is placed in a cell};
+
+% backward reading, below, spanning all five
+\draw[flow] ($(a5.south east)+(0.15,-1.55)$) -- ($(a1.south west)+(-0.15,-1.55)$)
+  node[lbl, midway, below] {backward: a deployment eliminates policies it cannot run};
+
+\end{tikzpicture}%
+}
+\caption{The five axes, and the two directions they can be read in. Forward, a paper is placed in a cell, which is what a survey ordinarily does. Backward, a description of a deployment eliminates the policies it cannot run. Every axis is answerable from a paper's own text, which is what makes the backward reading possible; Section~\ref{sec:placement} reports how far it gets before one missing property stops it.}
+\label{fig:axes}
+\end{figure}
+
+We organize admission-control policies along five axes: unit of
+admission, setting, SLO awareness, signal quantity, and portability.
+Each is answerable about a deployment from a paper's own text, which is
+what lets the taxonomy be read in either direction, from a paper to a
+cell or from a deployment to a set of candidate policies.
+
+A sixth dimension, the decision moment, is folded rather than
+promoted. It records where in the serving pipeline the decision is
+taken, and it is classificatory rather than descriptive: a reader
+cannot place their own deployment on it, only a paper. It earns its
+place because the portability axis is derived from it, ingress
+implying one class and the later moments another, and because the
+master classification table uses it as a compact code. We call this a
+five-axis taxonomy throughout, and reserve ``three-level
+classification'' for the master table's compact form, which codes unit,
+moment and signal grounding.
 
 \paragraph{Decision moment (folded).} Every admission decision can
 be located at one of three points in the serving pipeline:
@@ -498,6 +553,8 @@ deadlines, online serving mode, or per-tenant fairness. This is the
 seed for Open Problem~1.}
 \label{fig:taxonomy}
 \end{figure}
+
+
 
 \subsection{Axis 1: Unit of admission}
 
@@ -708,14 +765,18 @@ published measurements that do; it is stated as Open Problem~7.
 \subsection{Placing the corpus, and where it fails}
 \label{sec:placement}
 
-We applied the five axes to all sixteen admission-primary works,
-recording for each what it admits, when, against which quantity, what it
-assumes a request carries, and whether it is deployable without an
-engine fork. The exercise is a test of the axes as much as of the
-corpus: an axis that cannot be filled from the published text is not one
+We applied the taxonomy to all sixteen admission-primary works,
+recording seven properties for each: the five axes, plus what the
+policy assumes an arriving request carries, plus the range its signal
+took during the paper's own evaluation. The last two are not axes. They
+are recorded because a reader needs both to act on the taxonomy: a
+deadline-slack policy is unusable on traffic that carries no deadlines,
+and a reported result is uninterpretable if the signal behind it never
+moved. The exercise is a test of the axes as much as of the corpus,
+since an axis that cannot be filled from the published text is not one
 a reader could use.
 
-Five of the five fill. Every paper states its unit and setting; every
+Six of the seven fill, and all five axes are among them. Every paper states its unit and setting; every
 paper's objective is recoverable; the quantity each policy reads is
 always identifiable, even where the paper does not name it as a signal;
 and the portability class follows from the mechanism in all sixteen
@@ -796,7 +857,9 @@ screening, eligibility, and inclusion counts.
 \node[stage, below=of ident] (dedup) {\textbf{After de-duplication}: 247 records};
 \node[stage, below=of dedup] (screen) {\textbf{Title/abstract screening}: 247 records screened};
 \node[stage, below=of screen] (elig) {\textbf{Eligibility (full text)}: 84 records assessed};
-\node[stage, below=of elig] (incl) {\textbf{Included in synthesis}: 55 works\\(40 with a per-paper reading note)};
+\node[stage, below=of elig] (incl) {\textbf{Included from database search}: 40 studies deep-read};
+\node[stage, below=of incl] (other) {\textbf{Identified by other methods}: 15 works\\(verification sweeps, citation chaining,\\reviewer-flagged candidates)};
+\node[stage, below=of other] (total) {\textbf{Total corpus}: 55 works\\(40 with a per-paper reading note)};
 
 \node[excl, right=1.2cm of screen] (exs) {\textbf{Excluded at screening}: 163\\(off-topic 118, non-LLM 27,\\model-side only 18)};
 \node[excl, right=1.2cm of elig] (exe) {\textbf{Excluded at eligibility}: 44\\(no admission mechanism 29,\\marketing/blog 8, inaccessible 7)};
@@ -805,6 +868,8 @@ screening, eligibility, and inclusion counts.
 \draw[arr] (dedup) -- (screen);
 \draw[arr] (screen) -- (elig);
 \draw[arr] (elig) -- (incl);
+\draw[arr] (incl) -- (other);
+\draw[arr] (other) -- (total);
 \draw[side] (screen.east) -- (exs.west);
 \draw[side] (elig.east) -- (exe.west);
 
@@ -1447,9 +1512,14 @@ spanning them would not be interpretable.
 
 The more consequential gap is at the methodology level.
 Table~\ref{tab:baselines} shows the baseline set used by each
-admission-primary paper. No two papers share a baseline \emph{set}; the
-baselines that do recur across papers are unconfigured serving engines
-and classical scheduling disciplines, not admission policies.
+admission-primary paper. No two papers share a baseline \emph{set}. Six baselines recur across
+more than one paper, and the recurrence is concentrated in comparators
+that are not admission policies: vLLM in six papers and Sarathi in
+four, then EDF and FCFS twice each. Only two of the six are admission
+mechanisms, and one of those, AC-FCFS, is a token bucket constructed
+as an ablation rather than a published system. That leaves SHEPHERD as
+the single published admission policy any two papers have in
+common.
 
 \begin{table}[htbp]
 \centering
@@ -1780,7 +1850,7 @@ peer-reviewed top venues plus one accepted workshop paper and more
 than a dozen preprints. We surveyed fifty-five works across
 admission-primary, admission-adjacent, and scheduling clusters.
 
-Our five-axis taxonomy with five sub-branches organizes the corpus
+Our five-axis taxonomy with four sub-branches organizes the corpus
 without redundancy. The intersection agent-level $\times$ online
 $\times$ (TTFT+TBT-deadline-decomposed) $\times$ per-tenant-fair
 remains unoccupied; SAGA is a partial occupant on the agent-level

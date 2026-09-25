@@ -20,8 +20,10 @@
   **portability** (whether it runs in front of an unmodified engine, or needs a
   fork). Signal *structure*, the earlier scalar / dual-gate / LP / WCRT cut, is
   retained as a sub-branch beneath signal quantity.
-- Four further sub-branches: SLO granularity, fairness type, concurrency
-  context, decision moment.
+- Three further sub-branches: SLO granularity, fairness type, concurrency
+  context. Decision moment is folded rather than promoted: it is classificatory
+  rather than descriptive, portability is derived from it, and the master table
+  uses it as a code.
 - Per-cluster synthesis of fifty-five admission and admission-adjacent works.
 - Master classification of twenty-eight of them, with GRADE-style evidence
   ratings.

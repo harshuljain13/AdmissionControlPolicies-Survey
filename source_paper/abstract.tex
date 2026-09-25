@@ -3,9 +3,8 @@
 Serving large language models at scale is a distributed systems problem
 whose overload behavior is governed at the ingress. We conduct an
 adapted-PRISMA systematic review of fifty-five admission and
-admission-adjacent works published between 2022 and 2026 across OSDI,
-SOSP, NSDI, ASPLOS, EuroSys, MLSys, SoCC, ICML, NeurIPS, HPCA and
-arXiv, and report three findings. First, admission sits at a different
+admission-adjacent works published between 2022 and 2026, and report
+three findings. First, admission sits at a different
 layer from the one the serving literature studies: of the nine LLM
 serving systems that the admission literature most often builds on, all
 place the overload response inside the engine, through batching,
@@ -30,7 +29,8 @@ admission mechanism, each carrying a GRADE-adapted evidence rating;
 formal definitions of the admission-decision, goodput-under-admission
 and fairness-index primitives; a cross-paper synthesis of
 admission-signal overhead; an artifact-availability audit and seven
-reporting items that block cross-paper comparison; a mapping of eight
+properties on which the corpus diverges, which a cross-paper comparison
+would have to reconcile; a mapping of eight
 public production incidents to admission failure modes; and seven open
 problems, each grounded in published peer review or in a primary
 source's own limitations.
