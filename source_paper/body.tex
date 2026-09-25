@@ -77,14 +77,14 @@ differentiates this survey from those prior works.
       Figure~\ref{fig:prisma}).
 \item \textbf{Unified taxonomy} with five axes and five sub-branches,
       plus short codes (\textsc{unit-req/agt/ten},
-      \textsc{sig-sca/dg/lp/wcrt}) used across the master table
-      (Section~\ref{sec:taxonomy}).
+      \textsc{sig-sca/dg/lp/wcrt}), together with a master
+      classification of the twenty-eight corpus works that propose or
+      embed an admission mechanism, each carrying a GRADE-adapted
+      evidence rating (Sections~\ref{sec:taxonomy}
+      and~\ref{sec:master}).
 \item \textbf{Foundational definitions} of the admission decision,
       goodput-under-admission, and fairness-index primitives
       (Section~\ref{sec:defs}).
-\item \textbf{Master classification} of all admission-primary and
-      admission-adjacent works with GRADE-adapted evidence ratings
-      (Section~\ref{sec:master}, Table~\ref{tab:master}).
 \item \textbf{Admission-signal overhead synthesis} that identifies the
       cost-versus-lift tradeoff across scalar, dual-gate, LP, and
       formal-WCRT signals (Section~\ref{sec:overhead}).
@@ -104,10 +104,12 @@ we audited across OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, and HPCA
 between 2022 and 2026, all absorb overload inside the engine, through
 batching, migration, placement, autoscaling or memory management, and
 none takes a decision at the ingress. This reflects the scope each
-paper sets for itself rather than an omission. Token Pools (CAIS 2026)
-sits outside this seven-venue slice and does gate at the API gateway,
-which suggests ingress admission has been treated as an infrastructure
-concern rather than an engine-level research question. Second, of sixteen admission-primary papers we
+paper sets for itself rather than an omission. The corpus work that
+does gate at ingress, Token Pools
+\citep{cunningham2026tokenpools}, is a control-plane contribution
+rather than an engine one, which suggests admission has been treated as
+an infrastructure concern rather than an engine-level research
+question. Second, of sixteen admission-primary papers we
 audited, no two share a baseline set, and the only
 baselines shared by more than one paper are unconfigured serving engines
 and classical scheduling disciplines. Exactly one published admission
@@ -794,7 +796,7 @@ screening, eligibility, and inclusion counts.
 \node[stage, below=of ident] (dedup) {\textbf{After de-duplication}: 247 records};
 \node[stage, below=of dedup] (screen) {\textbf{Title/abstract screening}: 247 records screened};
 \node[stage, below=of screen] (elig) {\textbf{Eligibility (full text)}: 84 records assessed};
-\node[stage, below=of elig] (incl) {\textbf{Included in synthesis}: 44 studies deep-read\\(+ approx.\ 50 cite-only references)};
+\node[stage, below=of elig] (incl) {\textbf{Included in synthesis}: 55 works\\(40 with a per-paper reading note)};
 
 \node[excl, right=1.2cm of screen] (exs) {\textbf{Excluded at screening}: 163\\(off-topic 118, non-LLM 27,\\model-side only 18)};
 \node[excl, right=1.2cm of elig] (exe) {\textbf{Excluded at eligibility}: 44\\(no admission mechanism 29,\\marketing/blog 8, inaccessible 7)};
@@ -1129,22 +1131,36 @@ scheduler API and no admit-reject hook.
 
 \subsection{Scheduling papers with admission-adjacent components}
 
-We audited nine scheduling papers drawn from OSDI, SOSP, NSDI,
-ASPLOS, EuroSys, MLSys, and HPCA between 2022 and 2026.
+We audited the nine LLM serving systems that the admission-primary
+papers in this corpus most often build on or compare against, published
+between 2022 and 2026. The selection rule is that dependency rather
+than a venue list: these are the engines and schedulers the rest of the
+literature treats as its substrate. They happen to appear at OSDI,
+SOSP, NSDI, ASPLOS, EuroSys, MLSys and HPCA, which is a consequence of
+where such work is published rather than a criterion we applied.
+
 Table~\ref{tab:9for9} summarizes what each does under overload. All
 nine locate the overload response inside the engine, redistributing
 work through batching, migration, placement, autoscaling or memory
 management. None takes a decision at the ingress, and none sets out to:
 these are scheduling and memory-management contributions, and refusing
 work at the door lies outside the design space each paper defines for
-itself. The observation is about where the research attention has gone,
-not about a shortcoming in these systems. Token Pools (CAIS 2026) sits
-outside this seven-venue set and does implement ingress admission at
-the API gateway; we discuss it separately below.
+itself. The observation is about where research attention has gone, not
+about a shortcoming in these systems.
+
+The distinction that matters here is engine-level against
+infrastructure-level, and it does not track venue. Token Pools
+\citep{cunningham2026tokenpools} gates at the API boundary and is a
+control-plane contribution rather than an engine one; it is in this
+corpus and classified in Table~\ref{tab:master}. Reading the two
+together, ingress admission appears where a system owns the boundary in
+front of the fleet, and not in the engine papers, whichever venue
+either is published at. We would draw the same conclusion had Token
+Pools appeared at any of the seven.
 
 \begin{table}[htbp]
 \centering
-\caption{Overload response mechanisms in nine LLM serving papers from the seven-venue set (OSDI, SOSP, NSDI, ASPLOS, EuroSys, MLSys, HPCA), 2022--2026. Each locates its overload response inside the engine; the ingress-admission column is empty across all nine, which reflects the scope each paper sets rather than an omission. Token Pools (CAIS 2026), outside this venue set, does gate at the API gateway and is discussed separately.}
+\caption{Overload response mechanisms in the nine LLM serving systems the admission literature most often builds on, 2022--2026. Each locates its overload response inside the engine; the ingress-admission column is empty across all nine, which reflects the scope each paper sets rather than an omission. Token Pools, a control-plane contribution rather than an engine one, does gate at the API boundary and is discussed separately.}
 \label{tab:9for9}
 \small
 \rowcolors{2}{white}{admitgreylight!40}
@@ -1168,8 +1184,7 @@ PASCAL \citep{pascal2026} & HPCA 2026 & Runtime phase detection & No \\
 
 Past-Future's memory-projection gate is the closest of the nine to
 admission, and it operates on already-queued requests rather than at
-ingress. Taken with Token Pools, which sits outside the seven-venue set
-and does gate at the gateway, the pattern suggests that ingress
+ingress. Taken with Token Pools, which gates at the API boundary, the pattern suggests that ingress
 admission has been treated as an infrastructure concern rather than an
 engine-level research question. That is the gap this survey addresses:
 not that these systems are missing something they should have, but that
@@ -1190,7 +1205,7 @@ decisions through a unified capacity model, directly addressing our
 Open Problem~5 (coupling admission and autoscaling). The evaluation
 is single-node (DGX Spark, Qwen3-8B) with no released code, so we
 rate the evidence \textsc{m}. Token Pools tightens but does not close
-the top-venue-scheduling gap: it sits outside the seven-venue
+the engine-level gap: it sits outside the nine
 OSDI/SOSP/NSDI/ASPLOS/EuroSys/MLSys/HPCA set, and its evaluation
 scale is orders of magnitude below what those venues typically
 require.
@@ -1212,7 +1227,7 @@ formal worst-case-response-time bound.
 \paragraph{What the table does not classify.} Twenty-seven corpus works
 carry no row. Twelve are foundational systems, textbooks, or prior
 surveys, for which an admission taxonomy is not defined. Nine are
-scheduling papers from the seven-venue slice that contain no admission
+engine-level scheduling papers that contain no admission
 mechanism to classify, which is the nine-of-nine finding of
 Section~\ref{sec:clusters} rather than an omission here. The remaining
 six are AQUA \citep{kumar2025aqua}, Chiron, Mooncake, Niyama
@@ -1324,7 +1339,7 @@ Mitzenmacher \& Shahout & SIGMETRICS & 2025 & $-$ & $-$ & $-$  & VL \\
 \end{table}
 
 The nine scheduling papers from the OSDI/SOSP/NSDI/ASPLOS/EuroSys/
-MLSys/HPCA seven-venue slice (Orca, Sarathi-Serve, Llumnix,
+nine engine-level systems (Orca, Sarathi-Serve, Llumnix,
 DistServe, Past-Future, Aegaeon, Jenga, AdaServe, PASCAL) are
 omitted from Table~\ref{tab:master} because none includes an
 ingress-level admission decision at all; they are summarized
@@ -1771,8 +1786,8 @@ $\times$ (TTFT+TBT-deadline-decomposed) $\times$ per-tenant-fair
 remains unoccupied; SAGA is a partial occupant on the agent-level
 and fairness axes only (Figure~\ref{fig:taxonomy}).
 
-Nine scheduling papers from the seven-venue slice (OSDI, SOSP,
-NSDI, ASPLOS, EuroSys, MLSys, HPCA) place their overload response
+The nine engine-level systems the admission literature builds on
+place their overload response
 inside the engine rather than at the ingress
 (Table~\ref{tab:9for9}); Token Pools (CAIS 2026) sits outside this
 slice and does gate at the gateway.
