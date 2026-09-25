@@ -85,37 +85,33 @@ What it cannot check, and a human must:
 
 ### Bibliography completeness
 
-`ACM-Reference-Format` is far stricter than the TMLR style. The count went from
-117 warnings to 33:
+`ACM-Reference-Format` is far stricter than the TMLR style was. Warnings are down
+from 117 to 28, with nothing invented:
 
 | fixed | how |
 |---|---|
-| 27 publishers, 24 addresses | filled from the venue, which fixes them: USENIX Association / Berkeley CA; ACM / New York NY; Curran / Red Hook NY; IEEE / Piscataway NJ; ACL / Stroudsburg PA |
-| 16 arXiv entries | `@article` with a fake `journal={arXiv preprint ...}` became `@misc` with `eprint`/`archivePrefix`. A preprint has no volume, number or page range, so the warnings were the style file correctly objecting to the entry type |
-| 1 technical report | Jain's 1984 fairness index was an `@article` with the report number in the journal field; now `@techreport` with `number` and `institution` |
+| 27 publishers, 24 addresses | determined by the venue: USENIX Association / Berkeley; ACM / New York; Curran / Red Hook; IEEE / Piscataway; ACL / Stroudsburg |
+| 16 arXiv entries | `@article` carrying a fabricated `journal={arXiv preprint ...}` became `@misc` with `eprint`. A preprint has no volume, number or pages, so those warnings were the style file objecting to the entry type |
+| 1 technical report | Jain 1984 was an `@article` with the report number in the journal field; now `@techreport` |
+| 8 page ranges | pulled from CrossRef (QLM, AQUA, Aegaeon, Jenga, Past-Future, AdaServe, OmniServe) and OpenAlex (PagedAttention, Pie, KVFlow, MLPerf), each matched on title before accepting |
 
-**The remaining 33 are deliberate:**
+**The remaining 28 break down as follows.**
 
-- **26 missing page ranges.** These are real and would need looking up per paper in
-  the ACM DL, USENIX or PMLR listing. Nothing was invented. If ACM production asks,
-  this is the list to work through.
-- **6 missing addresses**, all PMLR or MLSys, neither of which has a fixed
-  publisher address to state.
-- **1 missing volume**, the SIGMETRICS tutorial, which has none.
+Twenty lack page ranges. Roughly half are USENIX proceedings (Orca, Sarathi,
+Llumnix, DistServe, VTC, Mooncake, FastServe, ServeGen); USENIX does not expose
+page numbers in a machine-readable form and its site returns 403 to scripted
+requests, so these need reading off the proceedings PDF. Five are ICML or PMLR
+papers whose volumes are not yet indexed. The rest are individually awkward:
+Chronos is in Frontiers, which assigns article numbers rather than pages;
+Mitzenmacher and Shahout is a tutorial with no page range; Token Pools is at a
+first-edition venue that is not yet indexed anywhere.
 
-The bibliography renders correctly in all cases; these are completeness notes,
-not errors.
+Six lack an address, all PMLR or MLSys, neither of which has a fixed publisher
+address to state. Two lack a volume, correctly.
 
-## Cover letter
-
-`COVER-LETTER.md` in this folder. Paste it into the ScholarOne cover-letter
-field, or attach as PDF if the form prefers that. It is not anonymised and not
-part of the manuscript: the editor reads it, reviewers do not.
-
-It names the gap, differentiates against all five prior surveys by name, states
-the signal-liveness finding with its limitation attached, and makes two
-disclosures the editors will otherwise ask about: single-coder screening, and the
-intended arXiv preprint.
+None of this is fatal and the bibliography renders. ACM production will ask for
+the page ranges rather than reject the submission, and this section is the
+worklist if they do.
 
 ## Before submitting
 
