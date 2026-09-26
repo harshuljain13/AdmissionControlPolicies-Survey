@@ -41,7 +41,7 @@ csur:
 	$(TECTONIC) -X compile $(CSUR)/paper.tex --keep-logs
 	@if ! command -v pdftotext >/dev/null 2>&1; then exit 0; fi; \
 	 hits=$$(pdftotext $(CSUR)/paper.pdf - 2>/dev/null | \
-	   grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
+	   grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|dolly|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
 	 if [ "$$hits" != "0" ]; then echo "FAIL: $$hits identifying string(s)"; exit 1; \
 	 else echo "OK: $(CSUR)/paper.pdf anonymous"; fi
 
@@ -118,7 +118,7 @@ verify: csur
 	 printf '%-34s' "ACM reference format block"; \
 	 pdftotext $(CSUR)/paper.pdf - 2>/dev/null | grep -q "ACM Reference Format" && echo "OK" || { echo "FAIL"; fail=1; }; \
 	 printf '%-34s' "anonymous"; \
-	 h=$$(pdftotext $(CSUR)/paper.pdf - 2>/dev/null | grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
+	 h=$$(pdftotext $(CSUR)/paper.pdf - 2>/dev/null | grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|dolly|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
 	 if [ "$$h" = "0" ]; then echo "OK"; else echo "FAIL ($$h strings)"; fail=1; fi; \
 	 printf '%-34s' "no unresolved refs/cites"; \
 	 n=$$(pdftotext $(CSUR)/paper.pdf - 2>/dev/null | grep -c "\[?\]" || true); \
@@ -186,11 +186,11 @@ anon:
 	@if ! command -v pdftotext >/dev/null 2>&1; then \
 		echo "SKIP: pdftotext not installed (brew install poppler)"; exit 0; fi; \
 	hits=$$(pdftotext $(TMLR)/paper.pdf - 2>/dev/null | \
-		grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
+		grep -icE "harshuljain|tanmay|tanya sah|parv|khatri|dolly|@gmail|AdmissionControlPolicies|AdmitPerf" || true); \
 	if [ "$$hits" != "0" ]; then \
 		echo "FAIL: $$hits identifying string(s) in tmlr/paper.pdf:"; \
 		pdftotext $(TMLR)/paper.pdf - 2>/dev/null | \
-		  grep -inE "harshuljain|tanmay|tanya sah|parv|khatri|@gmail|AdmissionControlPolicies|AdmitPerf"; \
+		  grep -inE "harshuljain|tanmay|tanya sah|parv|khatri|dolly|@gmail|AdmissionControlPolicies|AdmitPerf"; \
 		exit 1; \
 	else echo "OK: anonymous (no identifying strings)"; fi
 	@# The running header is the classic leak: a \shortauthors that the class
@@ -199,7 +199,7 @@ anon:
 	@# Jain's fairness index, by a different Jain).
 	@if command -v pdftotext >/dev/null 2>&1; then \
 		hd=$$(for pg in 3 5 7; do pdftotext -f $$pg -l $$pg $(TMLR)/paper.pdf - 2>/dev/null | head -2; done | \
-		      grep -icE "jain|sah|khatri" || true); \
+		      grep -icE "jain|sah|khatri|dolly" || true); \
 		if [ "$$hd" != "0" ]; then echo "FAIL: author name in a running header"; exit 1; \
 		else echo "OK: running headers carry no author name"; fi; fi
 

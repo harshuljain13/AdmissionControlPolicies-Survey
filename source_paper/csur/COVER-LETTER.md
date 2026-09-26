@@ -78,5 +78,5 @@ Thank you for considering it.
 
 Sincerely,
 
-Harshul Jain, Tanmay Sah, Tanya Sah, Parv Khatri
+Harshul Jain, Tanmay Sah, Tanya Sah, Parv Khatri, Dolly Sah
 Corresponding author: Harshul Jain (harshuljain1393@gmail.com)
