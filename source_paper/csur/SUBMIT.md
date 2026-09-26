@@ -1,11 +1,45 @@
 # ACM Computing Surveys (CSUR) submission
 
-Submit through **ACM Manuscript Central (ScholarOne)**. Upload the PDF.
+Submit through **ACM Manuscript Central (ScholarOne)**.
 
 ```bash
 make csur          # anonymous, current default
 make csur-named    # author names visible
+make cover         # one-page cover letter
+make supp          # the supplementary archive
 ```
+
+## What to upload
+
+| slot | file | designation |
+|---|---|---|
+| 1 | `paper.pdf` | Manuscript |
+| 2 | `cover-letter.pdf` | Cover letter, or paste `COVER-LETTER.md` into the form |
+| 3 | `supplementary.zip` | Supplemental Material |
+
+The third is not optional. Under `anonymous` the paper tells reviewers the
+coding sheets "are included as supplementary material", so submitting without
+it breaks a promise the manuscript makes in two places (§8 and §11).
+
+`make supp` builds it from `notes/` and `docs/`, and scans the built zip rather
+than the staging directory, so what is scanned is what is uploaded. It carries
+forty per-paper coding sheets, the four taxonomy documents, and a README
+explaining what a reviewer is looking at.
+
+Five files are excluded by name and the exclusion is load-bearing. Four of them
+(`sensitivity-table`, `evidence-audit`, `numbers-ledger`,
+`web-verification-2026-09-17`) name the companion tool, whose repository
+carries the authors' names. The paper goes to some trouble to hide that name
+under `anonymous`, and shipping it in the supplement would undo that. The
+fifth, `section-6.2-why-this-minimum`, is a draft for a section that no longer
+exists and carries empirical claims the paper deliberately does not make.
+
+Also excluded, for different reasons: `docs/reviewer-responses.md` names a
+person who commented on an earlier draft, and `docs/eval-log.md` and
+`docs/outline.md` are project-management files rather than audit material.
+
+The gate fails on any new file naming the tool, so adding a note and forgetting
+to check cannot leak.
 
 ## ⚠ Verify the review model before you submit
 
@@ -147,6 +181,7 @@ worklist if they do.
 - [x] **Keywords** set. CCS predates LLM serving and cannot name it, so the
       keyword block carries the terms a reader or search engine would actually
       use, including "LLM inference serving" and "GPU serving".
+- [x] **Supplementary archive** built and scanned. `make supp`.
 - [ ] **Note the arXiv preprint on the title page** if it is already posted. The cover letter already tells the editors this is intended.
 - [ ] **Address the cover letter** to a named editor if ScholarOne asks for one.
 - [ ] Drop `anonymous` from the class options for the camera-ready.

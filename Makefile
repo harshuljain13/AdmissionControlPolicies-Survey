@@ -27,7 +27,7 @@ TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera check text style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera check text supp style anon verify links clean
 
 all: check
 
@@ -177,6 +177,29 @@ text:
 	    if [ "$$n" = "0" ]; then echo "FAIL: $$f cannot extract '$$w'"; fail=1; fi; \
 	  done; done; \
 	 if [ $$fail = 0 ]; then echo "OK: every build is text-extractable"; else exit 1; fi
+
+## supp — the supplementary archive the anonymous paper promises.
+## Rebuilds from notes/ and docs/, then scans the built zip rather than
+## the staging directory, so what is scanned is what gets uploaded.
+## Four notes files name the companion tool and are excluded by name;
+## anything new that names it fails the gate rather than shipping.
+SUPPEXCL := sensitivity-table evidence-audit numbers-ledger \
+            web-verification-2026-09-17 section-6.2-why-this-minimum
+supp:
+	@rm -rf /tmp/survey-supp && mkdir -p /tmp/survey-supp/coding-sheets /tmp/survey-supp/taxonomy
+	@cp notes/*.md /tmp/survey-supp/coding-sheets/
+	@for f in $(SUPPEXCL); do rm -f /tmp/survey-supp/coding-sheets/$$f.md; done
+	@for f in applicability papers-index taxonomy open-problems; do cp docs/$$f.md /tmp/survey-supp/taxonomy/; done
+	@cp $(CSUR)/supp-README.md /tmp/survey-supp/README.md
+	@find /tmp/survey-supp -name '.DS_Store' -delete
+	@rm -f $(CSUR)/supplementary.zip
+	@cd /tmp/survey-supp && zip -qr $(CURDIR)/$(CSUR)/supplementary.zip README.md coding-sheets taxonomy -x '.*' '*/.*'
+	@python3 -c "import zipfile,re,sys; \
+	 z=zipfile.ZipFile('$(CSUR)/supplementary.zip'); \
+	 pat=re.compile(rb'harshul|tanmay|tanya sah|khatri|parv|harshuljain13|AdmissionControlPolicies|@gmail|admitperf',re.I); \
+	 bad=[n for n in z.namelist() if not n.endswith('/') and pat.search(z.read(n))]; \
+	 sys.exit('FAIL: identifying strings in '+', '.join(bad)) if bad else \
+	 print('OK: supplementary.zip, %d files, no identifying strings' % len([n for n in z.namelist() if not n.endswith('/')]))"
 
 ## check — build the TMLR PDF, then gate it
 check: tmlr style anon text
