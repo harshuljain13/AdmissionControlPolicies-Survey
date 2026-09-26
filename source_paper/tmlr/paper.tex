@@ -13,6 +13,20 @@
 \PassOptionsToPackage{table}{xcolor}
 \usepackage{tmlr}
 
+% Tectonic runs XeTeX, which loads Latin Modern as T1-encoded Type1.
+% In that encoding fi and fl are single glyphs with no Unicode mapping,
+% so pdftotext, Google Scholar and screen readers all read "classi"
+% for "classification". Loading the OpenType cut through fontspec
+% gives Identity-H encoding, which maps back to Unicode correctly.
+\usepackage{fontspec}
+\setmainfont{lmroman10-regular.otf}[
+  Ligatures=NoCommon,
+  BoldFont=lmroman10-bold.otf,
+  ItalicFont=lmroman10-italic.otf,
+  BoldItalicFont=lmroman10-bolditalic.otf]
+\setsansfont{lmsans10-regular.otf}[BoldFont=lmsans10-bold.otf]
+\setmonofont{lmmono10-regular.otf}
+
 \input{../preamble}
 
 \title{Admission Control for LLM Inference Serving:\\ A Systematic Review}

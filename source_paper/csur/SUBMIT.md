@@ -51,7 +51,7 @@ survey. Out-of-scope is TMLR's first listed desk-rejection reason.
 
 There is no hard cap on a full survey. The 15-page limit applies only to **short**
 survey papers, which CSUR describes as "well-focused perspective pieces/essays"
-that must be self-contained. At 26 pages in `acmsmall` this is a full survey and
+that must be self-contained. At 30 pages in `acmsmall` this is a full survey and
 the limit does not apply.
 
 ## Prior publication and the arXiv preprint
@@ -82,6 +82,24 @@ What it cannot check, and a human must:
 - whether the CCS concepts are the *right* ones, only that they exist
 - whether prose, tables and figures read correctly at acmsmall's narrower measure
 - ACM's authorship, conflict and originality policies
+
+### acmart version: shipping on 1.83, knowingly
+
+The build uses **acmart 1.83 (2022/02/19)**. Current is **2.20 (2026/08/16)**,
+a major version and four years newer. This is not a choice: Tectonic 0.17 bundles
+TeX Live 2022, and no newer bundle is published at its host. Generating 2.20 from
+CTAN needs docstrip, which Tectonic sandboxes against, so it needs a full TeX
+installation (`brew install --cask mactex-no-gui`, around 4 GB).
+
+Shipping on 1.83 is the deliberate call. 1.83 still produces a structurally valid
+ACM article, CSUR's guidelines do not name a required version, and production
+normalises formatting anyway. Against that, a major-version bump the night before
+submission can move page counts, break a table that is already tight to the
+margin, and introduce warnings with no time to absorb them.
+
+Worth doing after submission, not before. If a reviewer or production asks for
+the current template, install MacTeX and rebuild; nothing in the source is
+version-specific.
 
 ### Bibliography completeness
 
@@ -116,7 +134,13 @@ worklist if they do.
 ## Before submitting
 
 - [ ] **Verify the review model** in ScholarOne (see above). This is the one that
-      can cost a desk rejection.
+      can cost a desk rejection, and it is the only open item that cannot be
+      settled from outside the submission system.
+      **Default is anonymous** and stays that way unless the form says otherwise,
+      because the two errors are not symmetric: anonymised to a single-blind
+      venue is untidy, named to a double-anonymous venue is a desk rejection.
+      If the form says single-blind, `make csur-named` and re-upload. Everything
+      else is already conditional on the class option, so nothing else changes.
 - [x] **CCS concepts** set. "Surveys and overviews" is the anchor at 500,
       alongside NLP and neural networks; distributed architectures and
       distributed-systems principles at 300.

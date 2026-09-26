@@ -97,7 +97,7 @@ differentiates this survey from those prior works.
       comparison would have to reconcile (Section~\ref{sec:repro}).
       We identify them; establishing which of them are load-bearing
       needs measurement and is Open Problem~7.
-\item \textbf{Production evidence mapping} that ties eight public
+\item \textbf{Production evidence mapping} that ties seven public
       postmortems to admission failure modes (Section~\ref{sec:prod}).
 \item \textbf{Structured research agenda} of seven open problems, each
       grounded in either public peer review or the primary source's
@@ -1636,18 +1636,16 @@ third-party audit and to reproduce the master table
 \label{sec:prod}
 
 Real inference-fleet incidents map directly onto admission failure
-modes. Table~\ref{tab:incidents} lists eight public postmortems and
+modes. Table~\ref{tab:incidents} lists seven public postmortems and
 identifies the leading signal that would have prevented each. Each
 row carries a source URL and a confidence annotation:
 \textsc{v}~(verified) means the failure mode is explicitly named in
 the linked postmortem; \textsc{i}~(inferred) means the failure mode
-is our reading of an official postmortem whose wording is looser;
-\textsc{h}~(hypothesized) means the mapping to an admission-signal
-gap is our own analytic reconstruction, not stated by the operator.
+is our reading of an official postmortem whose wording is looser.
 
 \begin{table}[htbp]
 \centering
-\caption{Production incidents mapped to admission signals. Confidence: V verified from postmortem; I inferred from postmortem; H hypothesized (our reconstruction). The Azure 2016 entry is marked H because Azure's public status history no longer retains root-cause analyses from that period, so the account cannot be checked against a primary source.}
+\caption{Production incidents mapped to admission signals. Confidence: V verified from postmortem; I inferred from postmortem. Every row cites a postmortem that is public at the time of writing.}
 \label{tab:incidents}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -1658,7 +1656,6 @@ gap is our own analytic reconstruction, not stated by the operator.
 \rowcolor{admitteallight}
 \textbf{Incident} & \textbf{Failure mode} & \textbf{Trusted signal (was)} & \textbf{Leading signal (needed)} & \textbf{Source} & \textbf{Conf.} \\
 \midrule
-Azure Mar 2016 & Control-plane inferred backend unavailability, returned 429 for 3.5--4\,h & HTTP 400 (spurious) & Cross-validated backend liveness & archive not retained & H \\
 OpenAI DALL$\cdot$E queue collapse & Work admitted past client cancellation timeout & Queue depth & Queue age at admission & \citep{openai_dalle_postmortem} & I \\
 OpenAI Nov 8 2023 & Routing nodes crossed soak point; adding replicas insufficient & Utilization & Rate of change of utilization & \citep{openai_nov2023} & V \\
 OpenAI Dec 11 2024 & Telemetry API storm; stale DNS for 20\,min then failed at TTL expiry & Aggregate utilization dashboards & Control-plane health independent of data-plane cache & \citep{openai_dec2024} & V \\

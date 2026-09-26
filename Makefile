@@ -27,7 +27,7 @@ TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera check style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera check text style anon verify links clean
 
 all: check
 
@@ -164,8 +164,22 @@ camera:
 	@rm -f $(TMLR)/camera.tex
 	@echo "OK: $(TMLR)/camera.pdf"
 
+## text — every build's text must be machine-extractable.
+## Ligatures in T1-encoded Type1 fonts break this silently:
+## "classification" extracts as "classi" + "cation", so pdftotext,
+## Google Scholar and screen readers all see neither. Only catchable by
+## looking for words that are definitely in the paper.
+text:
+	@fail=0; for f in $(CSUR)/paper.pdf $(TMLR)/paper.pdf $(ARXIV)/paper.pdf; do \
+	  [ -f $$f ] || continue; \
+	  for w in classification specific efficiency insufficient; do \
+	    n=$$(pdftotext -q $$f - 2>/dev/null | grep -oc $$w || true); \
+	    if [ "$$n" = "0" ]; then echo "FAIL: $$f cannot extract '$$w'"; fail=1; fi; \
+	  done; done; \
+	 if [ $$fail = 0 ]; then echo "OK: every build is text-extractable"; else exit 1; fi
+
 ## check — build the TMLR PDF, then gate it
-check: tmlr style anon
+check: tmlr style anon text
 	@if grep -qiE 'undefined (reference|citation)' $(TMLR)/paper.log; then \
 		echo "FAIL: unresolved references or citations:"; \
 		grep -iE 'undefined (reference|citation)' $(TMLR)/paper.log; exit 1; \
