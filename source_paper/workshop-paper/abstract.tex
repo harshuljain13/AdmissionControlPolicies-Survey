@@ -1,0 +1,21 @@
+\begin{abstract}
+Admission control decides whether an arriving request enters an LLM serving
+system, and published policies differ in the quantity they read: queue depth,
+KV-cache pressure, deadline slack, tenant credit. A systematic review of
+fifty-five works found that none of sixteen admission-primary papers reports the
+range that quantity took during its own evaluation. The consequence is specific.
+A policy whose threshold was never approached and a policy that approached it
+and declined to reject produce identical admission counts and identical
+downstream latencies, so no reported number separates a policy that was
+exercised from one that was merely present.
+
+We measure that range directly. We define a signal-liveness probe, run two
+published policies on unmodified vLLM across arrival regimes spanning the
+engine's rated capacity, and report the observed signal range alongside the
+admission decisions it produced. We find that liveness is a property of the
+deployment configuration rather than of the policy: the same policy reading the
+same quantity is exercised under one model-to-memory-to-concurrency ratio and
+unreachable under another, with nothing in either paper's reported numbers
+distinguishing the two. We release the harness and propose a one-column addition
+to results reporting that makes the distinction checkable.
+\end{abstract}

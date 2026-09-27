@@ -26,8 +26,9 @@ SRC      := source_paper
 TMLR     := $(SRC)/tmlr
 ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
+WORKSHOP := $(SRC)/workshop-paper
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera check text supp style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera workshop check text supp style anon verify links clean
 
 all: check
 
@@ -208,6 +209,19 @@ supp:
 	 bad=[x for x in n if pat.search(z.read(x))]; \
 	 sys.exit('FAIL: identifying strings in '+', '.join(bad)) if bad else \
 	 print('OK: supplementary.zip, %d files, %.0f KB, no identifying strings' % (len(n), os.path.getsize(p)/1024))"
+
+## workshop — the signal-liveness workshop paper.
+## Same split as the survey: ../body.tex and ../abstract.tex are venue
+## neutral, the wrapper carries class, authors and bibliography. The
+## MLSys and ICLR 2027 CFPs are not open, so the only wrapper is a
+## preprint; venue wrappers drop in beside it without touching the body.
+workshop:
+	$(TECTONIC) -X compile $(WORKSHOP)/preprint/paper.tex
+	@n=$$(pdftotext -q $(WORKSHOP)/preprint/paper.pdf - 2>/dev/null | grep -c '\[?\]' || true); \
+	 if [ "$$n" != "0" ]; then echo "FAIL: $$n unresolved citation(s)"; exit 1; fi
+	@n=$$(pdftotext -q $(WORKSHOP)/preprint/paper.pdf - 2>/dev/null | grep -c '—' || true); \
+	 if [ "$$n" != "0" ]; then echo "FAIL: $$n em-dash(es)"; exit 1; fi
+	@echo "OK: $(WORKSHOP)/preprint/paper.pdf ($$(pdfinfo $(WORKSHOP)/preprint/paper.pdf | awk '/^Pages/{print $$2}') pages)"
 
 ## check — build the TMLR PDF, then gate it
 check: tmlr style anon text

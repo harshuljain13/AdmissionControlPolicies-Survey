@@ -1,0 +1,55 @@
+% Venue-neutral preprint wrapper for the workshop paper.
+%
+% The MLSys 2027 and ICLR 2027 workshop CFPs are not open, so no venue
+% style file exists yet. This wrapper builds a readable preprint with
+% the same typography as the survey, and when a CFP lands the venue
+% wrapper drops in alongside this one with ../body.tex unchanged.
+%
+% Structure mirrors the survey deliberately: body and abstract are
+% venue-neutral, everything venue-specific lives in the wrapper.
+
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1.15in]{geometry}
+
+% Libertine as OpenType, matching the survey. Loaded by filename because
+% fontspec cannot resolve the family name in this bundle, and
+% \usepackage{libertine} falls back to Computer Modern silently.
+\usepackage{fontspec}
+\setmainfont{LinLibertine_R.otf}[
+  BoldFont=LinLibertine_RB.otf,
+  ItalicFont=LinLibertine_RI.otf,
+  BoldItalicFont=LinLibertine_RBI.otf]
+\setsansfont{LinBiolinum_R.otf}[BoldFont=LinBiolinum_RB.otf]
+\setmonofont{lmmono10-regular.otf}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage[colorlinks=true,allcolors=black]{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\title{\bfseries Does the Signal Move? Measuring Admission-Control\\
+Signal Liveness in LLM Serving}
+
+\author{%
+  Harshul Jain \and Tanmay Sah \and Tanya Sah \and Parv Khatri \and Dolly Sah\\
+  \normalsize Independent Researchers
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{../abstract}
+
+\input{../body}
+
+\bibliographystyle{plainnat}
+\bibliography{../refs-local,../../references}
+
+\end{document}

@@ -1,3 +1,14 @@
+> **SUPERSEDED as the paper source.** The paper is now LaTeX:
+> `../body.tex`, `../abstract.tex` and `../preprint/paper.tex`, built with
+> `make workshop`. This file is kept for the venue analysis, the figure plan
+> and the timeline, which have no LaTeX equivalent.
+>
+> Three claims in it do not survive checking and are not carried into the
+> LaTeX. See `SKELETON-REVIEW.md`. In short: the survey finding is stated
+> backwards here (all five axes fill, not four), the "quoted from survey"
+> definition of inertness is not in the survey, and R1 rests on a pilot run
+> whose configuration made the result arithmetic rather than a finding.
+
 # Workshop Paper Skeleton: Signal Liveness in LLM Admission Control
 
 **Format:** 6-page core (fits MLSys workshops at 4-8pp and ICLR workshops at 4-9pp)

@@ -1,0 +1,205 @@
+% Venue-neutral body for the signal-liveness workshop paper.
+% No documentclass, no author block, no bibliography command: those
+% live in the per-venue wrappers, exactly as in the survey.
+%
+% Sections 1, 2, 3 and 7 are drafted. Sections 4, 5 and 6 are scaffolded
+% and cannot be written until the measurements exist. See
+% SKELETON-REVIEW.md for why the existing pilot run does not serve.
+
+\section{Introduction}
+\label{sec:intro}
+
+An LLM inference cluster under overload has one shared postmortem shape.
+Utilization climbs, a queue forms, latency degrades before errors appear, and
+the operator discovers that the system accepted more work than it could finish.
+Recent public incidents name the same layer as the failure site: requests were
+admitted that should have been refused, and the refusal, when it came, came from
+a timeout rather than a decision.
+
+Admission control is the decision taken before a request enters the system:
+admit it, hold it, or refuse it. A companion systematic review examined
+fifty-five admission and admission-adjacent works published between 2022 and
+2026 and classified them on five axes \citep{jain2026admission}. Applying the taxonomy
+to the sixteen admission-primary works in that corpus, the review recorded seven
+properties per paper: the five axes, plus what the policy assumes an arriving
+request carries, plus the range the policy's signal took during the paper's own
+evaluation. Six of the seven fill from published text, and all five axes are
+among them.
+
+One property fills for no paper. For none of the sixteen could the reviewers
+determine the range the policy's own signal took during its evaluation. This
+matters because of what it makes indistinguishable. A threshold that was never
+approached and a threshold that was approached but not crossed produce the same
+admission counts and the same downstream latencies. No reported number separates
+a policy that was exercised from one that was merely present, which means a
+reported improvement cannot be attributed to the policy's decisions rather than
+to its inactivity.
+
+The review states plainly that this finding is bibliographic rather than
+empirical: it reports an absence in what was extracted, not an observation of a
+policy failing this way in a deployment. Establishing the latter requires
+running a policy whose signal is known to move alongside one whose signal is
+known not to, on the same deployment and against the same trace, and asking
+whether any reported number separates them. The review states this as an open
+problem.
+
+This paper is an attempt at that open problem. We contribute:
+
+\begin{enumerate}
+  \item A \textbf{signal-liveness probe}: a protocol that takes a policy's
+    declared signal and a target deployment and reports whether the signal
+    reaches its decision threshold under offered load, runnable in an afternoon
+    on a single GPU.
+  \item \textbf{Measurements} of two published policies on unmodified vLLM
+    across arrival regimes, reporting signal range alongside the admission
+    decisions it produced, and quantifying how far two policies can diverge on
+    individual requests while agreeing on the aggregate rate that papers
+    conventionally report.
+  \item A \textbf{capability-declaration schema} derived from the taxonomy,
+    letting a policy state the signal it reads and the band it assumes, and a
+    runtime gate that refuses deployment when the engine cannot supply the
+    signal or when prior probes show the signal pinned in the target regime.
+\end{enumerate}
+
+This is a methodological contribution rather than a new admission mechanism. We
+propose no policy and claim no improvement over any published one. The precedent
+for evaluation-harness work at a systems venue is MLPerf Inference
+\citep{reddi2020mlperf}.
+
+\section{Background: the taxonomy and the unfilled property}
+\label{sec:background}
+
+The taxonomy classifies an admission policy on five axes, each answerable about
+one's own deployment without reading the papers: the \emph{unit} at which
+admission is decided, the \emph{setting} the policy assumes, the
+\emph{objective} it optimizes, the \emph{quantity} it watches, and its
+\emph{portability}, meaning whether it can run in front of an unmodified engine
+or requires control over batch formation.
+
+All five are recoverable from published text for all sixteen admission-primary
+works. Two further properties were recorded and are not axes. The first, what a
+policy assumes an arriving request carries, fills for every paper. The second,
+the range the signal took during evaluation, fills for none.
+
+\begin{table}[t]
+\centering
+\caption{The seven properties recorded per paper in the companion review, and
+whether each is recoverable from published text across the sixteen
+admission-primary works.}
+\label{tab:properties}
+\small
+\begin{tabular}{llc}
+\toprule
+\textbf{Property} & \textbf{Kind} & \textbf{Recoverable} \\
+\midrule
+Unit of admission        & axis     & 16/16 \\
+Setting                  & axis     & 16/16 \\
+Objective                & axis     & 16/16 \\
+Signal quantity          & axis     & 16/16 \\
+Portability              & axis     & 16/16 \\
+Request metadata assumed & recorded & 16/16 \\
+\textbf{Signal range observed} & \textbf{recorded} & \textbf{0/16} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We adopt the following definition, which the companion review does not state
+formally and which is this paper's own.
+
+\begin{definition}[Signal liveness]
+\label{def:liveness}
+Let $s(t)$ be the quantity a policy reads and $\theta$ its decision threshold.
+Given an offered-load probe over interval $[0,T]$ and a band width
+$\delta$, the signal is \textbf{live} if the fraction of samples with
+$|s(t) - \theta| < \delta$ is non-negligible, and \textbf{inert} otherwise.
+A policy whose signal is inert cannot have acted on its threshold during the
+run, whatever its reported admission rate.
+\end{definition}
+
+The definition is deliberately relative to a deployment rather than to a policy.
+Whether a signal is live depends on the engine configuration, the model, and the
+offered load, and one of this paper's results is that the same policy reading
+the same quantity can be live in one configuration and inert in another.
+
+\section{Method: the signal-liveness probe}
+\label{sec:method}
+
+The probe has three steps and requires no engine modification.
+
+\paragraph{Declare capability.} The policy states the signal it reads, drawn
+from the quantities the taxonomy enumerates (KV pressure, queue depth, deadline
+slack, tenant credit, session state, wait estimate), together with its decision
+threshold $\theta$ and the band $\delta$ within which it considers the signal
+actionable.
+
+\paragraph{Offer load.} The deployment is driven at a set of arrival rates
+spanning its rated capacity, established by a calibration run rather than
+assumed. Establishing capacity first is not optional: a probe run below the
+saturation point reports a flat signal for every policy, and reads as inertness
+when it is only absence of load.
+
+\paragraph{Record range.} The declared signal is sampled throughout at fixed
+cadence, and we report its minimum, maximum, median and upper percentiles,
+together with the fraction of samples inside the policy's band and the admission
+decisions taken at each sample.
+
+The reported artifact is the pair: signal range and admission outcome. Either
+alone is what the literature already provides and what
+Definition~\ref{def:liveness} shows to be insufficient.
+
+\section{Experimental setup}
+\label{sec:setup}
+
+% PENDING. Do not write against the existing pilot configuration: a 0.5B model
+% given ~19 GB of KV cache with max_num_seqs=10 cannot fill that cache, so KV
+% utilization near zero is arithmetic rather than a finding. The setup must
+% first establish a configuration in which the signal can reach its threshold.
+% See SKELETON-REVIEW.md.
+
+\section{Results}
+\label{sec:results}
+
+% PENDING measurements. Structure: signal range per (policy, regime) cell as the
+% central table; per-decision agreement between policies as the figure that
+% carries the argument; the crossover point at which a pinned signal becomes
+% live, if one exists in the tested range.
+
+\section{Discussion}
+\label{sec:discussion}
+
+% PENDING results. Three parts: what one added column to a results table would
+% have shown; the capability-declaration schema and runtime gate; and an
+% explicit statement of what two policies on one engine cannot establish about
+% the literature as a whole.
+
+\section{Threats to validity}
+\label{sec:threats}
+
+\paragraph{Two policies is not a survey of policies.} We measure two of the
+sixteen admission-primary policies in the corpus. This cannot establish how
+often inert signals occur in the literature. It can establish that inertness is
+measurable, that it occurs for at least one published policy in a configuration
+a practitioner might plausibly choose, and that its absence from reported
+results is a genuine information gap rather than a stylistic omission.
+
+\paragraph{One engine.} We measure on vLLM. Other engines expose different
+signals at different cadences, and a signal that is live on one may be
+unobservable on another. The probe protocol is engine-agnostic; the measurements
+are not.
+
+\paragraph{Liveness is configuration-dependent, including ours.} The central
+claim of this paper is that signal liveness depends on the deployment rather
+than on the policy. That claim applies reflexively. Our own configuration is one
+point in a space, and a reader should treat our numbers as an existence proof
+about that point rather than as a characterization of the policy.
+
+\paragraph{Synthetic workloads.} Our arrival processes and request shapes are
+proxies for production traffic. Agentic and multi-tenant workloads have
+correlation structure that a Poisson or bursty synthetic does not reproduce, and
+that structure is exactly what drives the signals under study.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+% PENDING results. Close on the reporting ask, which is one column, and on
+% one-command reproduction from a public commit.
