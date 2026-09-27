@@ -180,26 +180,34 @@ text:
 
 ## supp — the supplementary archive the anonymous paper promises.
 ## Rebuilds from notes/ and docs/, then scans the built zip rather than
-## the staging directory, so what is scanned is what gets uploaded.
-## Four notes files name the companion tool and are excluded by name;
-## anything new that names it fails the gate rather than shipping.
-SUPPEXCL := sensitivity-table evidence-audit numbers-ledger \
-            web-verification-2026-09-17 section-6.2-why-this-minimum
+## the staging tree, so what is scanned is what gets uploaded.
+##
+## Five notes files are excluded and the exclusion is load-bearing.
+## Four name the companion tool, whose repository carries the authors'
+## names; the manuscript hides that name under \if@ACM@anonymous, and
+## shipping it in the supplement would undo that in one search. The
+## fifth drafts a section that no longer exists and carries empirical
+## claims the paper deliberately does not make. Two of the five also
+## argue about paper.md, a file deleted in 988f24f, which reads as an
+## open process question that was settled weeks ago.
+SUPPEXCL := numbers-ledger section-6.2-why-this-minimum evidence-audit \
+            sensitivity-table web-verification-2026-09-17
 supp:
-	@rm -rf /tmp/survey-supp && mkdir -p /tmp/survey-supp/coding-sheets /tmp/survey-supp/taxonomy
-	@cp notes/*.md /tmp/survey-supp/coding-sheets/
-	@for f in $(SUPPEXCL); do rm -f /tmp/survey-supp/coding-sheets/$$f.md; done
-	@for f in applicability papers-index taxonomy open-problems; do cp docs/$$f.md /tmp/survey-supp/taxonomy/; done
+	@rm -rf /tmp/survey-supp && mkdir -p /tmp/survey-supp/notes /tmp/survey-supp/docs
+	@cp notes/*.md /tmp/survey-supp/notes/
+	@for f in $(SUPPEXCL); do rm -f /tmp/survey-supp/notes/$$f.md; done
+	@for f in applicability papers-index taxonomy open-problems; do cp docs/$$f.md /tmp/survey-supp/docs/; done
 	@cp $(CSUR)/supp-README.md /tmp/survey-supp/README.md
-	@find /tmp/survey-supp -name '.DS_Store' -delete
+	@find /tmp/survey-supp \( -name '.DS_Store' -o -name '*.swp' -o -name '*~' \) -delete
 	@rm -f $(CSUR)/supplementary.zip
-	@cd /tmp/survey-supp && zip -qr $(CURDIR)/$(CSUR)/supplementary.zip README.md coding-sheets taxonomy -x '.*' '*/.*'
-	@python3 -c "import zipfile,re,sys; \
-	 z=zipfile.ZipFile('$(CSUR)/supplementary.zip'); \
-	 pat=re.compile(rb'harshul|tanmay|tanya sah|khatri|parv|harshuljain13|AdmissionControlPolicies|@gmail|admitperf',re.I); \
-	 bad=[n for n in z.namelist() if not n.endswith('/') and pat.search(z.read(n))]; \
+	@cd /tmp/survey-supp && zip -qrX $(CURDIR)/$(CSUR)/supplementary.zip README.md notes docs -x '.*' '*/.*'
+	@python3 -c "import zipfile,re,sys,os; \
+	 p='$(CSUR)/supplementary.zip'; z=zipfile.ZipFile(p); \
+	 n=[x for x in z.namelist() if not x.endswith('/')]; \
+	 pat=re.compile(rb'harshul|tanmay|tanya sah|khatri|\\bparv\\b|harshuljain13|AdmissionControlPolicies|@gmail|\\badmitperf\\b|\\baudible\\b|\\bamazon\\b|/Users/|paper\\.md',re.I); \
+	 bad=[x for x in n if pat.search(z.read(x))]; \
 	 sys.exit('FAIL: identifying strings in '+', '.join(bad)) if bad else \
-	 print('OK: supplementary.zip, %d files, no identifying strings' % len([n for n in z.namelist() if not n.endswith('/')]))"
+	 print('OK: supplementary.zip, %d files, %.0f KB, no identifying strings' % (len(n), os.path.getsize(p)/1024))"
 
 ## check — build the TMLR PDF, then gate it
 check: tmlr style anon text

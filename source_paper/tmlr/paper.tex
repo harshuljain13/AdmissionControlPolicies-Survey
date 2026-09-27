@@ -13,18 +13,24 @@
 \PassOptionsToPackage{table}{xcolor}
 \usepackage{tmlr}
 
-% Tectonic runs XeTeX, which loads Latin Modern as T1-encoded Type1.
-% In that encoding fi and fl are single glyphs with no Unicode mapping,
-% so pdftotext, Google Scholar and screen readers all read "classi"
-% for "classification". Loading the OpenType cut through fontspec
-% gives Identity-H encoding, which maps back to Unicode correctly.
+% Libertine, loaded as OpenType through fontspec. Two reasons.
+%
+% Typography: this is the face acmart uses for the CSUR build, so the
+% preprint and the journal version read alike instead of the preprint
+% looking like a different paper set in Computer Modern.
+%
+% Extraction: the T1-encoded Type1 route stores fi, fl and ffi as single
+% glyphs with no Unicode mapping, so pdftotext, Google Scholar and screen
+% readers read "classi" for "classification". The OpenType cut is
+% Identity-H encoded and maps back correctly, which means ligatures stay
+% on and the text is still searchable. Filenames rather than family names
+% because fontspec cannot resolve "Linux Libertine O" in this bundle.
 \usepackage{fontspec}
-\setmainfont{lmroman10-regular.otf}[
-  Ligatures=NoCommon,
-  BoldFont=lmroman10-bold.otf,
-  ItalicFont=lmroman10-italic.otf,
-  BoldItalicFont=lmroman10-bolditalic.otf]
-\setsansfont{lmsans10-regular.otf}[BoldFont=lmsans10-bold.otf]
+\setmainfont{LinLibertine_R.otf}[
+  BoldFont=LinLibertine_RB.otf,
+  ItalicFont=LinLibertine_RI.otf,
+  BoldItalicFont=LinLibertine_RBI.otf]
+\setsansfont{LinBiolinum_R.otf}[BoldFont=LinBiolinum_RB.otf]
 \setmonofont{lmmono10-regular.otf}
 
 \input{../preamble}

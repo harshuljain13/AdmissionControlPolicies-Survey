@@ -22,24 +22,39 @@ coding sheets "are included as supplementary material", so submitting without
 it breaks a promise the manuscript makes in two places (§8 and §11).
 
 `make supp` builds it from `notes/` and `docs/`, and scans the built zip rather
-than the staging directory, so what is scanned is what is uploaded. It carries
-forty per-paper coding sheets, the four taxonomy documents, and a README
-explaining what a reviewer is looking at.
+than the staging directory, so what is scanned is what is uploaded. It carries forty per-paper coding sheets under `notes/`, the four taxonomy
+documents under `docs/`, and a README explaining what a reviewer is looking at
+and why some notes contain reasoning that was later revised.
 
-Five files are excluded by name and the exclusion is load-bearing. Four of them
-(`sensitivity-table`, `evidence-audit`, `numbers-ledger`,
-`web-verification-2026-09-17`) name the companion tool, whose repository
-carries the authors' names. The paper goes to some trouble to hide that name
-under `anonymous`, and shipping it in the supplement would undo that. The
-fifth, `section-6.2-why-this-minimum`, is a draft for a section that no longer
+Five notes files are excluded and the exclusion is load-bearing.
+
+Four of them name the companion tool: `evidence-audit`, `numbers-ledger`,
+`sensitivity-table` and `web-verification-2026-09-17`. That tool's repository
+carries the authors' names. The manuscript hides the name under
+`\if@ACM@anonymous`, so shipping it in the supplement would undo that work and
+a reviewer searching it would reach the authors in one step.
+
+The fifth, `section-6.2-why-this-minimum`, drafts a section that no longer
 exists and carries empirical claims the paper deliberately does not make.
+Handing reviewers numbers the manuscript declines to claim invites a question
+that cannot be answered.
 
-Also excluded, for different reasons: `docs/reviewer-responses.md` names a
+Two of the five have a second problem that redaction would not fix. They argue
+about `paper.md`, deleted in 988f24f, and `numbers-ledger` states a "decision
+needed before submission" that was settled weeks ago, along with a claim that
+the PDF is missing three works it now contains. To a reviewer that reads as an
+unresolved process problem in a submission that does not have one.
+
+Also excluded for different reasons: `docs/reviewer-responses.md` names a
 person who commented on an earlier draft, and `docs/eval-log.md` and
 `docs/outline.md` are project-management files rather than audit material.
 
-The gate fails on any new file naming the tool, so adding a note and forgetting
-to check cannot leak.
+The gate scans the built zip and fails on any new file matching an identifying
+string, so adding a note and forgetting to check cannot leak. Two matches are
+known and benign: Jain's Fairness Index in `equinox.md` and `open-problems.md`,
+and the Databricks Dolly dataset in `clairvoyant.md`. Neither names an author,
+and both are excluded from the gate's pattern by word boundaries on the
+author-specific forms.
 
 ## ⚠ Verify the review model before you submit
 
