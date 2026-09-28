@@ -28,7 +28,7 @@ ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 WORKSHOP := $(SRC)/workshop-paper
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check text supp style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check text supp style anon verify links pdflinks clean
 
 all: check
 
@@ -300,6 +300,15 @@ arxiv-source:
 	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl','neurips_2025.sty'] if f not in n]; \
 	 sys.exit('FAIL: missing '+', '.join(missing)) if missing else \
 	 print('OK: arxiv-submission.zip, %d files, %.0f KB' % (len(n), os.path.getsize('$(ARXIV)/arxiv-submission.zip')/1024))"
+
+## pdflinks — resolve every clickable link in the built PDFs.
+## `make links` checks references.bib; this checks what actually became a
+## URI annotation, which is not the same set. A bibliography style prints
+## some fields and drops others: unsrtnat prints url and doi but not
+## eprint, so arXiv-only entries silently lost their links until each was
+## given an explicit url. 403 and 429 are reported, not failed.
+pdflinks:
+	@python3 scripts/check-pdf-links.py $(ARXIV)/paper.pdf $(CSUR)/paper.pdf
 
 ## check — build the TMLR PDF, then gate it
 check: tmlr style anon text
