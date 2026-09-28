@@ -28,7 +28,7 @@ ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 WORKSHOP := $(SRC)/workshop-paper
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera workshop check text supp style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check text supp style anon verify links clean
 
 all: check
 
@@ -210,18 +210,47 @@ supp:
 	 sys.exit('FAIL: identifying strings in '+', '.join(bad)) if bad else \
 	 print('OK: supplementary.zip, %d files, %.0f KB, no identifying strings' % (len(n), os.path.getsize(p)/1024))"
 
-## workshop — the signal-liveness workshop paper.
-## Same split as the survey: ../body.tex and ../abstract.tex are venue
-## neutral, the wrapper carries class, authors and bibliography. The
-## MLSys and ICLR 2027 CFPs are not open, so the only wrapper is a
-## preprint; venue wrappers drop in beside it without touching the body.
-workshop:
-	$(TECTONIC) -X compile $(WORKSHOP)/preprint/paper.tex
-	@n=$$(pdftotext -q $(WORKSHOP)/preprint/paper.pdf - 2>/dev/null | grep -c '\[?\]' || true); \
-	 if [ "$$n" != "0" ]; then echo "FAIL: $$n unresolved citation(s)"; exit 1; fi
-	@n=$$(pdftotext -q $(WORKSHOP)/preprint/paper.pdf - 2>/dev/null | grep -c '—' || true); \
-	 if [ "$$n" != "0" ]; then echo "FAIL: $$n em-dash(es)"; exit 1; fi
-	@echo "OK: $(WORKSHOP)/preprint/paper.pdf ($$(pdfinfo $(WORKSHOP)/preprint/paper.pdf | awk '/^Pages/{print $$2}') pages)"
+## workshop — the signal-liveness workshop paper, all three builds.
+## body.tex and abstract.tex are venue neutral; each wrapper carries the
+## venue's own class, author block and bibliography style. Style files
+## are vendored per folder because tectonic ignores TEXINPUTS.
+##
+##   mlsys     MLSys, two column, mlsys2026.sty from the conference
+##   iclr      ICLR, single column, iclr2027_conference.sty from the
+##             official Master-Template
+##   preprint  neither venue, names visible, for circulation
+##
+## Both venue builds are anonymous by default. That includes the
+## self-citation to the companion survey, which is the leak authors
+## routinely miss: the bibliography names all five of us even when the
+## title block does not. \surveyref selects the anonymised key.
+workshop: workshop-mlsys workshop-iclr workshop-preprint
+
+workshop-mlsys:
+	@cd $(WORKSHOP)/mlsys && $(TECTONIC) -X compile paper.tex >/dev/null
+	@$(MAKE) --no-print-directory wsgate WS=$(WORKSHOP)/mlsys ANON=1
+
+workshop-iclr:
+	@cd $(WORKSHOP)/iclr && $(TECTONIC) -X compile paper.tex >/dev/null
+	@$(MAKE) --no-print-directory wsgate WS=$(WORKSHOP)/iclr ANON=1
+
+workshop-preprint:
+	@cd $(WORKSHOP)/preprint && $(TECTONIC) -X compile paper.tex >/dev/null
+	@$(MAKE) --no-print-directory wsgate WS=$(WORKSHOP)/preprint ANON=0
+
+## wsgate — shared checks. ANON=1 additionally forbids author names,
+## which catches the bibliography self-citation.
+wsgate:
+	@p=$(WS)/paper.pdf; \
+	 n=$$(pdftotext -q $$p - 2>/dev/null | grep -c '\[?\]' || true); \
+	 [ "$$n" = "0" ] || { echo "FAIL: $(WS) has $$n unresolved citation(s)"; exit 1; }; \
+	 n=$$(pdftotext -q $$p - 2>/dev/null | grep -c '—' || true); \
+	 [ "$$n" = "0" ] || { echo "FAIL: $(WS) has $$n em-dash(es)"; exit 1; }; \
+	 if [ "$(ANON)" = "1" ]; then \
+	   n=$$(pdftotext -q $$p - 2>/dev/null | grep -icE "harshul|tanmay|tanya sah|khatri|dolly|@gmail" || true); \
+	   [ "$$n" = "0" ] || { echo "FAIL: $(WS) leaks $$n identifying string(s)"; exit 1; }; \
+	 fi; \
+	 echo "OK: $$p ($$(pdfinfo $$p | awk '/^Pages/{print $$2}') pages$(if $(filter 1,$(ANON)),, , named))"
 
 ## check — build the TMLR PDF, then gate it
 check: tmlr style anon text

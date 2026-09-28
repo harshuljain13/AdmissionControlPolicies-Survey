@@ -1,0 +1,68 @@
+% MLSys workshop wrapper. Two-column, mlsys2026.sty as published by the
+% conference (same format as 2025, per the 2026 call). Style files are
+% vendored in this folder because tectonic ignores TEXINPUTS.
+%
+%   \mlsysfinal   camera ready, authors visible
+%   (default)     submission, anonymised
+%
+% The research track is 10 pages excluding references. Workshops set
+% their own limit, usually 4 to 8; check the CFP when it opens.
+%
+% Fonts: mlsys2026.sty sets Times via its own font commands, so this
+% wrapper does not load fontspec. Matching the survey's Libertine here
+% would violate the venue format, which matters more than consistency.
+
+\documentclass{article}
+
+\usepackage{mlsys2026}
+% \usepackage[accepted]{mlsys2026}   % uncomment for camera ready
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{url}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\mlsystitlerunning{Measuring Admission-Control Signal Liveness in LLM Serving}
+
+% Self-citation under anonymous review. Swap to jain2026admission
+% for the camera ready, alongside the de-anonymising class option.
+\newcommand{\surveyref}{anon2026admission}
+
+\begin{document}
+
+\twocolumn[
+\mlsystitle{Does the Signal Move? Measuring Admission-Control Signal
+Liveness in LLM Serving}
+
+\begin{mlsysauthorlist}
+\mlsysauthor{Harshul Jain}{ind}
+\mlsysauthor{Tanmay Sah}{ind}
+\mlsysauthor{Tanya Sah}{ind}
+\mlsysauthor{Parv Khatri}{ind}
+\mlsysauthor{Dolly Sah}{ind}
+\end{mlsysauthorlist}
+
+\mlsysaffiliation{ind}{Independent Researcher, USA}
+
+\mlsyscorrespondingauthor{Harshul Jain}{harshuljain1393@gmail.com}
+
+\mlsyskeywords{admission control, LLM inference serving, evaluation,
+signal liveness, systems measurement}
+
+\vskip 0.3in
+
+\input{../abstract}
+]
+
+\printAffiliationsAndNotice{}
+
+\input{../body}
+
+\bibliographystyle{mlsys2026}
+\bibliography{../refs-local,../../references}
+
+\end{document}

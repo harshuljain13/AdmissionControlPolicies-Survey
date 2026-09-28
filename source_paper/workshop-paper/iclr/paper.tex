@@ -1,0 +1,62 @@
+% ICLR workshop wrapper. Single column, iclr2027_conference.sty from the
+% official Master-Template. Style files are vendored in this folder
+% because tectonic ignores TEXINPUTS.
+%
+%   (default)   submission, anonymised, line numbers in the margin
+%   [final]     camera ready, authors visible
+%
+% ICLR workshops usually inherit the main conference style and set their
+% own page limit, typically 4 to 9. Check the CFP when it opens.
+%
+% Fonts: the ICLR style sets its own, so this wrapper does not load
+% fontspec. Matching the survey's Libertine would violate the venue
+% format, which matters more than consistency across our own builds.
+
+\documentclass{article}
+
+\usepackage{iclr2027_conference,times}
+% \usepackage[final]{iclr2027_conference}   % uncomment for camera ready
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{url}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\title{Does the Signal Move? Measuring Admission-Control\\
+Signal Liveness in LLM Serving}
+
+% Hidden under submission, shown with [final].
+\author{%
+Harshul Jain, Tanmay Sah, Tanya Sah, Parv Khatri \& Dolly Sah\\
+Independent Researchers\\
+\texttt{harshuljain1393@gmail.com}
+}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+% Anonymous by default, for the same reason the CSUR build is: submitting
+% anonymised to a single-blind venue is untidy, submitting named to a
+% double-blind one is a desk rejection. Uncomment for camera ready.
+% \iclrfinalcopy
+
+% Self-citation under anonymous review. Swap to jain2026admission
+% for the camera ready, alongside the de-anonymising class option.
+\newcommand{\surveyref}{anon2026admission}
+
+\begin{document}
+
+\maketitle
+
+\input{../abstract}
+
+\input{../body}
+
+\bibliographystyle{iclr2027_conference}
+\bibliography{../refs-local,../../references}
+
+\end{document}
