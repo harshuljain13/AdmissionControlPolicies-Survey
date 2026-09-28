@@ -28,7 +28,7 @@ ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 WORKSHOP := $(SRC)/workshop-paper
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check text supp style anon verify links pdflinks clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check nodupes text supp style anon verify links pdflinks clean
 
 all: check
 
@@ -89,15 +89,8 @@ csur-camera:
 ## arXiv compiles source itself and does NOT run bibtex, so the .bbl ships.
 arxiv:
 	$(TECTONIC) -X compile $(ARXIV)/paper.tex --keep-intermediates --keep-logs
-	@cd $(ARXIV) && cp ../body.tex ../abstract.tex ../preamble.tex ../references.bib . && \
-	 sed 's|{\.\./|{|g' paper.tex > main.tex && \
-	 cp paper.bbl main.bbl && \
-	 tar czhf upload.tar.gz main.tex main.bbl body.tex abstract.tex \
-	     preamble.tex references.bib tmlr.sty tmlr.bst fancyhdr.sty && \
-	 rm -f main.tex main.bbl body.tex abstract.tex preamble.tex references.bib
-	@echo
-	@echo "  $(ARXIV)/paper.pdf       <- read or share this"
-	@echo "  $(ARXIV)/upload.tar.gz   <- upload this to arXiv"
+	@echo "  $(ARXIV)/paper.pdf   <- read or share this"
+	@echo "  run 'make arxiv-source' for the bundle to upload"
 
 ## verify — mechanical format checks against the CSUR build.
 ## Everything here is checkable without a human; the rest is in
@@ -317,8 +310,21 @@ arxiv-source:
 pdflinks:
 	@python3 scripts/check-pdf-links.py $(ARXIV)/paper.pdf $(CSUR)/paper.pdf
 
+## nodupes — the venue folders must not contain copies of the shared
+## content files. Four such copies were committed once, identical at the
+## time and therefore invisible, and they are exactly the drift that
+## killed the old paper.md. The wrappers input ../body, not ./body, so a
+## local copy is never read and can only mislead.
+nodupes:
+	@bad=""; for d in $(ARXIV) $(CSUR) $(TMLR); do \
+	  for f in body.tex abstract.tex preamble.tex references.bib main.tex; do \
+	    [ -f "$$d/$$f" ] && bad="$$bad $$d/$$f"; \
+	  done; done; \
+	 if [ -n "$$bad" ]; then echo "FAIL: shared files duplicated into venue folders:$$bad"; exit 1; \
+	 else echo "OK: no duplicated content files in venue folders"; fi
+
 ## check — build the TMLR PDF, then gate it
-check: tmlr style anon text
+check: nodupes tmlr style anon text
 	@if grep -qiE 'undefined (reference|citation)' $(TMLR)/paper.log; then \
 		echo "FAIL: unresolved references or citations:"; \
 		grep -iE 'undefined (reference|citation)' $(TMLR)/paper.log; exit 1; \
