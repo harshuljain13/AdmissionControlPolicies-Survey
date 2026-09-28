@@ -76,11 +76,17 @@ anonymised to a single-blind venue is untidy, while submitting named to a
 double-anonymous one is a desk rejection. **Check ScholarOne's submission form
 before uploading** and switch with `make csur-named` if CSUR is single-blind.
 
-Two things sit in the body and would de-anonymise regardless of the class option,
-so both are conditional on acmart's `\if@ACM@anonymous`:
+One thing sits in the body and would de-anonymise regardless of the class
+option, so it is conditional on acmart's `\if@ACM@anonymous`: the name of the
+companion tool, whose repository carries the author names.
 
-- the artifact repository URL, which carries the GitHub username
-- the name of the companion tool, whose repository carries the author names
+The artifact repository URL used to be the other. It is gone from every build.
+The repository is private, so the link returned 404 for every reader while the
+paper claimed the coding sheets were "released publicly". Both halves are fixed:
+the sheets now travel with the paper rather than being linked, and the sentence
+says "released with it". For CSUR that means the supplementary archive; for the
+arXiv preprint it means `anc/coding-sheets.zip`, which arXiv serves as an
+ancillary file next to the PDF.
 
 ## Scope: this is a good fit
 

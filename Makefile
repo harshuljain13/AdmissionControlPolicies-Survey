@@ -288,6 +288,13 @@ arxiv-source:
 	@# neurips_2025.sty is not in TeX Live; without it arXiv cannot
 	@# compile the document at all
 	@cp $(ARXIV)/neurips_2025.sty /tmp/arxiv-src/
+	@# arXiv serves anything under anc/ as ancillary files alongside the
+	@# paper. The body says the coding sheets are released with it, so
+	@# they have to actually travel with it: the repository is private
+	@# and a link to it 404s for every reader.
+	@mkdir -p /tmp/arxiv-src/anc
+	@$(MAKE) --no-print-directory supp >/dev/null
+	@cp $(CSUR)/supplementary.zip /tmp/arxiv-src/anc/coding-sheets.zip
 	@cd /tmp/arxiv-src && $(TECTONIC) -X compile paper.tex --keep-intermediates >/dev/null 2>&1
 	@cd /tmp/arxiv-src && rm -f paper.pdf paper.aux paper.out paper.log paper.blg paper.xdv
 	@rm -f $(ARXIV)/arxiv-submission.zip
@@ -297,7 +304,7 @@ arxiv-source:
 	 n=[x for x in z.namelist() if not x.endswith('/')]; \
 	 bad=[x for x in n if x.endswith(('.pdf','.aux','.out','.log','.blg','.xdv'))]; \
 	 sys.exit('FAIL: build artifacts in bundle: '+', '.join(bad)) if bad else 0; \
-	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl','neurips_2025.sty'] if f not in n]; \
+	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl','neurips_2025.sty','anc/coding-sheets.zip'] if f not in n]; \
 	 sys.exit('FAIL: missing '+', '.join(missing)) if missing else \
 	 print('OK: arxiv-submission.zip, %d files, %.0f KB' % (len(n), os.path.getsize('$(ARXIV)/arxiv-submission.zip')/1024))"
 

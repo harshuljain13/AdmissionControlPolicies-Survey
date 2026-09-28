@@ -62,7 +62,10 @@
 % A venue without an anonymity mechanism must still define these two macros.
 \makeatletter
 \if@accepted
-  \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
+  % The coding sheets travel with the paper as ancillary files rather
+  % than as a repository link. The repository is private, so the link
+  % 404s for every reader, and a dead pointer is worse than none.
+  \newcommand{\artifacturl}{included as ancillary files with this preprint}
 \else
   \newcommand{\artifacturl}{repository withheld for double-blind review;
     the coding sheets are included as supplementary material}
