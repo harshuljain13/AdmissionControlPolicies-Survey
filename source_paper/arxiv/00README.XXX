@@ -1,0 +1,12 @@
+% arXiv processing directives.
+%
+% This document uses fontspec to load Linux Libertine as OpenType, which
+% requires xelatex. Per arXiv's TeX Live FAQ, xelatex has been available
+% as a processor option since November 2025, and fonts must be named by
+% file rather than by family because arXiv registers almost nothing with
+% fontconfig. paper.tex names them by file for that reason.
+%
+% Select xelatex as the processor during submission if it is not offered
+% automatically.
+
+paper.tex toplevelfile

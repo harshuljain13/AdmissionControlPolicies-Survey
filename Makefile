@@ -28,7 +28,7 @@ ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 WORKSHOP := $(SRC)/workshop-paper
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check text supp style anon verify links clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check text supp style anon verify links clean
 
 all: check
 
@@ -251,6 +251,43 @@ wsgate:
 	   [ "$$n" = "0" ] || { echo "FAIL: $(WS) leaks $$n identifying string(s)"; exit 1; }; \
 	 fi; \
 	 echo "OK: $$p ($$(pdfinfo $$p | awk '/^Pages/{print $$2}') pages$(if $(filter 1,$(ANON)),, , named))"
+
+## arxiv-source — the bundle arXiv actually wants.
+##
+## arXiv does not accept a PDF built from TeX source, so the submission
+## is the source itself. Two things this handles that hand-zipping gets
+## wrong. First it flattens: the working tree splits content from
+## wrappers, and the ../ paths that makes necessary do not resolve in a
+## flat submission. Second it ships paper.bbl, so the bibliography does
+## not depend on arXiv running bibtex against our .bib.
+##
+## The PDF, .aux, .out and .log are deliberately excluded. Including the
+## PDF is the specific thing arXiv rejects.
+##
+## Select xelatex as the processor at submission: the document loads
+## Libertine through fontspec. Fonts are named by file rather than by
+## family, which arXiv requires since it registers almost nothing with
+## fontconfig.
+arxiv-source:
+	@rm -rf /tmp/arxiv-src && mkdir -p /tmp/arxiv-src
+	@for f in abstract body preamble; do cp $(SRC)/$$f.tex /tmp/arxiv-src/; done
+	@cp $(SRC)/references.bib /tmp/arxiv-src/
+	@sed -e 's|{\.\./preamble}|{preamble}|' -e 's|{\.\./abstract}|{abstract}|' \
+	     -e 's|{\.\./body}|{body}|'         -e 's|{\.\./references}|{references}|' \
+	     $(ARXIV)/paper.tex > /tmp/arxiv-src/paper.tex
+	@cp $(ARXIV)/00README.XXX /tmp/arxiv-src/ 2>/dev/null || true
+	@cd /tmp/arxiv-src && $(TECTONIC) -X compile paper.tex --keep-intermediates >/dev/null 2>&1
+	@cd /tmp/arxiv-src && rm -f paper.pdf paper.aux paper.out paper.log paper.blg paper.xdv
+	@rm -f $(ARXIV)/arxiv-submission.zip
+	@cd /tmp/arxiv-src && zip -qrX $(CURDIR)/$(ARXIV)/arxiv-submission.zip . -x '.*'
+	@python3 -c "import zipfile,sys,os; \
+	 z=zipfile.ZipFile('$(ARXIV)/arxiv-submission.zip'); \
+	 n=[x for x in z.namelist() if not x.endswith('/')]; \
+	 bad=[x for x in n if x.endswith(('.pdf','.aux','.out','.log','.blg','.xdv'))]; \
+	 sys.exit('FAIL: build artifacts in bundle: '+', '.join(bad)) if bad else 0; \
+	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl'] if f not in n]; \
+	 sys.exit('FAIL: missing '+', '.join(missing)) if missing else \
+	 print('OK: arxiv-submission.zip, %d files, %.0f KB' % (len(n), os.path.getsize('$(ARXIV)/arxiv-submission.zip')/1024))"
 
 ## check — build the TMLR PDF, then gate it
 check: tmlr style anon text

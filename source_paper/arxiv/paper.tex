@@ -1,30 +1,26 @@
-% TMLR wrapper. Venue-specific only: document class, style package, author
-% block, and the anonymity conditionals. All content lives in
-% ../../body.tex, which is shared with every other venue.
+% arXiv preprint wrapper. Standalone: not TMLR, not acmart.
 %
-%   \usepackage{tmlr}             anonymous, for submission (default)
-%   \usepackage[preprint]{tmlr}   de-anonymised, for arXiv
-%   \usepackage[accepted]{tmlr}   camera-ready
+% This used to build on tmlr.sty, which was left over from when TMLR was
+% the target venue. It rendered correctly but put the preprint in a
+% specific journal's house style, with five stacked author blocks each
+% repeating the same affiliation. A preprint should not look like a
+% submission to a venue it is not being submitted to.
 %
-% Non-anonymous submissions are rejected by TMLR without review.
+% Author block follows the usual preprint convention: names on one line,
+% shared affiliation stated once rather than five times, emails
+% together. Typography matches the CSUR build so the two read alike.
 
-\documentclass[10pt]{article}
-
+% body.tex uses \rowcolors, which needs xcolor's table option in place
+% before xcolor loads. Must precede \documentclass.
 \PassOptionsToPackage{table}{xcolor}
-\usepackage[preprint]{tmlr}
 
-% Libertine, loaded as OpenType through fontspec. Two reasons.
-%
-% Typography: this is the face acmart uses for the CSUR build, so the
-% preprint and the journal version read alike instead of the preprint
-% looking like a different paper set in Computer Modern.
-%
-% Extraction: the T1-encoded Type1 route stores fi, fl and ffi as single
-% glyphs with no Unicode mapping, so pdftotext, Google Scholar and screen
-% readers read "classi" for "classification". The OpenType cut is
-% Identity-H encoded and maps back correctly, which means ligatures stay
-% on and the text is still searchable. Filenames rather than family names
-% because fontspec cannot resolve "Linux Libertine O" in this bundle.
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+
+% Libertine as OpenType, same as the CSUR build. Loaded by filename:
+% fontspec cannot resolve the family name in this bundle, and
+% \usepackage{libertine} falls back to Computer Modern without erroring.
 \usepackage{fontspec}
 \setmainfont{LinLibertine_R.otf}[
   BoldFont=LinLibertine_RB.otf,
@@ -35,49 +31,55 @@
 
 \input{../preamble}
 
-\title{Admission Control for LLM Inference Serving:\\ A Systematic Review}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{fancyhdr}
 
-% Visible here: [preprint] implies [accepted].
-\author{\name Harshul Jain \email harshuljain1393@gmail.com \\
-      \addr Independent Researcher
-      \AND
-      \name Tanmay Sah \email tradertanmay@mail.com \\
-      \addr Independent Researcher
-      \AND
-      \name Tanya Sah \email tanyasah20@gmail.com \\
-      \addr Independent Researcher
-      \AND
-      \name Parv Khatri \email khatriparv@gmail.com \\
-      \addr Independent Researcher
-      \AND
-      \name Dolly Sah \email Dolly17sah@gmail.com \\
-      \addr Independent Researcher}
+% arXiv and Google Scholar read these fields. The PDF previously carried
+% neither a title nor an author.
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  allcolors  = black,
+  pdftitle   = {Admission Control for LLM Inference Serving: A Systematic Review},
+  pdfauthor  = {Harshul Jain, Tanmay Sah, Tanya Sah, Parv Khatri, Dolly Sah},
+  pdfsubject = {Systematic review of admission control for LLM inference serving},
+  pdfkeywords= {large language models, LLM inference serving, admission control,
+                systematic review, distributed systems, scheduling, queueing,
+                overload management, service-level objectives, GPU serving}
+}
 
-\def\month{09}
-\def\year{2026}
-\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\small\itshape Admission Control for LLM Inference Serving}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
 
-% One thing in the body de-anonymises the submission, so it is conditional.
-% \if@accepted is set by the [accepted] and [preprint] options of tmlr.sty.
-% A venue without an anonymity mechanism must still define these two macros.
-\makeatletter
-\if@accepted
-  \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
-\else
-  \newcommand{\artifacturl}{repository withheld for double-blind review;
-    the coding sheets are included as supplementary material}
-\fi
-\makeatother
+% The artifact link. Named here, unlike the anonymous CSUR build.
+\newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
+
+\title{\bfseries\Large Admission Control for LLM Inference Serving:\\
+A Systematic Review}
+
+\author{%
+  Harshul Jain \quad Tanmay Sah \quad Tanya Sah \quad Parv Khatri \quad Dolly Sah\\[0.4em]
+  \normalsize Independent Researchers, USA\\[0.2em]
+  \normalsize\texttt{harshuljain1393@gmail.com}
+}
+
+% No date. \today would render the pinned SOURCE_DATE_EPOCH, which is
+% 14 November 2023, and arXiv stamps its own submission date anyway.
+\date{}
 
 \begin{document}
 
 \maketitle
+\thispagestyle{plain}
 
 \input{../abstract}
 
 \input{../body}
 
-\bibliographystyle{tmlr}
+\bibliographystyle{plainnat}
 \bibliography{../references}
 
 \end{document}
