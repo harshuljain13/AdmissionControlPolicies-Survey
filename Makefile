@@ -285,9 +285,9 @@ arxiv-source:
 	     -e 's|{\.\./body}|{body}|'         -e 's|{\.\./references}|{references}|' \
 	     $(ARXIV)/paper.tex > /tmp/arxiv-src/paper.tex
 	@cp $(ARXIV)/00README.XXX /tmp/arxiv-src/ 2>/dev/null || true
-	@# the ICLR style is not in TeX Live under this name; without it
-	@# arXiv cannot compile the document at all
-	@cp $(ARXIV)/iclr2027_conference.sty $(ARXIV)/iclr2027_conference.bst /tmp/arxiv-src/
+	@# neurips_2025.sty is not in TeX Live; without it arXiv cannot
+	@# compile the document at all
+	@cp $(ARXIV)/neurips_2025.sty /tmp/arxiv-src/
 	@cd /tmp/arxiv-src && $(TECTONIC) -X compile paper.tex --keep-intermediates >/dev/null 2>&1
 	@cd /tmp/arxiv-src && rm -f paper.pdf paper.aux paper.out paper.log paper.blg paper.xdv
 	@rm -f $(ARXIV)/arxiv-submission.zip
@@ -297,7 +297,7 @@ arxiv-source:
 	 n=[x for x in z.namelist() if not x.endswith('/')]; \
 	 bad=[x for x in n if x.endswith(('.pdf','.aux','.out','.log','.blg','.xdv'))]; \
 	 sys.exit('FAIL: build artifacts in bundle: '+', '.join(bad)) if bad else 0; \
-	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl','iclr2027_conference.sty','iclr2027_conference.bst'] if f not in n]; \
+	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl','neurips_2025.sty'] if f not in n]; \
 	 sys.exit('FAIL: missing '+', '.join(missing)) if missing else \
 	 print('OK: arxiv-submission.zip, %d files, %.0f KB' % (len(n), os.path.getsize('$(ARXIV)/arxiv-submission.zip')/1024))"
 

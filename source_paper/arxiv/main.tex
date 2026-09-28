@@ -1,0 +1,115 @@
+% arXiv preprint wrapper.
+%
+% NeurIPS style with the preprint option, which the style ships
+% specifically for arXiv uploads. Two references shaped this:
+%
+%   arXiv:2407.00079  heading treatment. Centred bold title between
+%                     rules, bold roman section headings in normal case,
+%                     no running header. The "Preprint." notice sits in
+%                     the page-one footer, which is where the option
+%                     puts it, not across the top of every page.
+%   arXiv:2608.28363  author block. Name, affiliation and email stacked
+%                     per author in a grid.
+%
+% No small caps anywhere: the style already sets \large\bf\raggedright
+% for sections, so nothing needs overriding.
+%
+% Style file is vendored here: tectonic ignores TEXINPUTS, and arXiv
+% provides only what TeX Live ships.
+%
+% Engine: pdflatex. cmap is loaded so fi and fl in the T1-encoded Type1
+% fonts carry ToUnicode mappings and the text stays searchable. cmap is
+% a pdfTeX package, so it does its work on arXiv and is inert under the
+% local tectonic build, which is XeTeX.
+
+% body.tex uses \rowcolors, which needs xcolor's table option in place
+% before xcolor loads. Must precede \documentclass.
+\PassOptionsToPackage{table}{xcolor}
+
+\documentclass{article}
+
+\usepackage[preprint]{neurips_2025}
+
+% Nimbus Mono for \texttt, matching arXiv:2608.28363. Without this the
+% typewriter face resolves to Latin Modern Mono Light, whose thin
+% strokes read as blurred at the size the email addresses are set.
+\usepackage{courier}
+
+% cmap must precede fontenc.
+\usepackage{cmap}
+\usepackage[T1]{fontenc}
+
+\input{preamble}
+
+% neurips loads natbib in author-year mode. Numeric matches both the
+% CSUR build and arXiv:2407.00079, so switch it after the style loads.
+\setcitestyle{numbers,square,comma,sort&compress}
+
+\usepackage{graphicx}
+\usepackage{microtype}
+
+% arXiv and Google Scholar read these fields. Without them the PDF
+% carries no title and no author at all.
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  allcolors  = black,
+  pdftitle   = {Admission Control for LLM Inference Serving: A Systematic Review},
+  pdfauthor  = {Harshul Jain; Tanmay Sah; Tanya Sah; Parv Khatri; Dolly Sah},
+  pdfsubject = {Systematic review of admission control for LLM inference serving},
+  pdfkeywords= {large language models, LLM inference serving, admission control,
+                systematic review, distributed systems, scheduling, queueing,
+                overload management, service-level objectives, GPU serving}
+}
+
+% The preprint option puts "Preprint." in the page-one footer via
+% \@noticestring. Blanked: the paper says what it is, and the notice
+% adds nothing a reader of an arXiv listing does not already know.
+\makeatletter
+\renewcommand{\@noticestring}{}
+\makeatother
+
+% Named here, unlike the anonymous CSUR build.
+\newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
+
+\title{Admission Control for LLM Inference Serving:\\
+A Systematic Review}
+
+% An explicit grid rather than the style's \And flow, which separates
+% with \hfil\linebreak[0]\hfil and lets TeX choose the break. Left to
+% itself it put two authors on a row and stranded the third.
+%
+% \normalfont on the affiliation and email rows is load-bearing: the
+% style sets \bf across the whole author block, so without it the
+% addresses come out in bold monospace, which reads as heavy and
+% smudged at this size. Only the names should be bold.
+\author{%
+\begin{tabular}{@{}ccc@{}}
+Harshul Jain & Tanmay Sah & Tanya Sah \\
+\normalfont Independent Researcher &
+\normalfont Independent Researcher &
+\normalfont Independent Researcher \\
+\normalfont\texttt{harshuljain1393@gmail.com} &
+\normalfont\texttt{tradertanmay@mail.com} &
+\normalfont\texttt{tanyasah20@gmail.com} \\[1.6ex]
+\multicolumn{3}{c}{%
+  \begin{tabular}{@{}cc@{}}
+  \bfseries Parv Khatri & \bfseries Dolly Sah \\
+  \normalfont Independent Researcher & \normalfont Independent Researcher \\
+  \normalfont\texttt{khatriparv@gmail.com} & \normalfont\texttt{Dolly17sah@gmail.com}
+  \end{tabular}}
+\end{tabular}
+}
+
+\begin{document}
+
+\maketitle
+
+\input{abstract}
+
+\input{body}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

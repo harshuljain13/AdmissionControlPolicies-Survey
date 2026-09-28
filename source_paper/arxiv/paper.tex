@@ -1,27 +1,26 @@
 % arXiv preprint wrapper.
 %
-% Built on the ICLR conference style, which is this group's house format
-% for preprints (see arXiv:2608.28363): "Preprint" running head, authors
-% in a grid with affiliation and email under each name, Times text with
-% Computer Modern math, author-year citations.
+% NeurIPS style with the preprint option, which the style ships
+% specifically for arXiv uploads. Two references shaped this:
 %
-% Two deliberate departures from that style. Headings and the title are
-% set in bold roman rather than the style's small caps, and the author
-% grid runs three across rather than two.
+%   arXiv:2407.00079  heading treatment. Centred bold title between
+%                     rules, bold roman section headings in normal case,
+%                     no running header. The "Preprint." notice sits in
+%                     the page-one footer, which is where the option
+%                     puts it, not across the top of every page.
+%   arXiv:2608.28363  author block. Name, affiliation and email stacked
+%                     per author in a grid.
 %
-% The style ships two running heads, "Under review as a conference paper
-% at ICLR 2027" and "Published as a conference paper at ICLR 2027".
-% Neither is true here, so \lhead is overridden to "Preprint".
+% No small caps anywhere: the style already sets \large\bf\raggedright
+% for sections, so nothing needs overriding.
 %
-% Style files are vendored in this folder: tectonic ignores TEXINPUTS,
-% and arXiv provides only what TeX Live ships.
+% Style file is vendored here: tectonic ignores TEXINPUTS, and arXiv
+% provides only what TeX Live ships.
 %
-% Engine: pdflatex, which the ICLR style and the times package expect.
-% No fontspec here, unlike the CSUR build. The cost is that fi and fl in
-% T1-encoded Type1 fonts carry no Unicode mapping, so cmap is loaded to
-% emit ToUnicode CMaps and keep the text searchable. cmap is a pdfTeX
-% package: it works on arXiv and is inert under the local tectonic
-% build, which is XeTeX.
+% Engine: pdflatex. cmap is loaded so fi and fl in the T1-encoded Type1
+% fonts carry ToUnicode mappings and the text stays searchable. cmap is
+% a pdfTeX package, so it does its work on arXiv and is inert under the
+% local tectonic build, which is XeTeX.
 
 % body.tex uses \rowcolors, which needs xcolor's table option in place
 % before xcolor loads. Must precede \documentclass.
@@ -29,7 +28,12 @@
 
 \documentclass{article}
 
-\usepackage{iclr2027_conference,times}
+\usepackage[preprint]{neurips_2025}
+
+% Nimbus Mono for \texttt, matching arXiv:2608.28363. Without this the
+% typewriter face resolves to Latin Modern Mono Light, whose thin
+% strokes read as blurred at the size the email addresses are set.
+\usepackage{courier}
 
 % cmap must precede fontenc.
 \usepackage{cmap}
@@ -37,9 +41,12 @@
 
 \input{../preamble}
 
+% neurips loads natbib in author-year mode. Numeric matches both the
+% CSUR build and arXiv:2407.00079, so switch it after the style loads.
+\setcitestyle{numbers,square,comma,sort&compress}
+
 \usepackage{graphicx}
 \usepackage{microtype}
-\usepackage{fancyhdr}
 
 % arXiv and Google Scholar read these fields. Without them the PDF
 % carries no title and no author at all.
@@ -55,70 +62,42 @@
                 overload management, service-level objectives, GPU serving}
 }
 
-\iclrfinalcopy
-
-% The ICLR style sets the title, the abstract label and every heading
-% level in small caps. Redefined below to bold roman, which reads as a
-% paper rather than as a typeset proceeding. Spacing and sizes are the
-% style's own values, carried over unchanged, so only the face differs.
+% The preprint option puts "Preprint." in the page-one footer via
+% \@noticestring. Blanked: the paper says what it is, and the notice
+% adds nothing a reader of an arXiv listing does not already know.
 \makeatletter
-% The style sets the title, the abstract label and every heading in
-% small caps. Redefined here to bold roman, so the paper reads as a
-% paper rather than as a typeset proceeding. Sizes and spacing are the
-% style's own values, carried over unchanged; only the face differs.
-%
-% \@maketitle is reproduced from the style's \ificlrfinal branch, which
-% is the branch we always take, with \sc replaced by \bfseries and the
-% 24pt strut reduced so three author columns fit on a row instead of
-% two. The columns carry name and email only: all five share one
-% affiliation, so it is stated once beneath the grid rather than five
-% times inside it, which is also what makes three fit.
-\def\@maketitle{\vbox{\hsize\textwidth
-  {\LARGE\bfseries \@title\par}
-  \vskip 0.22in
-  \@author
-  \vskip 0.12in}}
-\renewenvironment{abstract}%
-  {\vskip.075in\centerline{\large\bfseries Abstract}\vspace{0.5ex}\begin{quote}}%
-  {\par\end{quote}\vskip 1ex}
-\def\section{\@startsection{section}{1}{\z@}{-2.0ex plus -0.5ex minus -.2ex}%
-  {1.5ex plus 0.3ex minus 0.2ex}{\large\bfseries\raggedright}}
-\def\subsection{\@startsection{subsection}{2}{\z@}{-1.8ex plus -0.5ex minus -.2ex}%
-  {0.8ex plus .2ex}{\normalsize\bfseries\raggedright}}
-\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-1.5ex plus -0.5ex minus -.2ex}%
-  {0.5ex plus .2ex}{\normalsize\bfseries\raggedright}}
-\def\paragraph{\@startsection{paragraph}{4}{\z@}{1.5ex plus 0.5ex minus .2ex}%
-  {-1em}{\normalsize\bfseries}}
+\renewcommand{\@noticestring}{}
 \makeatother
-
-% Override the venue running head.
-\pagestyle{fancy}
-\fancyhf{}
-\lhead{\textit{Preprint}}
-\cfoot{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
 
 % Named here, unlike the anonymous CSUR build.
 \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
 
-\title{Admission Control for LLM Inference\\
-Serving: A Systematic Review}
+\title{Admission Control for LLM Inference Serving:\\
+A Systematic Review}
 
-% \And keeps authors on the same row, \AND starts a new one.
-% Three across, then two.
-% An explicit grid rather than the style's \And flow. \And separates
-% with \hfil\linebreak[0]\hfil and lets TeX choose where to break, which
-% put two on a row and stranded the third. A tabular fixes three across.
+% An explicit grid rather than the style's \And flow, which separates
+% with \hfil\linebreak[0]\hfil and lets TeX choose the break. Left to
+% itself it put two authors on a row and stranded the third.
+%
+% \normalfont on the affiliation and email rows is load-bearing: the
+% style sets \bf across the whole author block, so without it the
+% addresses come out in bold monospace, which reads as heavy and
+% smudged at this size. Only the names should be bold.
 \author{%
 \begin{tabular}{@{}ccc@{}}
-\bfseries Harshul Jain & \bfseries Tanmay Sah & \bfseries Tanya Sah \\
-\texttt{\small harshuljain1393@gmail.com} &
-\texttt{\small tradertanmay@mail.com} &
-\texttt{\small tanyasah20@gmail.com} \\[1.1ex]
-\bfseries Parv Khatri & \bfseries Dolly Sah & \\
-\texttt{\small khatriparv@gmail.com} &
-\texttt{\small Dolly17sah@gmail.com} & \\[0.9ex]
-\multicolumn{3}{c}{Independent Researchers, USA}
+Harshul Jain & Tanmay Sah & Tanya Sah \\
+\normalfont Independent Researcher &
+\normalfont Independent Researcher &
+\normalfont Independent Researcher \\
+\normalfont\texttt{harshuljain1393@gmail.com} &
+\normalfont\texttt{tradertanmay@mail.com} &
+\normalfont\texttt{tanyasah20@gmail.com} \\[1.6ex]
+\multicolumn{3}{c}{%
+  \begin{tabular}{@{}cc@{}}
+  \bfseries Parv Khatri & \bfseries Dolly Sah \\
+  \normalfont Independent Researcher & \normalfont Independent Researcher \\
+  \normalfont\texttt{khatriparv@gmail.com} & \normalfont\texttt{Dolly17sah@gmail.com}
+  \end{tabular}}
 \end{tabular}
 }
 
@@ -130,7 +109,7 @@ Serving: A Systematic Review}
 
 \input{../body}
 
-\bibliographystyle{iclr2027_conference}
+\bibliographystyle{unsrtnat}
 \bibliography{../references}
 
 \end{document}

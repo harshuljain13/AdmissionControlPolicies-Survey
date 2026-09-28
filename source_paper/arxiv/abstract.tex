@@ -1,0 +1,37 @@
+\begin{abstract}
+\noindent
+Serving large language models at scale is a distributed systems problem
+whose overload behavior is governed at the ingress. We conduct an
+adapted-PRISMA systematic review of fifty-five admission and
+admission-adjacent works published between 2022 and 2026, and report
+three findings. First, admission sits at a different
+layer from the one the serving literature studies: of the nine LLM
+serving systems that the admission literature most often builds on, all
+place the overload response inside the engine, through batching,
+migration, placement, autoscaling or memory management, and none takes
+a decision at the ingress, while the corpus work that does gate at
+ingress is a control-plane contribution rather than an engine one.
+Second, of sixteen admission-primary papers, no two share a baseline
+set: policies are measured against the absence of admission control and
+almost never against one another. Third, placing all sixteen on our
+axes succeeds on six of seven properties and fails on one. Unit,
+setting, objective, the quantity a policy watches, the metadata it
+assumes, and whether it is deployable in front of an unmodified engine
+are all recoverable from the published text; the observed range of the
+quantity the policy reads is reported by none of them. Selection
+therefore fails on a single missing fact, and it is the fact that
+determines whether a reported improvement is interpretable at all.
+We contribute systematic coverage of fifty-five works under an
+adapted-PRISMA protocol; a five-axis taxonomy of unit, setting, SLO
+awareness, signal quantity and portability, with a master
+classification of the twenty-eight works that propose or embed an
+admission mechanism, each carrying a GRADE-adapted evidence rating;
+formal definitions of the admission-decision, goodput-under-admission
+and fairness-index primitives; a cross-paper synthesis of
+admission-signal overhead; an artifact-availability audit and seven
+properties on which the corpus diverges, which a cross-paper comparison
+would have to reconcile; a mapping of seven
+public production incidents to admission failure modes; and seven open
+problems, each grounded in published peer review or in a primary
+source's own limitations.
+\end{abstract}
