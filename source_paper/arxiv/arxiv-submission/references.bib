@@ -1,0 +1,671 @@
+% References for "Admission Control for LLM Inference Serving: A Systematic Review"
+% Version: v0.2 draft, 2026-09-11
+
+@inproceedings{yu2022orca,
+  title={Orca: A Distributed Serving System for Transformer-Based Generative Models},
+  author={Yu, Gyeong-In and Jeong, Joo Seong and Kim, Geon-Woo and Kim, Soojeong and Chun, Byung-Gon},
+  booktitle={16th USENIX Symposium on Operating Systems Design and Implementation (OSDI '22)},
+  year={2022},
+  publisher={USENIX Association},
+  url={https://www.usenix.org/conference/osdi22/presentation/yu},
+  address={Berkeley, CA, USA}
+}
+
+@inproceedings{kwon2023pagedattention,
+  title={Efficient Memory Management for Large Language Model Serving with PagedAttention},
+  author={Kwon, Woosuk and Li, Zhuohan and Zhuang, Siyuan and Sheng, Ying and Zheng, Lianmin and Yu, Cody Hao and Gonzalez, Joseph and Zhang, Hao and Stoica, Ion},
+  booktitle={Proceedings of the 29th Symposium on Operating Systems Principles (SOSP '23)},
+  year={2023},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  pages={611--626}
+}
+
+@inproceedings{agrawal2024sarathi,
+  title={Taming Throughput-Latency Tradeoff in {LLM} Inference with {Sarathi-Serve}},
+  author={Agrawal, Amey and Kedia, Nitin and Panwar, Ashish and Mohan, Jayashree and Kwatra, Nipun and Gulavani, Bhargav and Tumanov, Alexey and Ramjee, Ramachandran},
+  booktitle={18th USENIX Symposium on Operating Systems Design and Implementation (OSDI '24)},
+  year={2024},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA}
+}
+
+@inproceedings{sun2024llumnix,
+  title={{Llumnix}: Dynamic Scheduling for Large Language Model Serving},
+  author={Sun, Biao and Huang, Ziming and Zhao, Hanyu and Xiao, Wencong and Zhang, Xinyi and Li, Yong and Lin, Wei},
+  booktitle={18th USENIX Symposium on Operating Systems Design and Implementation (OSDI '24)},
+  year={2024},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA}
+}
+
+@inproceedings{zhong2024distserve,
+  title={{DistServe}: Disaggregating Prefill and Decoding for Goodput-Optimized Large Language Model Serving},
+  author={Zhong, Yinmin and Liu, Shengyu and Chen, Junda and Hu, Jianbo and Zhu, Yibo and Liu, Xuanzhe and Jin, Xin and Zhang, Hao},
+  booktitle={18th USENIX Symposium on Operating Systems Design and Implementation (OSDI '24)},
+  year={2024},
+  eprint={2401.09670},
+  archivePrefix={arXiv},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA},
+  url={https://arxiv.org/abs/2401.09670}
+}
+
+@inproceedings{sheng2024vtc,
+  title={Fairness in Serving Large Language Models},
+  author={Sheng, Ying and Cao, Shiyi and Li, Dacheng and Zhu, Banghua and Li, Zhuohan and Zhuo, Danyang and Gonzalez, Joseph E. and Stoica, Ion},
+  booktitle={18th USENIX Symposium on Operating Systems Design and Implementation (OSDI '24)},
+  year={2024},
+  eprint={2401.00588},
+  archivePrefix={arXiv},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA},
+  note={Code: https://github.com/Ying1123/VTC-artifact},
+  url={https://www.usenix.org/conference/osdi24/presentation/sheng}
+}
+
+@inproceedings{patke2024qlm,
+  title={Queue Management for {SLO}-Oriented Large Language Model Serving},
+  author={Patke, Archit and Reddy, Dhemath and Jha, Saurabh and Qiu, Haoran and Pinto, Christian and Narayanaswami, Chandra and Kalbarczyk, Zbigniew and Iyer, Ravishankar},
+  booktitle={Proceedings of the 2024 ACM Symposium on Cloud Computing (SoCC '24)},
+  pages={18--35},
+  year={2024},
+  doi={10.1145/3698038.3698523},
+  eprint={2407.00047},
+  archivePrefix={arXiv},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  note={Code: https://github.com/QLM-project/QLM}
+}
+
+@misc{patke2025chiron,
+  title={Hierarchical Autoscaling for Large Language Model Serving with {Chiron}},
+  author={Patke, Archit and Reddy, Dhemath and Jha, Saurabh and Narayanaswami, Chandra and Kalbarczyk, Zbigniew and Iyer, Ravishankar},
+  year={2025},
+  url={https://arxiv.org/abs/2501.08090},
+  eprint={2501.08090},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2501.08090}
+}
+
+@inproceedings{abhyankar2024infercept,
+  title={{InferCept}: Efficient Intercept Support for Augmented Large Language Model Inference},
+  author={Abhyankar, Reyna and He, Zijian and Srivatsa, Vikranth and Zhang, Hao and Zhang, Yiying},
+  booktitle={International Conference on Machine Learning (ICML 2024)},
+  year={2024},
+  eprint={2402.01869},
+  archivePrefix={arXiv},
+  publisher={PMLR},
+  note={Code: https://github.com/WukLab/InferCept},
+  url={https://arxiv.org/abs/2402.01869}
+}
+
+@inproceedings{jin2025cake,
+  title={Compute Or Load {KV} Cache? Why Not Both?},
+  note={System name: Cake},
+  author={Jin, Shuowei and Liu, Xueshen and Zhang, Qingzhao and Mao, Z. Morley},
+  booktitle={International Conference on Machine Learning (ICML 2025)},
+  year={2025},
+  eprint={2410.03065},
+  archivePrefix={arXiv},
+  publisher={PMLR},
+  url={https://arxiv.org/abs/2410.03065}
+}
+
+@inproceedings{pan2025kvflow,
+  title={{KVFlow}: Efficient Prefix Caching for Accelerating {LLM}-Based Multi-Agent Workflows},
+  author={Pan, Zaifeng and Patel, Ajjkumar and Hu, Zhengding and Shen, Yipeng and Guan, Yue and Li, Wan-Lu and Qin, Lianhui and Wang, Yida and Ding, Yufei},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS 2025)},
+  year={2025},
+  eprint={2507.07400},
+  archivePrefix={arXiv},
+  publisher={Curran Associates, Inc.},
+  address={Red Hook, NY, USA},
+  pages={139912--139931},
+  note={Code: https://github.com/PanZaifeng/KVFlow},
+  url={https://arxiv.org/abs/2507.07400}
+}
+
+@inproceedings{gim2025pie,
+  title={{Pie}: A Programmable Serving System for Emerging {LLM} Applications},
+  author={Gim, In and Ma, Zhiyao and Lee, Seung-seob and Zhong, Lin},
+  booktitle={Proceedings of the 30th Symposium on Operating Systems Principles (SOSP '25)},
+  year={2025},
+  eprint={2510.24051},
+  archivePrefix={arXiv},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  pages={415--430},
+  note={Code: https://github.com/pie-project/pie},
+  url={https://arxiv.org/abs/2510.24051}
+}
+
+@inproceedings{hong2025sola,
+  title={{SOLA}: Optimizing {SLO} Attainment for Large Language Model Serving with State-Aware Scheduling},
+  author={Hong, Ke and Li, Xiuhong and Chen, Lufang and Mao, Qiuli and Ning, Xuefei and Dai, Guohao and Yan, Shengen and Liang, Yun and Wang, Yu},
+  booktitle={Proceedings of Machine Learning and Systems (MLSys 2025)},
+  year={2025},
+  url={https://openreview.net/forum?id=ubIvpetAd6},
+  publisher={MLSys}
+}
+
+@inproceedings{chen2026concur,
+  title={{CONCUR}: High-Throughput Agentic Batch Inference of {LLM} via Congestion-Based Concurrency Control},
+  author={Chen, Qiaoling and Ye, Zhisheng and Tang, Tian and Sun, Peng and Tian, Boyu and Wang, Guoteng and Li, Shenggui and Wen, Yonggang and Han, Zhenhua and Zhang, Tianwei},
+  booktitle={International Conference on Machine Learning (ICML 2026)},
+  year={2026},
+  eprint={2601.22705},
+  archivePrefix={arXiv},
+  url={https://openreview.net/forum?id=mmdqUrEY24},
+  publisher={PMLR}
+}
+
+@inproceedings{shen2026twolayer,
+  title={A Two-Layer Framework for Joint Online Configuration Selection and Admission Control},
+  author={Shen, Owen and Xu, Haoran and Ye, Yinyu and Glynn, Peter and Jaillet, Patrick},
+  booktitle={International Conference on Machine Learning (ICML 2026)},
+  year={2026},
+  eprint={2602.07663},
+  archivePrefix={arXiv},
+  publisher={PMLR},
+  url={https://arxiv.org/abs/2602.07663}
+}
+
+@inproceedings{kang2026thunderagent,
+  title={{ThunderAgent}: A Simple, Fast and Program-Aware Agentic Inference System},
+  author={Kang, Hao and Li, Ziyang and Xu, Weili and Yang, Xinyu and Chen, Yinfang and Wang, Junxiong and Chen, Beidi and Krishna, Tushar and Xu, Chenfeng and Arora, Simran},
+  booktitle={International Conference on Machine Learning (ICML 2026)},
+  year={2026},
+  eprint={2602.13692},
+  archivePrefix={arXiv},
+  publisher={PMLR},
+  url={https://arxiv.org/abs/2602.13692}
+}
+
+@article{marref2026chronos,
+  title={Formal Schedulability Analysis for {LLM} Inference: {TTFT} and {TBT} Deadline Guarantees via Response-Time Theory},
+  author={Marref, Amine and Tarmissi, Khaled and Chaibi, Hassene},
+  journal={Frontiers in Computer Science},
+  volume={8},
+  year={2026},
+  doi={10.3389/fcomp.2026.1873627},
+  note={Code: https://github.com/am-research/rtss-ttft-tbt}
+}
+
+@inproceedings{wu2026fastserve,
+  title={Fast Distributed Inference Serving for Large Language Models},
+  author={Wu, Bingyang and Zhong, Yinmin and Zhang, Zili and Liu, Shengyu and Liu, Fangyue and Sun, Yuanhang and Huang, Gang and Liu, Xuanzhe and Jin, Xin},
+  booktitle={21st USENIX Symposium on Networked Systems Design and Implementation (NSDI '26)},
+  year={2026},
+  eprint={2305.05920},
+  archivePrefix={arXiv},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA},
+  note={Code: https://github.com/LLMServe/FastServe},
+  url={https://www.usenix.org/conference/nsdi26/presentation/wu-bingyang}
+}
+
+@inproceedings{kumar2025aqua,
+  title={{AQUA}: Network-Accelerated Memory Offloading for {LLMs} in Scale-Up {GPU} Domains},
+  author={Vijaya Kumar, Abhishek and Antichi, Gianni and Singh, Rachee},
+  booktitle={Proceedings of the 30th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS 2025)},
+  year={2025},
+  doi={10.1145/3676641.3715983},
+  eprint={2407.21255},
+  archivePrefix={arXiv},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  pages={48-62},
+  note={Code: https://github.com/aquaml}
+}
+
+@misc{chen2025slosserve,
+  title={{SLOs-Serve}: Optimized Serving of Multi-{SLO} {LLMs}},
+  author={Chen, Siyuan and Jia, Zhipeng and Khan, Samira and Krishnamurthy, Arvind and Gibbons, Phillip B.},
+  year={2025},
+  eprint={2504.08784},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2504.08784},
+  url={https://arxiv.org/abs/2504.08784}
+}
+
+@misc{li2026continuum,
+  title={{Continuum}: Efficient and Robust Multi-Turn {LLM} Agent Scheduling with {KV} Cache Time-to-Live},
+  author={Li, Hanchen and He, Runyuan and Mang, Qiuyang and Zhang, Qizheng and Mao, Huanzhi and Chen, Xiaokun and Zhou, Hangrui and Zhang, Huanchen and Cheung, Alvin and Gonzalez, Joseph and Stoica, Ion},
+  note={Accepted as poster at ICLR 2026 Workshop on Lifelong Agents. Code: https://github.com/Hanchenli/vllm-continuum},
+  year={2026},
+  eprint={2511.02230},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2511.02230},
+  url={https://arxiv.org/abs/2511.02230}
+}
+
+@misc{lyu2025fairbatching,
+  title={{FairBatching}: Fairness-Aware Batch Formation for {LLM} Inference},
+  author={Lyu, Hongtao and Liu, Boyue and Wu, Mingyu and Chen, Haibo},
+  year={2025},
+  eprint={2510.14392},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2510.14392},
+  url={https://arxiv.org/abs/2510.14392}
+}
+
+@misc{ao2025fluidwait,
+  title={Optimizing {LLM} Inference: Fluid-Guided Online Scheduling with Memory Constraints},
+  author={Ao, Ruicheng and Luo, Gan and Simchi-Levi, David and Wang, Chao},
+  year={2025},
+  eprint={2504.11320},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2504.11320},
+  url={https://arxiv.org/abs/2504.11320}
+}
+
+@misc{ao2026sic,
+  title={Service-Induced Congestion in Memory-Constrained {LLM} Serving},
+  author={Ao, Ruicheng and Dong, Jing and Luo, Gan and Simchi-Levi, David},
+  year={2026},
+  eprint={2606.15555},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2606.15555},
+  url={https://arxiv.org/abs/2606.15555}
+}
+
+@misc{dong2026flowcontrolled,
+  title={Flow-Controlled Scheduling for {LLM} Inference with Provable Stability Guarantees},
+  author={Dong, Zhuolun and Cao, Junyu},
+  year={2026},
+  eprint={2604.11001},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2604.11001},
+  url={https://arxiv.org/abs/2604.11001}
+}
+
+@misc{jaillet2026online,
+  title={Online Scheduling for {LLM} Inference with {KV} Cache Constraints},
+  author={Jaillet, Patrick and Jiang, Jiashuo and Mellou, Konstantina and Molinaro, Marco and Podimata, Chara and Zhou, Zijie},
+  year={2026},
+  eprint={2502.07115},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2502.07115},
+  url={https://arxiv.org/abs/2502.07115}
+}
+
+@article{mitzenmacher2025queueing,
+  title={Queueing, Predictions, and {LLMs}: Challenges and Open Problems},
+  author={Mitzenmacher, Michael and Shahout, Rana},
+  journal={SIGMETRICS 2025 Tutorial},
+  year={2025},
+  eprint={2503.07545},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2503.07545}
+}
+
+@misc{ikram2025ascendra,
+  title={{Ascendra}: Dynamic Request Prioritization for Efficient {LLM} Serving},
+  author={Ikram, Azam and Li, Xiang and Elnikety, Sameh and Bagchi, Saurabh},
+  year={2025},
+  eprint={2504.20828},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2504.20828},
+  url={https://arxiv.org/abs/2504.20828}
+}
+
+@misc{sundaresan2026clairvoyant,
+  title={{Clairvoyant}: Predictive Shortest-Job-First Admission for Serial {LLM} Inference},
+  author={Sundaresan, Aravind},
+  year={2026},
+  eprint={2606.07248},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2606.07248},
+  note={Code: https://github.com/Aravind0403/clairvoyant-scheduler},
+  url={https://arxiv.org/abs/2606.07248}
+}
+
+@misc{wei2025equinox,
+  title={{Equinox}: Holistic Fair Scheduling in Serving Large Language Models},
+  author={Wei, Zhixiang and Yen, James and Chen, Jingyi and Zhang, Ziyang and Huang, Zhibai and Chen, Chen and Yu, Xingzi and Gu, Yicheng and Wu, Chenggang and Wang, Yun and Xia, Mingyuan and Wu, Jie and Wang, Hao and Qi, Zhengwei},
+  year={2025},
+  eprint={2508.16646},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2508.16646},
+  url={https://arxiv.org/abs/2508.16646}
+}
+
+@inproceedings{qin2025mooncake,
+  title={{Mooncake}: Trading More Storage for Less Computation---A {KVCache}-centric Architecture for Serving {LLM} Chatbot},
+  author={Qin, Ruoyu and Li, Zheming and He, Weiran and Zhang, Mingxing and Wu, Yongwei and Zheng, Weimin and Xu, Xinran},
+  booktitle={23rd USENIX Conference on File and Storage Technologies (FAST '25)},
+  year={2025},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA}
+}
+
+@inproceedings{aegaeon2025,
+  title={{Aegaeon}: Effective GPU Pooling for Concurrent LLM Serving on the Market},
+  author={Xiang, Yuxing and Li, Xue and Qian, Kun and Yang, Yufan and Zhu, Diwen and Yu, Wenyuan and Zhai, Ennan and Liu, Xuanzhe and Jin, Xin and Zhou, Jingren},
+  booktitle={Proceedings of the 30th Symposium on Operating Systems Principles (SOSP '25)},
+  year={2025},
+  doi={10.1145/3731569.3764815},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  numpages={16},
+  pages={1030--1045}
+}
+
+@inproceedings{jenga2025,
+  title={{Jenga}: Effective Memory Management for Serving {LLM} with Heterogeneity},
+  author={Zhang, Chen and Du, Kuntai and Liu, Shu and Kwon, Woosuk and Mo, Xiangxi and Wang, Yufeng and Liu, Xiaoxuan and You, Kaichao and Li, Zhuohan and Long, Mingsheng and Zhai, Jidong and Gonzalez, Joseph and Stoica, Ion},
+  booktitle={Proceedings of the 30th Symposium on Operating Systems Principles (SOSP '25)},
+  year={2025},
+  doi={10.1145/3731569.3764823},
+  eprint={2503.18292},
+  archivePrefix={arXiv},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  pages={446-461}
+}
+
+@inproceedings{pastfuture2025,
+  title={Past-Future Scheduler for {LLM} Serving under {SLA} Guarantees},
+  author={Gong, Ruihao and Bai, Shihao and Wu, Siyu and Fan, Yunqian and Wang, Zaijun and Li, Xiuhong and Yang, Hailong and Liu, Xianglong},
+  booktitle={Proceedings of the 30th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS '25), Volume 2},
+  pages={798--813},
+  year={2025},
+  doi={10.1145/3676641.3716011},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA}
+}
+
+@inproceedings{adaserve2026,
+  title={{AdaServe}: Accelerating Multi-{SLO} {LLM} Serving with {SLO}-Customized Speculative Decoding},
+  author={Li, Zikun and Chen, Zhuofu and Delacourt, Remi and Oliaro, Gabriele and Wang, Zeyu and Chen, Qinghan and Lin, Shuhuai and Yang, April and Zhang, Zhihao and Chen, Zhuoming and Lai, Sean and Cheng, Xinhao and Miao, Xupeng and Jia, Zhihao},
+  booktitle={Proceedings of the 21st European Conference on Computer Systems (EuroSys '26)},
+  year={2026},
+  doi={10.1145/3767295.3769315},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  pages={36-54}
+}
+
+@inproceedings{pascal2026,
+  title={{PASCAL}: A Phase-Aware Scheduling Algorithm for Serving Reasoning-based Large Language Models},
+  author={Cho, Eunyeong and Bang, Jehyeon and Hwang, Ranggi and Rhu, Minsoo},
+  booktitle={2026 IEEE International Symposium on High Performance Computer Architecture (HPCA)},
+  year={2026},
+  eprint={2602.11530},
+  archivePrefix={arXiv},
+  publisher={IEEE},
+  address={Piscataway, NJ, USA},
+  url={https://arxiv.org/abs/2602.11530}
+}
+
+@techreport{heisler2025survey,
+  title={{LLM} Inference Scheduling: A Survey of Techniques, Frameworks, and Trade-offs},
+  author={Heisler, Morgan and Yousefijamarani, Zahra and Wang, Xinglu and others},
+  institution={TechRxiv},
+  year={2025},
+  month={November}
+}
+
+@inproceedings{zhen2025titans,
+  title={Taming the Titans: A Survey of Efficient {LLM} Inference Serving},
+  author={Zhen, Ranran and Li, Juntao and Ji, Yixin and Yang, Zhenlin and Liu, Tong and Xia, Qingrong and Duan, Xinyu and Wang, Zhefeng and Huai, Baoxing and Zhang, Min},
+  booktitle={Proceedings of the 18th International Natural Language Generation Conference (INLG 2025)},
+  year={2025},
+  eprint={2504.19720},
+  archivePrefix={arXiv},
+  publisher={Association for Computational Linguistics},
+  address={Stroudsburg, PA, USA},
+  url={https://arxiv.org/abs/2504.19720}
+}
+
+@inproceedings{li2024surveyllm,
+  title={{LLM} Inference Serving: Survey of Recent Advances and Opportunities},
+  author={Li, Baolin and Jiang, Yankai and Gadepally, Vijay and Tiwari, Devesh},
+  booktitle={2024 IEEE High Performance Extreme Computing Conference (HPEC)},
+  pages={1--8},
+  year={2024},
+  eprint={2407.12391},
+  archivePrefix={arXiv},
+  publisher={IEEE},
+  address={Piscataway, NJ, USA},
+  url={https://arxiv.org/abs/2407.12391}
+}
+
+% Foundational cross-references
+@inproceedings{patel2024splitwise,
+  title={{Splitwise}: Efficient Generative {LLM} Inference Using Phase Splitting},
+  author={Patel, Pratyush and Choukse, Esha and Zhang, Chaojie and Shah, Aashaka and Goiri, {\'I}{\~n}igo and Maleki, Saeed and Bianchini, Ricardo},
+  booktitle={51st ACM/IEEE International Symposium on Computer Architecture (ISCA '24)},
+  pages={118--132},
+  year={2024},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA}
+}
+
+@inproceedings{shepherd2023,
+  title={{SHEPHERD}: Serving {DNN}s in the Wild},
+  author={Zhang, Hong and Tang, Yupeng and Khandelwal, Anurag and Stoica, Ion},
+  booktitle={20th USENIX Symposium on Networked Systems Design and Implementation (NSDI '23)},
+  pages={787--808},
+  year={2023},
+  publisher={USENIX Association},
+  address={Berkeley, CA, USA}
+}
+
+% Production incident references (postmortems)
+@misc{openai_dalle_postmortem,
+  title={{OpenAI} incident report: {DALL{\textperiodcentered}E} queue collapse},
+  author={{OpenAI}},
+  howpublished={\url{https://status.openai.com/incidents/rllgb3r2rqsf}},
+  year={2023}
+}
+
+@misc{openai_nov2023,
+  title={{OpenAI} incident report: {November 8 2023 tipping point}},
+  author={{OpenAI}},
+  howpublished={\url{https://status.openai.com/incidents/00fpy0yxrx1q}},
+  year={2023}
+}
+
+@misc{openai_apr2025,
+  title={{OpenAI} incident write-up: {April 2025 failover}},
+  author={{OpenAI}},
+  howpublished={\url{https://status.openai.com/incidents/01JMYB59DYSH9TF6JV52TWBGRG/write-up}},
+  year={2025}
+}
+
+@misc{openai_dec2024,
+  title={{OpenAI} incident report: {December 11 2024 delayed cache cliff}},
+  author={{OpenAI}},
+  howpublished={\url{https://status.openai.com/incidents/ctrsv3lwd797}},
+  year={2024}
+}
+
+@misc{openai_nov25_2024,
+  title={{OpenAI} incident report: {November 25 2024 large-cluster cliff}},
+  author={{OpenAI}},
+  howpublished={\url{https://status.openai.com/incidents/01JMYB4BYHJWDV9A51ZPA86YBQ}},
+  year={2024}
+}
+
+@misc{anthropic_jan2026,
+  title={{Anthropic} incident report: {January 21 2026 capacity miss}},
+  author={{Anthropic}},
+  howpublished={\url{https://status.claude.com/incidents/yrxt885v63jw}},
+  year={2026}
+}
+
+@misc{anthropic_nov2025,
+  title={{Anthropic} incident report: {November 25 2025 529 overloaded}},
+  author={{Anthropic}},
+  howpublished={\url{https://status.claude.com/incidents/5g213mxxlbsw}},
+  year={2025}
+}
+
+@misc{anthropic_aug2025,
+  title={A postmortem of three recent issues},
+  author={{Anthropic Engineering}},
+  howpublished={\url{https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues}},
+  year={2025}
+}
+
+@misc{cloudflare_ratelimit_2017,
+  title={How we built rate limiting capable of scaling to millions of domains},
+  author={{Cloudflare}},
+  howpublished={\url{https://blog.cloudflare.com/counting-things-a-lot-of-different-things/}},
+  year={2017}
+}
+
+@misc{cloudflare_ratelimit_2022,
+  title={Introducing Advanced Rate Limiting},
+  author={{Cloudflare}},
+  howpublished={\url{https://blog.cloudflare.com/advanced-rate-limiting/}},
+  year={2022}
+}
+
+@misc{anthropic_api_errors,
+  title={{Anthropic} {API} Documentation: Errors},
+  author={{Anthropic}},
+  howpublished={\url{https://docs.anthropic.com/en/api/errors}},
+  year={2026}
+}
+
+@inproceedings{cunningham2026tokenpools,
+  title={Token Management in Multi-Tenant {AI} Inference Platforms},
+  author={Cunningham, William J.},
+  booktitle={ACM Conference on {AI} and Agentic Systems (CAIS '26)},
+  year={2026},
+  publisher={ACM},
+  note={System name: Token Pools. arXiv:2603.00356},
+  url={https://arxiv.org/abs/2603.00356},
+  address={New York, NY, USA}
+}
+
+@misc{huang2025proserve,
+  title={{ProServe}: Unified Multi-Priority Request Scheduling for {LLM} Serving},
+  author={Huang, Weizhe and Peng, Tao and Liu, Tongxuan and Jin, Donghe and Meng, Kang and Dong, Xianzhe and Zhang, Ke},
+  year={2025},
+  note={v2 revised 2026-06-12},
+  url={https://arxiv.org/abs/2512.12928},
+  eprint={2512.12928},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2512.12928}
+}
+
+@misc{guo2026saga,
+  title={{SAGA}: Workflow-Atomic Scheduling for {AI} Agent Inference on {GPU} Clusters},
+  author={Guo, Dongxin and Wu, Jikun and Yiu, Siu Ming},
+  year={2026},
+  note={v2 revised 2026-06-19},
+  url={https://arxiv.org/abs/2605.00528},
+  eprint={2605.00528},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2605.00528}
+}
+
+@techreport{jain1984fairness,
+  title={A Quantitative Measure of Fairness and Discrimination for Resource Allocation in Shared Computer Systems},
+  author={Jain, Rajendra K. and Chiu, Dah-Ming and Hawe, William R.},
+  number={TR-301},
+  institution={Digital Equipment Corporation},
+  address={Hudson, MA, USA},
+  year={1984}
+}
+
+@misc{khan2024fairserve,
+  title={Ensuring Fair {LLM} Serving Amid Diverse Applications},
+  author={Khan, Redwan Ibne Seraj and Jain, Kunal and Shen, Haiying and Mallick, Ankur and Parayil, Anjaly and Kulkarni, Anoop and Kofsky, Steve and Choudhary, Pankhuri and St. Amant, Ren\'ee and Wang, Rujia and Cheng, Yue and Butt, Ali R. and R\"uhle, Victor and Bansal, Chetan and Rajmohan, Saravan},
+  year={2024},
+  note={System name: FairServe},
+  url={https://arxiv.org/abs/2411.15997},
+  eprint={2411.15997},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2411.15997}
+}
+
+@misc{lai2025tokenscale,
+  title={{TokenScale}: Timely and Accurate Autoscaling for Disaggregated {LLM} Serving with Token Velocity},
+  author={Lai, Ruiqi and Liu, Hongrui and Lu, Chengzhi and Liu, Zonghao and Cao, Siyu and Shao, Siyang and Zhang, Yixin and Mai, Luo and Ustiugov, Dmitrii},
+  year={2025},
+  url={https://arxiv.org/abs/2512.03416},
+  eprint={2512.03416},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2512.03416}
+}
+
+@inproceedings{xiang2025servegen,
+  title={{ServeGen}: Workload Characterization and Generation of Large Language Model Serving in Production},
+  author={Xiang, Yuxing and Li, Xue and Qian, Kun and Yu, Wenyuan and Zhai, Ennan and Jin, Xin},
+  booktitle={23rd USENIX Symposium on Networked Systems Design and Implementation (NSDI '26)},
+  year={2026},
+  publisher={USENIX Association},
+  note={Code: github.com/alibaba/ServeGen},
+  url={https://arxiv.org/abs/2505.09999},
+  address={Berkeley, CA, USA}
+}
+
+@inproceedings{tang2026scorpio,
+  title={{Scorpio}: Serving Right Requests at the Right Time for Heterogeneous {SLOs} in {LLM} Inference},
+  author={Tang, Yinghao and Lan, Tingfeng and Pan, Bo and Huang, Xiuqi and Lu, Hui and Chen, Wei},
+  booktitle={27th International Conference on Web Information Systems Engineering (WISE 2026)},
+  year={2026},
+  note={arXiv:2505.23022; accepted version},
+  url={https://arxiv.org/abs/2505.23022},
+  publisher={Springer},
+  address={Cham, Switzerland}
+}
+
+@misc{goel2025niyama,
+  title={Niyama: Breaking the Silos of LLM Inference Serving},
+  author={Goel, Kanishk and Mohan, Jayashree and Kwatra, Nipun and Anupindi, Ravi Shreyas and Ramjee, Ramachandran},
+  year={2025},
+  eprint={2503.22562},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/2503.22562}
+}
+
+@misc{ma2026loadbalancing,
+  title={A Control-Oriented Survey of Load Balancing for LLM Inference Serving},
+  author={Ma, Hanbo and Li, Zhongguo and Wang, Junan and Cao, Chunyi and Li, Donglin and Yang, Jun and Ding, Zhengtao},
+  year={2026},
+  howpublished={SSRN preprint},
+  url={https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6516666}
+}
+
+@article{omniserve2026,
+  title={Serving Hybrid {LLM} Loads with {SLO} Guarantees Using {CPU-GPU} Attention Piggybacking},
+  author={Mo, Zizhao and Chen, Junlin and Xu, Huanle and Xu, Chengzhong},
+  journal={Proceedings of the ACM on Management of Data},
+  year={2026},
+  doi={10.1145/3802107},
+  eprint={2603.12831},
+  archivePrefix={arXiv},
+  note={System name: OmniServe},
+  pages={1-26}
+}
+
+@misc{agrawal2024etalon,
+  title={{Etalon}: Holistic Performance Evaluation Framework for {LLM} Inference Systems},
+  author={Agrawal, Amey and Agarwal, Anmol and Kedia, Nitin and Mohan, Jayashree and Kundu, Souvik and Kwatra, Nipun and Ramjee, Ramachandran and Tumanov, Alexey},
+  year={2024},
+  eprint={2407.07000},
+  archivePrefix={arXiv},
+  howpublished={arXiv preprint arXiv:2407.07000},
+  note={Earlier circulated as Metron},
+  url={https://arxiv.org/abs/2407.07000}
+}
+
+@inproceedings{reddi2020mlperf,
+  title={{MLPerf} Inference Benchmark},
+  author={Reddi, Vijay Janapa and Cheng, Christine and Kanter, David and Mattson, Peter and Schmuelling, Guenther and Wu, Carole-Jean and others},
+  booktitle={47th Annual International Symposium on Computer Architecture (ISCA 2020)},
+  year={2020},
+  eprint={1911.02549},
+  archivePrefix={arXiv},
+  publisher={IEEE},
+  address={Piscataway, NJ, USA},
+  pages={446--459},
+  url={https://arxiv.org/abs/1911.02549}
+}
