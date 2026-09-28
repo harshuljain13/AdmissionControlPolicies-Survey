@@ -28,7 +28,7 @@ ARXIV    := $(SRC)/arxiv
 CSUR     := $(SRC)/csur
 WORKSHOP := $(SRC)/workshop-paper
 
-.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check nodupes text supp style anon verify links pdflinks clean
+.PHONY: all tmlr arxiv csur csur-named csur-camera cover camera arxiv-source workshop workshop-mlsys workshop-iclr workshop-preprint wsgate check nodupes parity text supp style anon verify links pdflinks clean
 
 all: check
 
@@ -323,8 +323,19 @@ nodupes:
 	 if [ -n "$$bad" ]; then echo "FAIL: shared files duplicated into venue folders:$$bad"; exit 1; \
 	 else echo "OK: no duplicated content files in venue folders"; fi
 
+## parity — the arXiv and CSUR builds must say the same thing.
+## They \input the same sources, so this should be true by construction.
+## It is checked anyway because the construction has failed before:
+## copies of the shared files were committed into a venue folder,
+## identical at the time and therefore invisible, and a stale copy would
+## have diverged silently from then on. Compares structure, the citation
+## key set, and every substantive word, with the legitimate differences
+## enumerated in the script rather than waved past.
+parity:
+	@python3 scripts/check-parity.py
+
 ## check — build the TMLR PDF, then gate it
-check: nodupes tmlr style anon text
+check: nodupes parity tmlr style anon text
 	@if grep -qiE 'undefined (reference|citation)' $(TMLR)/paper.log; then \
 		echo "FAIL: unresolved references or citations:"; \
 		grep -iE 'undefined (reference|citation)' $(TMLR)/paper.log; exit 1; \
