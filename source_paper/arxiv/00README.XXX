@@ -1,12 +1,11 @@
 % arXiv processing directives.
 %
-% This document uses fontspec to load Linux Libertine as OpenType, which
-% requires xelatex. Per arXiv's TeX Live FAQ, xelatex has been available
-% as a processor option since November 2025, and fonts must be named by
-% file rather than by family because arXiv registers almost nothing with
-% fontconfig. paper.tex names them by file for that reason.
+% Engine: pdflatex. The document uses the ICLR conference style with the
+% times package, both of which expect pdflatex. cmap is loaded so that
+% fi and fl ligatures in the T1-encoded Type1 fonts carry ToUnicode
+% mappings and the text stays searchable.
 %
-% Select xelatex as the processor during submission if it is not offered
-% automatically.
+% iclr2027_conference.sty and .bst are bundled here: TeX Live does not
+% ship them, so without them this will not compile.
 
 paper.tex toplevelfile

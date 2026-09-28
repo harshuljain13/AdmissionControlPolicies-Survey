@@ -1,85 +1,136 @@
-% arXiv preprint wrapper. Standalone: not TMLR, not acmart.
+% arXiv preprint wrapper.
 %
-% This used to build on tmlr.sty, which was left over from when TMLR was
-% the target venue. It rendered correctly but put the preprint in a
-% specific journal's house style, with five stacked author blocks each
-% repeating the same affiliation. A preprint should not look like a
-% submission to a venue it is not being submitted to.
+% Built on the ICLR conference style, which is this group's house format
+% for preprints (see arXiv:2608.28363): "Preprint" running head, authors
+% in a grid with affiliation and email under each name, Times text with
+% Computer Modern math, author-year citations.
 %
-% Author block follows the usual preprint convention: names on one line,
-% shared affiliation stated once rather than five times, emails
-% together. Typography matches the CSUR build so the two read alike.
+% Two deliberate departures from that style. Headings and the title are
+% set in bold roman rather than the style's small caps, and the author
+% grid runs three across rather than two.
+%
+% The style ships two running heads, "Under review as a conference paper
+% at ICLR 2027" and "Published as a conference paper at ICLR 2027".
+% Neither is true here, so \lhead is overridden to "Preprint".
+%
+% Style files are vendored in this folder: tectonic ignores TEXINPUTS,
+% and arXiv provides only what TeX Live ships.
+%
+% Engine: pdflatex, which the ICLR style and the times package expect.
+% No fontspec here, unlike the CSUR build. The cost is that fi and fl in
+% T1-encoded Type1 fonts carry no Unicode mapping, so cmap is loaded to
+% emit ToUnicode CMaps and keep the text searchable. cmap is a pdfTeX
+% package: it works on arXiv and is inert under the local tectonic
+% build, which is XeTeX.
 
 % body.tex uses \rowcolors, which needs xcolor's table option in place
 % before xcolor loads. Must precede \documentclass.
 \PassOptionsToPackage{table}{xcolor}
 
-\documentclass[11pt]{article}
+\documentclass{article}
 
-\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{iclr2027_conference,times}
 
-% Libertine as OpenType, same as the CSUR build. Loaded by filename:
-% fontspec cannot resolve the family name in this bundle, and
-% \usepackage{libertine} falls back to Computer Modern without erroring.
-\usepackage{fontspec}
-\setmainfont{LinLibertine_R.otf}[
-  BoldFont=LinLibertine_RB.otf,
-  ItalicFont=LinLibertine_RI.otf,
-  BoldItalicFont=LinLibertine_RBI.otf]
-\setsansfont{LinBiolinum_R.otf}[BoldFont=LinBiolinum_RB.otf]
-\setmonofont{lmmono10-regular.otf}
+% cmap must precede fontenc.
+\usepackage{cmap}
+\usepackage[T1]{fontenc}
 
 \input{../preamble}
 
-\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{microtype}
 \usepackage{fancyhdr}
 
-% arXiv and Google Scholar read these fields. The PDF previously carried
-% neither a title nor an author.
+% arXiv and Google Scholar read these fields. Without them the PDF
+% carries no title and no author at all.
 \usepackage{hyperref}
 \hypersetup{
   colorlinks = true,
   allcolors  = black,
   pdftitle   = {Admission Control for LLM Inference Serving: A Systematic Review},
-  pdfauthor  = {Harshul Jain, Tanmay Sah, Tanya Sah, Parv Khatri, Dolly Sah},
+  pdfauthor  = {Harshul Jain; Tanmay Sah; Tanya Sah; Parv Khatri; Dolly Sah},
   pdfsubject = {Systematic review of admission control for LLM inference serving},
   pdfkeywords= {large language models, LLM inference serving, admission control,
                 systematic review, distributed systems, scheduling, queueing,
                 overload management, service-level objectives, GPU serving}
 }
 
+\iclrfinalcopy
+
+% The ICLR style sets the title, the abstract label and every heading
+% level in small caps. Redefined below to bold roman, which reads as a
+% paper rather than as a typeset proceeding. Spacing and sizes are the
+% style's own values, carried over unchanged, so only the face differs.
+\makeatletter
+% The style sets the title, the abstract label and every heading in
+% small caps. Redefined here to bold roman, so the paper reads as a
+% paper rather than as a typeset proceeding. Sizes and spacing are the
+% style's own values, carried over unchanged; only the face differs.
+%
+% \@maketitle is reproduced from the style's \ificlrfinal branch, which
+% is the branch we always take, with \sc replaced by \bfseries and the
+% 24pt strut reduced so three author columns fit on a row instead of
+% two. The columns carry name and email only: all five share one
+% affiliation, so it is stated once beneath the grid rather than five
+% times inside it, which is also what makes three fit.
+\def\@maketitle{\vbox{\hsize\textwidth
+  {\LARGE\bfseries \@title\par}
+  \vskip 0.22in
+  \@author
+  \vskip 0.12in}}
+\renewenvironment{abstract}%
+  {\vskip.075in\centerline{\large\bfseries Abstract}\vspace{0.5ex}\begin{quote}}%
+  {\par\end{quote}\vskip 1ex}
+\def\section{\@startsection{section}{1}{\z@}{-2.0ex plus -0.5ex minus -.2ex}%
+  {1.5ex plus 0.3ex minus 0.2ex}{\large\bfseries\raggedright}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-1.8ex plus -0.5ex minus -.2ex}%
+  {0.8ex plus .2ex}{\normalsize\bfseries\raggedright}}
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-1.5ex plus -0.5ex minus -.2ex}%
+  {0.5ex plus .2ex}{\normalsize\bfseries\raggedright}}
+\def\paragraph{\@startsection{paragraph}{4}{\z@}{1.5ex plus 0.5ex minus .2ex}%
+  {-1em}{\normalsize\bfseries}}
+\makeatother
+
+% Override the venue running head.
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[C]{\small\itshape Admission Control for LLM Inference Serving}
-\fancyfoot[C]{\thepage}
+\lhead{\textit{Preprint}}
+\cfoot{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
-% The artifact link. Named here, unlike the anonymous CSUR build.
+% Named here, unlike the anonymous CSUR build.
 \newcommand{\artifacturl}{\url{https://github.com/harshuljain13/AdmissionControlPolicies-Survey}}
 
-\title{\bfseries\Large Admission Control for LLM Inference Serving:\\
-A Systematic Review}
+\title{Admission Control for LLM Inference\\
+Serving: A Systematic Review}
 
+% \And keeps authors on the same row, \AND starts a new one.
+% Three across, then two.
+% An explicit grid rather than the style's \And flow. \And separates
+% with \hfil\linebreak[0]\hfil and lets TeX choose where to break, which
+% put two on a row and stranded the third. A tabular fixes three across.
 \author{%
-  Harshul Jain \quad Tanmay Sah \quad Tanya Sah \quad Parv Khatri \quad Dolly Sah\\[0.4em]
-  \normalsize Independent Researchers, USA\\[0.2em]
-  \normalsize\texttt{harshuljain1393@gmail.com}
+\begin{tabular}{@{}ccc@{}}
+\bfseries Harshul Jain & \bfseries Tanmay Sah & \bfseries Tanya Sah \\
+\texttt{\small harshuljain1393@gmail.com} &
+\texttt{\small tradertanmay@mail.com} &
+\texttt{\small tanyasah20@gmail.com} \\[1.1ex]
+\bfseries Parv Khatri & \bfseries Dolly Sah & \\
+\texttt{\small khatriparv@gmail.com} &
+\texttt{\small Dolly17sah@gmail.com} & \\[0.9ex]
+\multicolumn{3}{c}{Independent Researchers, USA}
+\end{tabular}
 }
-
-% No date. \today would render the pinned SOURCE_DATE_EPOCH, which is
-% 14 November 2023, and arXiv stamps its own submission date anyway.
-\date{}
 
 \begin{document}
 
 \maketitle
-\thispagestyle{plain}
 
 \input{../abstract}
 
 \input{../body}
 
-\bibliographystyle{plainnat}
+\bibliographystyle{iclr2027_conference}
 \bibliography{../references}
 
 \end{document}
