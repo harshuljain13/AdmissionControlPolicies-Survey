@@ -266,10 +266,15 @@ wsgate:
 ## The PDF, .aux, .out and .log are deliberately excluded. Including the
 ## PDF is the specific thing arXiv rejects.
 ##
-## Select xelatex as the processor at submission: the document loads
-## Libertine through fontspec. Fonts are named by file rather than by
-## family, which arXiv requires since it registers almost nothing with
-## fontconfig.
+## No 00README.XXX. That file is an AutoTeX directive, and arXiv retired
+## AutoTeX in April 2025 for Submission 1.5, which selects the processor
+## through the UI. Including it stalled the submission at the file-check
+## step with no error shown; removing it, with every other file
+## unchanged, let the same bundle through. All it declared was
+## paper.tex as the top-level file, which arXiv determines on its own
+## since paper.tex is the only file with a documentclass.
+##
+## Select pdflatex as the processor in the UI.
 arxiv-source:
 	@rm -rf /tmp/arxiv-src && mkdir -p /tmp/arxiv-src
 	@for f in abstract body preamble; do cp $(SRC)/$$f.tex /tmp/arxiv-src/; done
@@ -277,7 +282,6 @@ arxiv-source:
 	@sed -e 's|{\.\./preamble}|{preamble}|' -e 's|{\.\./abstract}|{abstract}|' \
 	     -e 's|{\.\./body}|{body}|'         -e 's|{\.\./references}|{references}|' \
 	     $(ARXIV)/paper.tex > /tmp/arxiv-src/paper.tex
-	@cp $(ARXIV)/00README.XXX /tmp/arxiv-src/ 2>/dev/null || true
 	@# neurips_2025.sty is not in TeX Live; without it arXiv cannot
 	@# compile the document at all
 	@cp $(ARXIV)/neurips_2025.sty /tmp/arxiv-src/
@@ -301,6 +305,7 @@ arxiv-source:
 	 bad=[x for x in n if x.endswith(('.pdf','.aux','.out','.log','.blg','.xdv'))]; \
 	 sys.exit('FAIL: build artifacts in bundle: '+', '.join(bad)) if bad else 0; \
 	 missing=[f for f in ['paper.tex','body.tex','abstract.tex','preamble.tex','references.bib','paper.bbl','neurips_2025.sty','anc/README.md'] if f not in n]; \
+	 sys.exit('FAIL: 00README.XXX present; it stalls arXiv Submission 1.5') if '00README.XXX' in n else None; \
 	 sys.exit('FAIL: missing '+', '.join(missing)) if missing else \
 	 print('OK: arxiv-submission.zip, %d files, %.0f KB' % (len(n), os.path.getsize('$(ARXIV)/arxiv-submission.zip')/1024))"
 

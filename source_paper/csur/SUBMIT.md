@@ -186,6 +186,18 @@ None of this is fatal and the bibliography renders. ACM production will ask for
 the page ranges rather than reject the submission, and this section is the
 worklist if they do.
 
+## arXiv
+
+`make arxiv-source` builds `arxiv-submission.zip`: seven source files plus 45
+ancillary files under `anc/`. Upload the single zip and select **pdflatex** as
+the processor.
+
+**Do not add a 00README.XXX.** That file is an AutoTeX directive, and arXiv
+retired AutoTeX in April 2025 for Submission 1.5. With it present the
+submission stalls at the file-check step showing no error and no way forward;
+removing it, with every other file unchanged, let the identical bundle through.
+The gate in `make arxiv-source` now fails if one reappears.
+
 ## Before submitting
 
 - [ ] **Verify the review model** in ScholarOne (see above). This is the one that
