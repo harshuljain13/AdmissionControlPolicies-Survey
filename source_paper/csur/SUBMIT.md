@@ -188,6 +188,17 @@ worklist if they do.
 
 ## arXiv
 
+**Submitted 2026-09-28 as `submit/8139513`.** Under moderation; announcement
+normally within two business days.
+
+When it announces, check the arXiv-built PDF for two things that could not be
+verified locally. Search it for "classification": `cmap` only takes effect
+under pdflatex, and every build here runs XeTeX, so this is the first proof
+that ligatures extract and the paper is searchable. Then confirm the 45
+ancillary files are listed on the abstract page, because the manuscript states
+twice that the coding sheets are included with it.
+
+
 `make arxiv-source` builds `arxiv-submission.zip`: seven source files plus 45
 ancillary files under `anc/`. Upload the single zip and select **pdflatex** as
 the processor.
